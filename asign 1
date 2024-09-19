@@ -1,0 +1,30 @@
+#problem 1
+    # pg.draw.line(screen, BLACK, [20,40], [200,40])
+    # start_y = 50
+    # end_y = 55
+    # for n in range(0, 20):
+    #     pg.draw.line(screen, BLACK, [400,start_y], [400,end_y])
+    #     start_y += 10
+    #     end_y +=10
+    # pg.draw.lines(screen, BLACK, True, [(30, 100), (180, 100), (105, 250)])
+
+    #problem 2
+    # draw_rect(10,10, YELLOW, screen)
+    # draw_rect(170,10, ORANGE, screen)
+    # draw_rect(330,10, BLUE, screen)
+
+    #problem 3
+    # pg.draw.circle(screen, GREEN, [80,60], 40)
+    # pg.draw.circle(screen, RED, [80,60], 40, 2)
+
+    # pg.draw.ellipse(screen, GREEN, [170, 10, 150,100])
+    # pg.draw.ellipse(screen, RED, [170, 10, 150,100], 2)
+
+    # pg.draw.rect(screen, GREEN, [360, 20, 90,70])
+    # pg.draw.rect(screen, RED, [360, 20, 90,70], 2)
+
+    # pg.draw.arc(screen, RED, [58, 147, 85, 110], 0, 5*pi/4, 72)
+    # pg.draw.arc(screen, GREEN, [60, 150, 80, 100], 0, 5*pi/4, 70)
+
+    # pg.draw.polygon(screen, GREEN, [[230, 150], [320,190], [380, 280], [330, 310], [230,235], [150, 310]])
+    # pg.draw.polygon(screen, RED, [[230, 150], [320,190], [380, 280], [330, 310], [230,235], [150, 310]], 2)
