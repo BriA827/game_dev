@@ -12,10 +12,10 @@ def temp_convert():
     return c_temp
 
 def trape_area():
-    height = input("Enter the height of the trapezoid: ")
+    HEIGHT = input("Enter the HEIGHT of the trapezoid: ")
     bb = input("Enter the length of the bottom base: ")
     tb = input("Enter the length of the top base: ")
-    t_area = .5 * (float(bb) + float(tb)) * float(height)
+    t_area = .5 * (float(bb) + float(tb)) * float(HEIGHT)
     print(f"The area is: {t_area}")
     return t_area
 
