@@ -17,7 +17,13 @@ PLANET = (250, 183, 90)
 FAST_COMET = 6
 SLOW_COMET = 4
 
-ALIEN_MOVE = 6
+ALIEN_MOVE = 3.3
+
+MOON_TOP_START = pi/3
+MOON_BOT_START = pi
+MOON_BOT = pi
+MOON_BOT_END = 3*pi/2
+MOON_CHANGE = .015
 
 FPS = 60
 
@@ -65,7 +71,7 @@ title_img = title_font.render(title_text, True, BLACK)
 
 x_list1 = []
 y_list1 = []
-star_colors = []
+star_colors = [random.choice([YELLOW, WHITE]) for n in range(0, 70)]
 
 blue_x = []
 blue_y = []
@@ -73,10 +79,12 @@ blue_y = []
 orange_x = []
 orange_y = []
 
+star_x = [random.randint(0, WIDTH) for x in range( 0, 70)]
+star_y = [random.randint(0, WIDTH) for y in range( 0, 70)]
+
 for n in range(0, random.randint(10,19)):
     x_list1.append(random.randint(0,WIDTH))
     y_list1.append(random.randint(0,HEIGHT))
-    star_colors.append(random.choice([YELLOW, WHITE]))
 
 for n in range(0, random.randint(10,17)):
     blue_x.append(random.randint(0,WIDTH))
@@ -107,6 +115,9 @@ while playing:
 
     #draw
 
+    for n in range(0, len(star_x)):
+        pg.draw.circle(screen, star_colors[n], [star_x[n], star_y[n]], 3)
+
     for n in range(0,len(blue_x)):
         comet(blue_x[n], blue_y[n], BLUE, screen)
         blue_y[n] += SLOW_COMET
@@ -127,16 +138,26 @@ while playing:
             orange_x[n], orange_y[n] = [random.randint(100,WIDTH+350), random.randint(-25,-5)]
 
     #moon
-    pg.draw.arc(screen, WHITE, [850,50, 80,80], 8.5*pi/6, 4*pi/6, 3)
-    pg.draw.arc(screen, WHITE, [845,50, 80,80], 8.5*pi/6, 4*pi/6, 5)
+    pg.draw.arc(screen, WHITE, [870,40, 80,80], MOON_BOT_START, MOON_TOP_START, 8)
+    pg.draw.arc(screen, WHITE, [865,40, 80,80], MOON_BOT_START, MOON_TOP_START, 8)
+
+    MOON_BOT_START += MOON_CHANGE
+    if MOON_BOT_START > MOON_BOT_END or MOON_BOT_START < MOON_BOT:
+        MOON_CHANGE = MOON_CHANGE *-1
+
+    MOON_TOP_START += MOON_CHANGE
 
     #planet
     pg.draw.arc(screen, ORANGE, [350, 290, 300,40], .5*pi, .49*pi, 6)
     pg.draw.circle(screen, PLANET, [500, 300], 80, 80)
     pg.draw.arc(screen, ORANGE, [350, 290, 300,40], .9*pi, .1*pi, 6)
 
+
     #alien
     alien(alien_cords[0], alien_cords[1], screen)
+    alien_cords[1] -= ALIEN_MOVE
+    if alien_cords[1] < 500 or alien_cords[1] > HEIGHT - 40:
+        ALIEN_MOVE = ALIEN_MOVE * -1
 
     #update screen
     pg.display.flip()
