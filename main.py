@@ -4,15 +4,16 @@ from math import pi
 import random
 
 #constants
-WHITE = (255,255,255)
-BLACK = (0,0,0)
-RED = (255,0,0)
-GREEN = (0,255,0)
-BLUE = (0,0,255)
-YELLOW = (238, 210, 2)
-ORANGE = (255, 69, 0)
-GREY = (120,120,120)
-PLANET = (250, 183, 90)
+WHITE = [255,255,255]
+BLACK = [0,0,0]
+RED = [255,0,0]
+GREEN = [0,255,0]
+BLUE = [0,0,255]
+YELLOW = [238, 210, 0]
+ORANGE = [255, 69, 0]
+GREY = [120,120,120]
+PLANET = [230, 163, 80]
+RINGS = [201, 112, 48]
 
 FAST_COMET = 6
 SLOW_COMET = 4
@@ -148,16 +149,16 @@ while playing:
     MOON_TOP_START += MOON_CHANGE
 
     #planet
-    pg.draw.arc(screen, ORANGE, [350, 290, 300,40], .5*pi, .49*pi, 6)
+    pg.draw.arc(screen, RINGS, [350, 290, 300,40], .5*pi, .49*pi, 6)
     pg.draw.circle(screen, PLANET, [500, 300], 80, 80)
-    pg.draw.arc(screen, ORANGE, [350, 290, 300,40], .9*pi, .1*pi, 6)
-
+    pg.draw.arc(screen, RINGS, [350, 290, 300,40], .9*pi, .1*pi, 6)
 
     #alien
     alien(alien_cords[0], alien_cords[1], screen)
     alien_cords[1] -= ALIEN_MOVE
     if alien_cords[1] < 500 or alien_cords[1] > HEIGHT - 40:
         ALIEN_MOVE = ALIEN_MOVE * -1
+    
 
     #update screen
     pg.display.flip()
