@@ -18,7 +18,8 @@ RINGS = [201, 112, 48]
 FAST_COMET = 6
 SLOW_COMET = 4
 
-ALIEN_MOVE = 3.3
+ALIEN_MOVE_SIDE = 3.3
+ALIEN_MOVE_UP = 3
 
 MOON_TOP_START = pi/3
 MOON_BOT_START = pi
@@ -39,13 +40,20 @@ def comet(x, y, color, canvas):
     pg.draw.circle(canvas, color, [x,y], 10,10)
     pg.draw.polygon(canvas, color, [[x,y-10], [x+15,y-35], [x+15,y-25], [x+55, y-60], [x+40,y-30], [x+50, y-30], [x+5, y]])
 
+def planet(x, y, canvas):
+    pg.draw.arc(canvas, RINGS, [x-150, y-10, 300,40], .5*pi, .49*pi, 6)
+    pg.draw.circle(canvas, PLANET, [x, y], 80, 80)
+    pg.draw.arc(canvas, RINGS, [x-150, y-10, 300,40], .9*pi, .1*pi, 6)
+
 def alien(x, y, canvas):
     #700, 650
-    pg.draw.polygon(canvas, GREEN, [[x,y], [x+20,y-100],[x+100,y-100],[x+120,y]])
+    # pg.draw.polygon(canvas, GREEN, [[x,y], [x+20,y-100],[x+100,y-100],[x+120,y]])
+    pg.draw.polygon(canvas, GREY, [[x, y-100], [x+120,y-100], [x+110,y-80], [x+10,y-80]])
     pg.draw.polygon(canvas, GREY, [[x-30,y-100], [x+20,y-150],[x+100,y-150],[x+150,y-100]])
     pg.draw.arc(canvas, GREY, [x+20,y-195,80,90], 0, 1*pi, 3)
     pg.draw.rect(canvas,GREEN, [x+50, y-160, 20,10])
     pg.draw.ellipse(canvas,GREEN, [x+50, y-190, 20, 30])
+
     circ_x = x+10
     for n in range(0,5):
         pg.draw.circle(canvas, YELLOW, [circ_x, y-115], 5)
@@ -83,19 +91,24 @@ orange_y = []
 star_x = [random.randint(0, WIDTH) for x in range( 0, 70)]
 star_y = [random.randint(0, WIDTH) for y in range( 0, 70)]
 
-for n in range(0, random.randint(10,19)):
+for n in range(0, 5):
     x_list1.append(random.randint(0,WIDTH))
     y_list1.append(random.randint(0,HEIGHT))
 
-for n in range(0, random.randint(10,17)):
+for n in range(0, 7):
     blue_x.append(random.randint(0,WIDTH))
     blue_y.append(random.randint(0,HEIGHT))
 
-for n in range(0, random.randint(10,17)):
+for n in range(0, random.randint(10,13)):
     orange_x.append(random.randint(0,WIDTH))
     orange_y.append(random.randint(0,HEIGHT))
 
-alien_cords = [700,650]
+x_loc = 700
+y_loc = 650
+x_speed = 0
+y_speed = 0
+
+# pg.mouse.set_visible(False)
 
 #main game loop
 while playing:
@@ -104,8 +117,38 @@ while playing:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             playing = False
+        elif event.type == pg.KEYDOWN:
+            if event.key == pg.K_LEFT:
+                x_speed = -1 * ALIEN_MOVE_SIDE
+            elif event.key == pg.K_RIGHT:
+                x_speed = ALIEN_MOVE_SIDE
+            elif event.key == pg.K_UP:
+                y_speed = -1 * ALIEN_MOVE_UP
+            elif event.key == pg.K_DOWN:
+                y_speed = ALIEN_MOVE_UP
+        elif event.type == pg.KEYUP:
+            if event.key == pg.K_LEFT or event.key == pg.K_RIGHT:
+                x_speed = 0
+            elif event.key == pg.K_UP or event.key == pg.K_DOWN:
+                y_speed = 0
 
     #game logic
+    pos = pg.mouse.get_pos()
+    mx = pos[0]
+    my = pos[1]
+
+    x_loc += x_speed
+    y_loc += y_speed
+
+    if x_loc < -140:
+        x_loc = WIDTH +30
+    elif x_loc > WIDTH + 30:
+        x_loc = -140
+    
+    if y_loc < 15:
+        y_loc = HEIGHT +170
+    elif y_loc > HEIGHT +170:
+        y_loc = 15
 
     #clear the screen
     screen.fill(BLACK)
@@ -149,15 +192,14 @@ while playing:
     MOON_TOP_START += MOON_CHANGE
 
     #planet
-    pg.draw.arc(screen, RINGS, [350, 290, 300,40], .5*pi, .49*pi, 6)
-    pg.draw.circle(screen, PLANET, [500, 300], 80, 80)
-    pg.draw.arc(screen, RINGS, [350, 290, 300,40], .9*pi, .1*pi, 6)
+    planet(330, 300, screen)
 
     #alien
-    alien(alien_cords[0], alien_cords[1], screen)
-    alien_cords[1] -= ALIEN_MOVE
-    if alien_cords[1] < 500 or alien_cords[1] > HEIGHT - 40:
-        ALIEN_MOVE = ALIEN_MOVE * -1
+    alien(x_loc, y_loc, screen)
+    # alien_cords[1] -= ALIEN_MOVE
+    # if alien_cords[1] < 500 or alien_cords[1] > HEIGHT - 40:
+    #     ALIEN_MOVE = ALIEN_MOVE * -1
+    
     
 
     #update screen
