@@ -28,3 +28,7 @@
 
     # pg.draw.polygon(screen, GREEN, [[230, 150], [320,190], [380, 280], [330, 310], [230,235], [150, 310]])
     # pg.draw.polygon(screen, RED, [[230, 150], [320,190], [380, 280], [330, 310], [230,235], [150, 310]], 2)
+
+# title_font = pg.font.SysFont('comicsans', 13)
+# title_text = 'The Everlasting Lord of Arcane Wisdom, Shouki no Kami, the Prodigal'
+# title_img = title_font.render(title_text, True, BLACK)

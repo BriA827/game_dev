@@ -15,11 +15,11 @@ GREY = [120,120,120]
 PLANET = [230, 163, 80]
 RINGS = [201, 112, 48]
 
-FAST_COMET = 6
+FAST_COMET = 6.5
 SLOW_COMET = 4
 
-ALIEN_MOVE_SIDE = 3.3
-ALIEN_MOVE_UP = 3
+ALIEN_MOVE_SIDE = 5
+ALIEN_MOVE_UP = 5
 
 MOON_TOP_START = pi/3
 MOON_BOT_START = pi
@@ -46,9 +46,8 @@ def planet(x, y, canvas):
     pg.draw.arc(canvas, RINGS, [x-150, y-10, 300,40], .9*pi, .1*pi, 6)
 
 def alien(x, y, canvas):
-    #700, 650
-    # pg.draw.polygon(canvas, GREEN, [[x,y], [x+20,y-100],[x+100,y-100],[x+120,y]])
-    pg.draw.polygon(canvas, GREY, [[x, y-100], [x+120,y-100], [x+110,y-80], [x+10,y-80]])
+    pg.draw.polygon(canvas, GREEN, [[x,y], [x+20,y-100],[x+100,y-100],[x+120,y]])
+    pg.draw.polygon(canvas, GREY, [[x, y-100], [x+120,y-100], [x+105,y-85], [x+15,y-85]])
     pg.draw.polygon(canvas, GREY, [[x-30,y-100], [x+20,y-150],[x+100,y-150],[x+150,y-100]])
     pg.draw.arc(canvas, GREY, [x+20,y-195,80,90], 0, 1*pi, 3)
     pg.draw.rect(canvas,GREEN, [x+50, y-160, 20,10])
@@ -74,9 +73,9 @@ clock = pg.time.Clock()
 playing = True 
 
 #code
-title_font = pg.font.SysFont('comicsans', 13)
-title_text = 'The Everlasting Lord of Arcane Wisdom, Shouki no Kami, the Prodigal'
-title_img = title_font.render(title_text, True, BLACK)
+title_font = pg.font.SysFont('comicsans', 40)
+title_text = '0'
+title_img = title_font.render(title_text, True, WHITE)
 
 x_list1 = []
 y_list1 = []
@@ -91,15 +90,15 @@ orange_y = []
 star_x = [random.randint(0, WIDTH) for x in range( 0, 70)]
 star_y = [random.randint(0, WIDTH) for y in range( 0, 70)]
 
-for n in range(0, 5):
+for n in range(0, 7):
     x_list1.append(random.randint(0,WIDTH))
     y_list1.append(random.randint(0,HEIGHT))
 
-for n in range(0, 7):
+for n in range(0, 5):
     blue_x.append(random.randint(0,WIDTH))
     blue_y.append(random.randint(0,HEIGHT))
 
-for n in range(0, random.randint(10,13)):
+for n in range(0, 2):
     orange_x.append(random.randint(0,WIDTH))
     orange_y.append(random.randint(0,HEIGHT))
 
@@ -107,6 +106,8 @@ x_loc = 700
 y_loc = 650
 x_speed = 0
 y_speed = 0
+
+frag_cords = [random.randint(50,WIDTH-50), random.randint(50,HEIGHT-50)]
 
 # pg.mouse.set_visible(False)
 
@@ -133,9 +134,9 @@ while playing:
                 y_speed = 0
 
     #game logic
-    pos = pg.mouse.get_pos()
-    mx = pos[0]
-    my = pos[1]
+    # pos = pg.mouse.get_pos()
+    # mx = pos[0]
+    # my = pos[1]
 
     x_loc += x_speed
     y_loc += y_speed
@@ -153,9 +154,7 @@ while playing:
     #clear the screen
     screen.fill(BLACK)
 
-    #blit
-    #problem 4
-    # screen.blit(title_img, (10,10))
+    screen.blit(title_img, (WIDTH/2+35,10))
 
     #draw
 
@@ -168,7 +167,7 @@ while playing:
         blue_x[n] -= SLOW_COMET
 
         if blue_y[n] > HEIGHT + 50 or blue_x[n] < -40:
-            blue_x[n], blue_y[n] = [random.randint(100,WIDTH+350), random.randint(-25,-5)]
+            blue_x[n], blue_y[n] = [random.randint(50,WIDTH+400), random.randint(-25,-5)]
 
     for n in range(0,len(x_list1)):
         star(x_list1[n], y_list1[n], star_colors[n], screen)
@@ -179,28 +178,30 @@ while playing:
         orange_x[n] -= FAST_COMET
 
         if orange_y[n] > HEIGHT + 50 or orange_x[n] < -40:
-            orange_x[n], orange_y[n] = [random.randint(100,WIDTH+350), random.randint(-25,-5)]
+            orange_x[n], orange_y[n] = [random.randint(50,WIDTH+400), random.randint(-25,-5)]
 
     #moon
     pg.draw.arc(screen, WHITE, [870,40, 80,80], MOON_BOT_START, MOON_TOP_START, 8)
     pg.draw.arc(screen, WHITE, [865,40, 80,80], MOON_BOT_START, MOON_TOP_START, 8)
 
-    MOON_BOT_START += MOON_CHANGE
-    if MOON_BOT_START > MOON_BOT_END or MOON_BOT_START < MOON_BOT:
-        MOON_CHANGE = MOON_CHANGE *-1
+    # MOON_BOT_START += MOON_CHANGE
+    # if MOON_BOT_START > MOON_BOT_END or MOON_BOT_START < MOON_BOT:
+    #     MOON_CHANGE = MOON_CHANGE *-1
 
-    MOON_TOP_START += MOON_CHANGE
+    # MOON_TOP_START += MOON_CHANGE
 
     #planet
     planet(330, 300, screen)
 
+    star(frag_cords[0], frag_cords[1], GREEN, screen)
+
     #alien
     alien(x_loc, y_loc, screen)
-    # alien_cords[1] -= ALIEN_MOVE
-    # if alien_cords[1] < 500 or alien_cords[1] > HEIGHT - 40:
-    #     ALIEN_MOVE = ALIEN_MOVE * -1
-    
-    
+
+    if (frag_cords[0] >= x_loc and frag_cords[0] <= x_loc + 120) and (frag_cords[1] >= y_loc-100 and frag_cords[1] <= y_loc):
+        frag_cords = [random.randint(50,WIDTH-50), random.randint(50,HEIGHT-50)]
+        title_text = str(int(title_text) + 1)
+        title_img = title_font.render(title_text, True, WHITE)
 
     #update screen
     pg.display.flip()
