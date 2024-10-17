@@ -14,6 +14,7 @@ ORANGE = [255, 69, 0]
 GREY = [120,120,120]
 PLANET = [230, 163, 80]
 RINGS = [201, 112, 48]
+TRANSPARENT = [0,0,0,0]
 
 FAST_COMET = 6.5
 SLOW_COMET = 4
@@ -45,8 +46,10 @@ def planet(x, y, canvas):
     pg.draw.circle(canvas, PLANET, [x, y], 80, 80)
     pg.draw.arc(canvas, RINGS, [x-150, y-10, 300,40], .9*pi, .1*pi, 6)
 
-def alien(x, y, canvas):
-    pg.draw.polygon(canvas, GREEN, [[x,y], [x+20,y-100],[x+100,y-100],[x+120,y]])
+def alien(x, y, canvas, flash):
+    # hitbox = x,y-195,120,110
+    if flash == True:
+        pg.draw.polygon(canvas, GREEN, [[x,y], [x+20,y-100],[x+100,y-100],[x+120,y]])
     pg.draw.polygon(canvas, GREY, [[x, y-100], [x+120,y-100], [x+105,y-85], [x+15,y-85]])
     pg.draw.polygon(canvas, GREY, [[x-30,y-100], [x+20,y-150],[x+100,y-150],[x+150,y-100]])
     pg.draw.arc(canvas, GREY, [x+20,y-195,80,90], 0, 1*pi, 3)
@@ -77,13 +80,19 @@ title_font = pg.font.SysFont('comicsans', 40)
 title_text = '0'
 title_img = title_font.render(title_text, True, WHITE)
 
+death_font = pg.font.SysFont("comicsans", 60)
+death_text = 'You Died!'
+death_img = death_font.render(death_text, True, WHITE)
+
 x_list1 = []
 y_list1 = []
 star_colors = [random.choice([YELLOW, WHITE]) for n in range(0, 70)]
 
+max_blue = 4
 blue_x = []
 blue_y = []
 
+max_orange = 1
 orange_x = []
 orange_y = []
 
@@ -94,11 +103,11 @@ for n in range(0, 7):
     x_list1.append(random.randint(0,WIDTH))
     y_list1.append(random.randint(0,HEIGHT))
 
-for n in range(0, 5):
+for n in range(0, max_blue):
     blue_x.append(random.randint(0,WIDTH))
     blue_y.append(random.randint(0,HEIGHT))
 
-for n in range(0, 2):
+for n in range(0, max_orange):
     orange_x.append(random.randint(0,WIDTH))
     orange_y.append(random.randint(0,HEIGHT))
 
@@ -106,6 +115,8 @@ x_loc = 700
 y_loc = 650
 x_speed = 0
 y_speed = 0
+
+light = False
 
 frag_cords = [random.randint(50,WIDTH-50), random.randint(50,HEIGHT-50)]
 
@@ -127,11 +138,15 @@ while playing:
                 y_speed = -1 * ALIEN_MOVE_UP
             elif event.key == pg.K_DOWN:
                 y_speed = ALIEN_MOVE_UP
+            elif event.key == pg.K_SPACE:
+                light = True
         elif event.type == pg.KEYUP:
             if event.key == pg.K_LEFT or event.key == pg.K_RIGHT:
                 x_speed = 0
             elif event.key == pg.K_UP or event.key == pg.K_DOWN:
                 y_speed = 0
+            elif event.key == pg.K_SPACE:
+                light = False
 
     #game logic
     # pos = pg.mouse.get_pos()
@@ -154,7 +169,7 @@ while playing:
     #clear the screen
     screen.fill(BLACK)
 
-    screen.blit(title_img, (WIDTH/2+35,10))
+    screen.blit(title_img, (WIDTH/2+35, 10))
 
     #draw
 
@@ -196,9 +211,9 @@ while playing:
     star(frag_cords[0], frag_cords[1], GREEN, screen)
 
     #alien
-    alien(x_loc, y_loc, screen)
+    alien(x_loc, y_loc, screen, light)
 
-    if (frag_cords[0] >= x_loc and frag_cords[0] <= x_loc + 120) and (frag_cords[1] >= y_loc-100 and frag_cords[1] <= y_loc):
+    if (frag_cords[0] >= x_loc and frag_cords[0] <= x_loc + 120) and (frag_cords[1] >= y_loc-100 and frag_cords[1] <= y_loc) and light==True:
         frag_cords = [random.randint(50,WIDTH-50), random.randint(50,HEIGHT-50)]
         title_text = str(int(title_text) + 1)
         title_img = title_font.render(title_text, True, WHITE)
