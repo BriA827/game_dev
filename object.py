@@ -1,4 +1,5 @@
 import math
+import matplotlib.pyplot as plt
 
 # class Dog:
 #     def __init__(self, name, age, breed) -> None:
@@ -25,8 +26,9 @@ class Quadratic:
 
         self.x_values = []
         self.y_values = []
-        self.d = None
-        self.xs = None
+        self.d = self.discrim()
+        self.xs = self.x_inter()
+        self.v = self.vertex()
 
     def value(self,x):
         v = (self.a * (x**2)) + (self.b * x) + self.c
@@ -37,23 +39,32 @@ class Quadratic:
     def discrim(self):
         num = ((self.b)**2 - (4*self.a*self.c))
         # >0, 2    =0, 1    <0, 0
-        self.d = num
         return num
     
     def x_inter(self):
+        self.discrim()
         if self.d < 0:
             return "No real solutions"
         pos = (-1*self.b + math.sqrt(self.d)) / (2*self.a)
         neg = (-1*self.b - math.sqrt(self.d)) / (2*self.a)
-        self.xs = [pos,neg]
         return pos, neg
     
     def vertex(self):
-        y = (self.a * (self.d)**2) + (self.b * self.d) + self.c
-        return y
+        x = (-1*self.b)/(2* self.a)
+        y = self.a *(x**2) + self.b * x + self.c
+        return x ,y
+    
+    def graph(self):
+        self.vertex()
+        plt.title(f"f(X) = {self.a}X^2 + {self.b}X + {self.c}")
+        plt.xlabel("X")
+        plt.ylabel("f(X)")
+        plt.plot([f for f in range(self.v[0]-10, self.v[0]+10)], [self.value(f) for f in range(self.v[0]-10, self.v[0]+10)])
+        plt.show()
     
 quad = Quadratic(1,0,-4)
-print(quad.value(5))
-print(quad.discrim())
-print(quad.x_inter())
-print(quad.vertex())
+# print(quad.value(5))
+# print(quad.discrim())
+# print(quad.x_inter())
+# print(quad.vertex())
+quad.graph()
