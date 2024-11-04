@@ -59,7 +59,8 @@ class Quadratic:
         plt.title(f"f(X) = {self.a}X^2 + {self.b}X + {self.c}")
         plt.xlabel("X")
         plt.ylabel("f(X)")
-        plt.plot([f for f in range(self.v[0]-10, self.v[0]+10)], [self.value(f) for f in range(self.v[0]-10, self.v[0]+10)])
+        plt.plot([f for f in range(int(round(self.v[0], 0))-20, int(round(self.v[0], 0))+20)], [self.value(f) for f in range(int(round(self.v[0], 0))-20, int(round(self.v[0], 0))+20)])
+        plt.grid()
         plt.show()
     
 quad = Quadratic(1,0,-4)
