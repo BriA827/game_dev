@@ -27,7 +27,7 @@ class Player:
     def draw(self):
         pg.draw.rect(self.display,self.color, [self.x,self.y, self.width, self.height])
 
-class Wall:
+class Brick:
     def __init__(self, x, y, width, height, color, display) -> None:
         self.self = self
         self.x = x
@@ -39,3 +39,20 @@ class Wall:
     
     def draw(self):
         pg.draw.rect(self.display, self.color, [self.x,self.y, self.width,self.height])
+
+class Enemy:
+    def __init__(self, x, y, width, height, color, display, velo) -> None:
+        self.self = self
+        self.x = x
+        self.y = y
+        self.width = width 
+        self.height = height
+        self.color = color
+        self.display = display
+        self.velo = velo
+    
+    def draw(self):
+          pg.draw.rect(self.display, self.color, [self.x,self.y, self.width,self.height])
+
+    def move(self):
+        self.x -= self.velo
