@@ -56,3 +56,7 @@ class Enemy:
 
     def move(self):
         self.x -= self.velo
+        
+    def stopped(self, blocked, screen_width):
+        if self.x <= blocked-5:
+            self.x = screen_width + blocked

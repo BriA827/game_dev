@@ -30,8 +30,7 @@ while playing == True:
 
     mon.draw()
     mon.move()
-    if mon.x <= BRICK_WIDTH-5:
-         mon.x = WIDTH+BRICK_WIDTH
+    mon.stopped(BRICK_WIDTH, WIDTH)
 
     for b in brick_list:
          b.draw()
