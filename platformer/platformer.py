@@ -26,8 +26,6 @@ while playing == True:
     me.move()
     me.keys()
 
-    me.draw()
-
     mon.draw()
     mon.move()
     mon.stopped(BRICK_WIDTH, WIDTH)
