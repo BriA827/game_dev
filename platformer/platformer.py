@@ -22,13 +22,13 @@ playing = True
 
 while playing == True:
     screen.fill(BLACK)
+
+    me.update(brick_list)
     me.draw()
-    me.move()
-    me.keys()
 
     mon.draw()
     mon.move()
-    mon.stopped(BRICK_WIDTH, WIDTH)
+    mon.stopped()
 
     for b in brick_list:
          b.draw()
