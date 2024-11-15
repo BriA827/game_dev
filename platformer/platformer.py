@@ -6,6 +6,9 @@ screen = pg.display.set_mode([WIDTH, HEIGHT])
 clock = pg.time.Clock()
 
 brick_list = []
+door_list = []
+enemy_list = []
+
 for row in range(len(LAYOUT)):
      y_loc = row * BRICK_HEIGHT
      for column in range(len(LAYOUT[0])):
@@ -17,18 +20,25 @@ for row in range(len(LAYOUT)):
             me = Player(x_loc,y_loc,PLAYER_WIDTH,PLAYER_HEIGHT,YELLOW,screen) 
         elif LAYOUT[row][column] == "e":
             mon = Enemy(x_loc+BRICK_WIDTH,y_loc,ENEMY_WIDTH,ENEMY_HEIGHT,GREEN,screen, 5) 
+            enemy_list.append(mon)
+        elif LAYOUT[row][column] == "d":
+            end = Door(x_loc, y_loc-20, BRICK_WIDTH, DOOR_HEIGHT, GREY, screen)
+            door_list.append(end)
 
 playing = True
 
 while playing == True:
     screen.fill(BLACK)
 
-    me.update(brick_list)
+    me.update(brick_list, door_list, enemy_list)
     me.draw()
 
-    mon.draw()
-    mon.move()
-    mon.stopped()
+    for mon in enemy_list:
+        mon.draw()
+        mon.moving(brick_list)
+
+    for d in door_list:
+        d.draw()
 
     for b in brick_list:
          b.draw()

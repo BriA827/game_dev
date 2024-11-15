@@ -19,13 +19,13 @@ class Player:
     def draw(self):
         pg.draw.rect(self.display, self.color, self.rect)
 
-    def update(self, surface_list):
+    def update(self, surface_list, doors, monsters):
         x_change = 0
         y_change = 0
 
         keys = pg.key.get_pressed()
 
-        if keys[pg.K_LEFT] and self.rect.x > BRICK_WIDTH:
+        if keys[pg.K_LEFT]:
             x_change = -1* self.x_velo
         if keys[pg.K_RIGHT]:
             x_change = self.x_velo
@@ -47,7 +47,31 @@ class Player:
 
         for surface in surface_list:
             if surface.rect.colliderect(self.rect.x, self.rect.y + y_change, self.rect.width, self.rect.height):
-                pass
+                if self.y_velo >= 0:
+                    y_change = surface.rect.top - self.rect.bottom
+                    self.landed = True
+                    self.jumping = False
+                    self.y_velo = 0
+                elif self.y_velo <0:
+                    y_change = surface.rect.bottom - self.rect.top
+                    self.y_velo = 0
+            if surface.rect.colliderect(self.rect.x + x_change, self.rect.y, self.rect.width, self.rect.height):
+                x_change = 0
+
+        for door in doors:
+            if door.rect.colliderect(self.rect.x + x_change, self.rect.y + y_change, self.rect.width, self.rect.height):
+                x_change = 0
+                self.y_velo = 0
+                self.rect.x = BRICK_WIDTH + BRICK_WIDTH
+                print("Win!")
+
+        for monster in monsters:
+            if monster.rect.colliderect(self.rect.x + x_change, self.rect.y + y_change, self.rect.width, self.rect.height):
+                x_change = 0
+                self.y_velo = 0
+                self.rect.x = BRICK_WIDTH + BRICK_WIDTH
+                print("Die")
+
         # if self.rect.bottom + y_change > HEIGHT - BRICK_HEIGHT:
         #     y_change = 0
         #     self.rect.bottom = HEIGHT - BRICK_HEIGHT
@@ -63,12 +87,10 @@ class Brick:
         self.self = self
         self.x = x
         self.y = y
-        self.width = width 
-        self.height = height
         self.color = color
         self.display = display
 
-        self.rect = pg.Rect(self.x,self.y, self.width,self.height)
+        self.rect = pg.Rect(self.x,self.y, width,height)
     
     def draw(self):
         pg.draw.rect(self.display, self.color, self.rect)
@@ -76,22 +98,41 @@ class Brick:
 
 
 class Enemy:
-    def __init__(self, x, y, width, height, color, display, velo) -> None:
+    def __init__(self, x, y, width, height, color, display, velo, confined=False) -> None:
         self.self = self
         self.x = x
         self.y = y
-        self.width = width 
-        self.height = height
         self.color = color
         self.display = display
         self.velo = velo
+        self.confined = confined
+
+        self.rect = pg.Rect(self.x,self.y,width,height)
     
     def draw(self):
-          pg.draw.rect(self.display, self.color, [self.x,self.y, self.width,self.height])
+          pg.draw.rect(self.display, self.color, self.rect)
 
-    def move(self):
-        self.x -= self.velo
-        
-    def stopped(self):
-        if self.x <= BRICK_WIDTH-5:
-            self.x = WIDTH + BRICK_WIDTH
+    def moving(self, surface_list):
+        self.rect.x -= self.velo
+
+        self.rect.y += GRAVITY
+
+        for surface in surface_list:
+            if surface.rect.colliderect(self.rect.x, self.rect.y + GRAVITY, self.rect.width, self.rect.height):
+                self.rect.y = surface.rect.top
+
+        if self.confined == False:
+            if self.rect.x <= BRICK_WIDTH-5:
+               self.rect.x = WIDTH + BRICK_WIDTH
+
+class Door:
+    def __init__(self, x, y, width, height, color, display):
+        self.self = self
+        self. x = x
+        self.y = y
+        self. color = color
+        self.display = display
+        self.rect = pg.Rect(self.x, self.y, width, height)
+
+    def draw(self):
+        pg.draw.rect(self.display, self.color, self.rect)
