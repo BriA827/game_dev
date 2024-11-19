@@ -86,25 +86,20 @@ def gamestart():
     info_text2 = 'Move with Arrow Keys'
     info_img2 = info_font2.render(info_text2, True, WHITE)
 
-    info_font3 = pg.font.SysFont('comicsans', 30)
     info_text3 = 'Press Space to Activate Light'
-    info_img3 = info_font3.render(info_text3, True, WHITE)
+    info_img3 = info_font2.render(info_text3, True, WHITE)
 
-    info_font4 = pg.font.SysFont('comicsans', 30)
     info_text4 = 'Press S to Activate Shield (Blocks Asteroids)'
-    info_img4 = info_font4.render(info_text4, True, WHITE)
+    info_img4 = info_font2.render(info_text4, True, WHITE)
 
-    info_font5 = pg.font.SysFont('comicsans', 30)
     info_text5 = 'Collect Green Stars with Light'
-    info_img5 = info_font5.render(info_text5, True, WHITE)
+    info_img5 = info_font2.render(info_text5, True, WHITE)
     
-    info_font6 = pg.font.SysFont('comicsans', 30)
     info_text6 = 'Avoid Falling Asteroids, More Spawn with Higher Points'
-    info_img6 = info_font6.render(info_text6, True, WHITE)
+    info_img6 = info_font2.render(info_text6, True, WHITE)
 
-    info_font7 = pg.font.SysFont('comicsans', 30)
     info_text7 = 'Press Enter to Start Game'
-    info_img7 = info_font7.render(info_text7, True, WHITE)
+    info_img7 = info_font2.render(info_text7, True, WHITE)
 
     playing = True 
     while playing:

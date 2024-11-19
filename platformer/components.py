@@ -15,6 +15,8 @@ class Player:
         self.landed = True
 
         self.rect = pg.Rect(self.x, self.y,width,height)
+        self.status = True
+        self.win = False
 
     def draw(self):
         pg.draw.rect(self.display, self.color, self.rect)
@@ -62,15 +64,13 @@ class Player:
             if door.rect.colliderect(self.rect.x + x_change, self.rect.y + y_change, self.rect.width, self.rect.height):
                 x_change = 0
                 self.y_velo = 0
-                self.rect.x = BRICK_WIDTH + BRICK_WIDTH
-                print("Win!")
+                self.win = True
 
         for monster in monsters:
             if monster.rect.colliderect(self.rect.x + x_change, self.rect.y + y_change, self.rect.width, self.rect.height):
                 x_change = 0
                 self.y_velo = 0
-                self.rect.x = BRICK_WIDTH + BRICK_WIDTH
-                print("Die")
+                self.status = False
 
         # if self.rect.bottom + y_change > HEIGHT - BRICK_HEIGHT:
         #     y_change = 0
@@ -79,6 +79,12 @@ class Player:
         
         self.rect.x += x_change
         self.rect.y += y_change
+
+    def end(self):
+        if self.status == False:
+            return self.status
+        if self.win == True:
+            return self.win
 
 
 
@@ -98,7 +104,7 @@ class Brick:
 
 
 class Enemy:
-    def __init__(self, x, y, width, height, color, display, velo, confined=False) -> None:
+    def __init__(self, x, y, width, height, color, display, velo, confined) -> None:
         self.self = self
         self.x = x
         self.y = y
@@ -112,18 +118,17 @@ class Enemy:
     def draw(self):
           pg.draw.rect(self.display, self.color, self.rect)
 
-    def moving(self, surface_list):
-        self.rect.x -= self.velo
-
-        self.rect.y += GRAVITY
-
-        for surface in surface_list:
-            if surface.rect.colliderect(self.rect.x, self.rect.y + GRAVITY, self.rect.width, self.rect.height):
-                self.rect.y = surface.rect.top
-
+    def moving(self, blocks):
         if self.confined == False:
             if self.rect.x <= BRICK_WIDTH-5:
                self.rect.x = WIDTH + BRICK_WIDTH
+
+        else:
+            for b in blocks:
+                if b.rect.colliderect(self.rect.x, self.rect.y, self.rect.width, self.rect.height):
+                    self.velo = self.velo * -1
+
+        self.rect.x -= self.velo
 
 class Door:
     def __init__(self, x, y, width, height, color, display):
