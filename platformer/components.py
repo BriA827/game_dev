@@ -78,6 +78,9 @@ class Player:
         self.rect.x += x_change
         self.rect.y += y_change
 
+        if self.rect.y >= HEIGHT:
+            self.status = False
+
     def end(self):
         if self.status == False:
             return self.status

@@ -7,6 +7,7 @@ def game(level):
     screen = pg.display.set_mode([WIDTH, HEIGHT])
     clock = pg.time.Clock()
     brick_list = []
+    elevator_list = []
     door_list = []
     enemies = []
     blocked_list = []
@@ -128,7 +129,7 @@ def win(level):
 
 ###########################################################
 
-lev = 0
+lev = 2
 
 play = True
 
