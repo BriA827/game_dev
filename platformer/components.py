@@ -68,8 +68,6 @@ class Player:
 
         for monster in monsters:
             if monster.rect.colliderect(self.rect.x + x_change, self.rect.y + y_change, self.rect.width, self.rect.height):
-                x_change = 0
-                self.y_velo = 0
                 self.status = False
 
         # if self.rect.bottom + y_change > HEIGHT - BRICK_HEIGHT:

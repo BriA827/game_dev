@@ -14,7 +14,7 @@ BACK = BLACK
 
 FPS = 60
 
-LAYOUT = ["1111111111111111111111111111111111111111",
+LAYOUT_1 = ["1111111111111111111111111111111111111111",
           "1                                      1",
           "1                                      1",
           "1                                      1",
@@ -26,13 +26,35 @@ LAYOUT = ["1111111111111111111111111111111111111111",
           "1                                      1",
           "1                                      1",
           "1                                      1",
-          "1               b   m  b               1",
+          "1                                      1",
+          "1                                      1",
+          "1                                      1",
+          "1                                      1",
+          "1                                      1",
+          "1  p                              d   e1",
+          "1111111111111111111111111111111111111111"]
+
+LAYOUT_2 = ["1111111111111111111111111111111111111111",
+          "1                                      1",
+          "1                                      1",
+          "1                                      1",
+          "1                                      1",
+          "1                                      1",
+          "1                                      1",
+          "1                                      1",
+          "1                                      1",
+          "1                                      1",
+          "1                           d          1",
+          "1                          111         1",
+          "1               b  m   b               1",
           "1                111111                1",
-          "1        b  m  b        b  m  b        1",
-          "1         11111          11111         1",
+          "1        b  m  b                       1",
+          "1         11111                        1",
           "1                                      1",
           "1  p                                  e1",
           "1111111111111111111111111111111111111111"]
+
+LAYOUTS = [LAYOUT_1, LAYOUT_2]
 
 BRICK_WIDTH = 40
 BRICK_HEIGHT = 40
@@ -45,15 +67,10 @@ ENEMY_HEIGHT = 40
 
 DOOR_HEIGHT = 60
 
-WIDTH = BRICK_WIDTH * len(LAYOUT[0])
-HEIGHT = BRICK_HEIGHT * len(LAYOUT)
+WIDTH = BRICK_WIDTH * len(LAYOUT_1[0])
+HEIGHT = BRICK_HEIGHT * len(LAYOUT_1)
 
 GRAVITY = 1
 
 pg.font.init()
 FONT = pg.font.SysFont('comicsans', 40)
-DIE_TEXT = 'You Died!'
-DIE_IMG = FONT.render(DIE_TEXT, True, WHITE)
-
-WIN_TEXT = 'You Won!'
-WIN_IMG = FONT.render(WIN_TEXT, True, WHITE)
