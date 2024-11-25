@@ -6,11 +6,18 @@ def game(level):
     pg.init()
     screen = pg.display.set_mode([WIDTH, HEIGHT])
     clock = pg.time.Clock()
+
+    dirt_image = pg.image.load("platformer/images/ground_dirt.png")
+    grass_image = pg.image.load("platformer/images/ground.png")
+    player_image = pg.image.load("platformer/images/side.png")
+    enemy_image = pg.image.load("platformer/images/slime_normal.png")
+
     brick_list = []
     elevator_list = []
     door_list = []
     enemies = []
     blocked_list = []
+    height_list = []
 
     playing = True
 
@@ -19,38 +26,57 @@ def game(level):
         for column in range(len(level[0])):
             x_loc = column * BRICK_WIDTH
             if level[row][column] == "1":
-                brick = Brick(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT,RED,screen)  
+                brick = Brick(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT,RED,screen, image=dirt_image)  
                 brick_list.append(brick)  
+
+            elif level[row][column] == "2":
+                ele = Elevator(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT,RED,screen, move=True)  
+                elevator_list.append(ele)
+                brick_list.append(ele)  
+
+            elif level[row][column] == "l":
+                hei = Elevator(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT,YELLOW,screen) 
+                height_list.append(hei) 
+
             elif level[row][column] == "p":
-                me = Player(x_loc,y_loc,PLAYER_WIDTH,PLAYER_HEIGHT,YELLOW,screen) 
+                me = Player(x_loc,y_loc,PLAYER_WIDTH,PLAYER_HEIGHT,YELLOW,screen, player_image) 
+            
             elif level[row][column] == "m":
-                mon = Enemy(x_loc+BRICK_WIDTH,y_loc,ENEMY_WIDTH,ENEMY_HEIGHT,GREEN,screen, 3, True)
+                mon = Enemy(x_loc+BRICK_WIDTH,y_loc,ENEMY_WIDTH,ENEMY_HEIGHT,GREEN,screen, 3, True, enemy_image)
                 enemies.append(mon)
+            
             elif level[row][column] == "e":
-                ene = Enemy(x_loc+BRICK_WIDTH,y_loc,ENEMY_WIDTH,ENEMY_HEIGHT,GREEN,screen, 5, False)
+                ene = Enemy(x_loc+BRICK_WIDTH,y_loc,ENEMY_WIDTH,ENEMY_HEIGHT,GREEN,screen, 5, False, enemy_image)
                 enemies.append(ene)
+            
             elif level[row][column] == "b":
-                blocked = Brick(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT,BACK,screen)
+                blocked = Brick(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT,BACK,screen, image=None)
                 blocked_list.append(blocked)
+            
             elif level[row][column] == "d":
                 end = Door(x_loc, y_loc-20, BRICK_WIDTH, DOOR_HEIGHT, GREY, screen)
+                door_list.append(end)
+
+            elif level[row][column] == "c":
+                end = Crate(x_loc, y_loc-20, BRICK_WIDTH, DOOR_HEIGHT, screen)
                 door_list.append(end)
     
     while playing == True:
         screen.fill(BACK)
 
-        for b in blocked_list:
-            b.draw()
-
-        for e in enemies:
+        for e in elevator_list:
             e.draw()
-            e.moving(blocked_list)
+            e.lift(height_list)
 
         for d in door_list:
             d.draw()
 
         for b in brick_list:
             b.draw()
+
+        for e in enemies:
+            e.draw()
+            e.moving(blocked_list)
 
         me.update(brick_list, door_list, enemies)
         me.draw()
@@ -129,20 +155,20 @@ def win(level):
 
 ###########################################################
 
-lev = 2
+lev = 1
 
 play = True
 
 while play == True:
-    end = game(LAYOUTS[lev])
+    end = game(LAYOUTS[lev-1])
 
     if end == "death":
         play = gameend()
 
     elif end == "next":
-        if lev >= len(LAYOUTS) -1:
+        if lev >= len(LAYOUTS):
             play = win(lev)
-            lev = 0
+            lev = 1
         else:
             lev+=1
 

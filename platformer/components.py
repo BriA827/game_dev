@@ -2,11 +2,12 @@ import pygame as pg
 from settings import *
 
 class Player:
-    def __init__(self,x,y,width,height,color,display) -> None:
+    def __init__(self,x,y,width,height,color,display, image):
+        self.image = pg.transform.scale(image, (width, height))
+        self.rect = self.image.get_rect()
         self.self = self
-        self.x = x
-        self.y = y
-        self.color = color
+        self.rect.x = x
+        self.rect.y = y
         self.display = display
         self.x_velo = 5
 
@@ -14,12 +15,11 @@ class Player:
         self.jumping = False
         self.landed = True
 
-        self.rect = pg.Rect(self.x, self.y,width,height)
         self.status = True
         self.win = False
 
     def draw(self):
-        pg.draw.rect(self.display, self.color, self.rect)
+        self.display.blit(self.image, self.rect)
 
     def update(self, surface_list, doors, monsters):
         x_change = 0
@@ -90,34 +90,59 @@ class Player:
 
 
 class Brick:
-    def __init__(self, x, y, width, height, color, display) -> None:
+    def __init__(self, x, y, width, height, color, display, image=None):
         self.self = self
-        self.x = x
-        self.y = y
+        if image == None:
+            self.rect = pg.Rect(x,y,width,height)
+            self.image = image
+        else:
+            self.image = pg.transform.scale(image, (width, height))
+            self.rect = self.image.get_rect()
+
+        self.rect.x = x
+        self.rect.y = y
         self.color = color
         self.display = display
-
-        self.rect = pg.Rect(self.x,self.y, width,height)
     
     def draw(self):
+        if self.image == None:
+            pg.draw.rect(self.display, self.color, self.rect)
+        else:
+            self.display.blit(self.image, self.rect)
+
+class Elevator:
+    def __init__(self, x, y, width, height, color, display, move=False):
+        self.self = self
+        self.color = color
+        self.display = display
+        self.move = move
+        self.velo = 2
+
+        self.rect = pg.Rect(x,y,width,height)
+
+    def draw(self):
         pg.draw.rect(self.display, self.color, self.rect)
-
-
+    
+    def lift(self, max):
+        for m in max:
+            if m.rect.colliderect(self.rect.x, self.rect.y - self.velo, self.rect.width, self.rect.height):
+                self.velo = self.velo * -1
+        self.rect.y -= self.velo
 
 class Enemy:
-    def __init__(self, x, y, width, height, color, display, velo, confined) -> None:
+    def __init__(self, x, y, width, height, color, display, velo, confined, image):
+        self.image = pg.transform.scale(image, (width, height))
+        self.rect = self.image.get_rect()
         self.self = self
-        self.x = x
-        self.y = y
+        self.rect.x = x
+        self.rect.y = y
         self.color = color
         self.display = display
         self.velo = velo
         self.confined = confined
-
-        self.rect = pg.Rect(self.x,self.y,width,height)
     
     def draw(self):
-          pg.draw.rect(self.display, self.color, self.rect)
+          self.display.blit(self.image, self.rect)
 
     def moving(self, blocks):
         if self.confined == False:
@@ -134,11 +159,21 @@ class Enemy:
 class Door:
     def __init__(self, x, y, width, height, color, display):
         self.self = self
-        self. x = x
-        self.y = y
         self. color = color
         self.display = display
-        self.rect = pg.Rect(self.x, self.y, width, height)
+        self.rect = pg.Rect(x, y, width, height)
 
     def draw(self):
         pg.draw.rect(self.display, self.color, self.rect)
+
+class Crate:
+    def __init__(self, x, y, width, height, color, display):
+        self.self = self
+        self. color = color
+        self.display = display
+        self.rect = pg.Rect(x, y, width, height)
+    
+    def moving(self):
+        self.pos = pg.mouse.get_pos()
+        mx = self.pos[0]
+        my = self.pos[1]
