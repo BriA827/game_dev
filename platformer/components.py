@@ -32,12 +32,12 @@ class Player:
         if keys[pg.K_RIGHT]:
             x_change = self.x_velo
 
-        if keys[pg.K_SPACE] and not self.jumping and self.landed:
+        if keys[pg.K_UP] and not self.jumping and self.landed:
             self.jumping = True
             self.landed = False
             self.y_velo = -19
 
-        if not keys[pg.K_SPACE]:
+        if not keys[pg.K_UP]:
             self.jumping = False
 
         self.y_velo += GRAVITY
@@ -159,7 +159,7 @@ class Enemy:
 class Door:
     def __init__(self, x, y, width, height, color, display):
         self.self = self
-        self. color = color
+        self.color = color
         self.display = display
         self.rect = pg.Rect(x, y, width, height)
 
@@ -167,13 +167,21 @@ class Door:
         pg.draw.rect(self.display, self.color, self.rect)
 
 class Crate:
-    def __init__(self, x, y, width, height, color, display):
+    def __init__(self, x, y, width, height, color, display, image):
+        self.image = pg.transform.scale(image, (width, height))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
         self.self = self
-        self. color = color
+        self.color = color
         self.display = display
-        self.rect = pg.Rect(x, y, width, height)
     
     def moving(self):
-        self.pos = pg.mouse.get_pos()
-        mx = self.pos[0]
-        my = self.pos[1]
+        m_pos = pg.mouse.get_pos()
+        m = pg.Rect(m_pos[0], m_pos[1], MOUSE_RECT_SIZE, MOUSE_RECT_SIZE)
+        if m.colliderect(self.rect.x, self.rect.y,self.rect.width, self.rect.height):
+            self.rect.x = m_pos[0]
+            self.rect.y = m_pos[1]
+
+    def draw(self):
+        self.display.blit(self.image, self.rect)

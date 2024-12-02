@@ -11,6 +11,7 @@ def game(level):
     grass_image = pg.image.load("platformer/images/ground.png")
     player_image = pg.image.load("platformer/images/side.png")
     enemy_image = pg.image.load("platformer/images/slime_normal.png")
+    crate_image = pg.image.load("platformer/images/crate.png")
 
     brick_list = []
     elevator_list = []
@@ -18,6 +19,7 @@ def game(level):
     enemies = []
     blocked_list = []
     height_list = []
+    boxes = []
 
     playing = True
 
@@ -54,12 +56,14 @@ def game(level):
                 blocked_list.append(blocked)
             
             elif level[row][column] == "d":
-                end = Door(x_loc, y_loc-20, BRICK_WIDTH, DOOR_HEIGHT, GREY, screen)
-                door_list.append(end)
+                door = Door(x_loc, y_loc-20, BRICK_WIDTH, DOOR_HEIGHT, GREY, screen)
+                door_list.append(door)
 
             elif level[row][column] == "c":
-                end = Crate(x_loc, y_loc-20, BRICK_WIDTH, DOOR_HEIGHT, screen)
-                door_list.append(end)
+                box = Crate(x_loc, y_loc, BRICK_WIDTH, BRICK_HEIGHT, GREY, screen, image = crate_image)
+                boxes.append(box)
+                brick_list.append(box)
+
     
     while playing == True:
         screen.fill(BACK)
@@ -98,6 +102,10 @@ def game(level):
                 if event.type == pg.QUIT:
                     playing = False
                     return "done"
+                elif event.type == pg.MOUSEBUTTONDOWN:
+                    for c in boxes:
+                        c.moving()
+
 
 def gameend():
     pg.init()
@@ -155,7 +163,7 @@ def win(level):
 
 ###########################################################
 
-lev = 1
+lev = 3
 
 play = True
 

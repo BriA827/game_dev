@@ -85,10 +85,10 @@ LAYOUT_3 = ["1111111111111111111111111111111111111111",
           "1                                      1",
           "1                                      1",
           "1                                      1",
-          "1               lll            lll     1",
+          "1                                      1",
           "1       lll             lll            1",
           "1                                      1",
-          "1c p                                   1",
+          "1c p            lll            lll     1",
           "111111                                 1",
           "1                                      1",
           "1                                      1",
@@ -112,6 +112,8 @@ WIDTH = BRICK_WIDTH * len(LAYOUT_1[0])
 HEIGHT = BRICK_HEIGHT * len(LAYOUT_1)
 
 GRAVITY = 1
+
+MOUSE_RECT_SIZE = 10
 
 pg.font.init()
 FONT = pg.font.SysFont('comicsans', 40)
