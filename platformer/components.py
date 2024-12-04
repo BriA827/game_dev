@@ -21,7 +21,7 @@ class Player:
     def draw(self):
         self.display.blit(self.image, self.rect)
 
-    def update(self, surface_list, doors, monsters):
+    def update(self, surface_list, doors, monsters, unlocked):
         x_change = 0
         y_change = 0
 
@@ -111,17 +111,28 @@ class Brick:
             self.display.blit(self.image, self.rect)
 
 class Elevator:
-    def __init__(self, x, y, width, height, color, display, move=False):
+    def __init__(self, x, y, width, height, color, display, move=False, image=False):
+        if image == True:
+            self.image = pg.transform.scale(image, (width, height))
+            self.rect = self.image.get_rect()
+            self.self = self
+            self.rect.x = x
+            self.rect.y = y
+        else:
+            self.rect = pg.Rect(x,y,width,height)
+            self.image = image
+
         self.self = self
         self.color = color
         self.display = display
         self.move = move
         self.velo = 2
 
-        self.rect = pg.Rect(x,y,width,height)
-
     def draw(self):
-        pg.draw.rect(self.display, self.color, self.rect)
+        if self.image == None:
+            pg.draw.rect(self.display, self.color, self.rect)
+        else:
+            self.display.blit(self.image, self.rect)
     
     def lift(self, max):
         for m in max:
@@ -142,7 +153,7 @@ class Enemy:
         self.confined = confined
     
     def draw(self):
-          self.display.blit(self.image, self.rect)
+        self.display.blit(self.image, self.rect)
 
     def moving(self, blocks):
         if self.confined == False:
@@ -157,14 +168,19 @@ class Enemy:
         self.rect.x -= self.velo
 
 class Door:
-    def __init__(self, x, y, width, height, color, display):
+    def __init__(self, x, y, width, height, color, display, image):
         self.self = self
+        self.image = pg.transform.scale(image, (width, height))
+        self.rect = self.image.get_rect()
+
+        self.rect.x = x
+        self.rect.y = y
         self.color = color
         self.display = display
-        self.rect = pg.Rect(x, y, width, height)
 
     def draw(self):
-        pg.draw.rect(self.display, self.color, self.rect)
+        self.display.blit(self.image, self.rect)
+
 
 class Crate:
     def __init__(self, x, y, width, height, color, display, image):
@@ -175,13 +191,41 @@ class Crate:
         self.self = self
         self.color = color
         self.display = display
+        self.velo = 5
     
-    def moving(self):
-        m_pos = pg.mouse.get_pos()
-        m = pg.Rect(m_pos[0], m_pos[1], MOUSE_RECT_SIZE, MOUSE_RECT_SIZE)
-        if m.colliderect(self.rect.x, self.rect.y,self.rect.width, self.rect.height):
-            self.rect.x = m_pos[0]
-            self.rect.y = m_pos[1]
+    def moving(self, blocks, on):
+        y_change = 0
+        if on == True:
+            m_pos = pg.mouse.get_pos()
+            m = pg.Rect(m_pos[0], m_pos[1], MOUSE_RECT_SIZE, MOUSE_RECT_SIZE)
+            if m.colliderect(self.rect.x, self.rect.y,self.rect.width, self.rect.height):
+                self.rect.x = m_pos[0] - 15
+                self.rect.y = m_pos[1] - 10
+        self.rect.y += self.velo
+        for b in blocks:
+            if b.rect.colliderect(self.rect.x, self.rect.y+self.velo, self.rect.width, self.rect.height):
+                self.velo = 0
+        self.rect.y += y_change
 
     def draw(self):
         self.display.blit(self.image, self.rect)
+
+class Key:
+    def __init__(self, x, y, width, height, color, display, image):
+        self.image = pg.transform.scale(image, (width, height))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.self = self
+        self.color = color
+        self.display = display
+        self.collected = False
+
+    def draw(self):
+        if self.collected == False:
+            self.display.blit(self.image, self.rect)
+
+    def collect(self, player):
+        if player.rect.colliderect(self.rect.x, self.rect.y, self.rect.width, self.rect.height):
+            self.collected = True
+            return True

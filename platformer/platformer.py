@@ -12,6 +12,10 @@ def game(level):
     player_image = pg.image.load("platformer/images/side.png")
     enemy_image = pg.image.load("platformer/images/slime_normal.png")
     crate_image = pg.image.load("platformer/images/crate.png")
+    bridge_image = pg.image.load("platformer/images/bridge.png")
+    stone_image = pg.image.load("platformer/images/ground_rock.png")
+    lock_image = pg.image.load("platformer/images/lock_yellow.png")
+    key_image = pg.image.load("platformer/images/key_yellow.png")
 
     brick_list = []
     elevator_list = []
@@ -28,11 +32,15 @@ def game(level):
         for column in range(len(level[0])):
             x_loc = column * BRICK_WIDTH
             if level[row][column] == "1":
-                brick = Brick(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT,RED,screen, image=dirt_image)  
+                brick = Brick(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT,RED,screen, image=stone_image)  
                 brick_list.append(brick)  
 
             elif level[row][column] == "2":
-                ele = Elevator(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT,RED,screen, move=True)  
+                brick = Brick(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT,RED,screen, image=grass_image)  
+                brick_list.append(brick)  
+
+            elif level[row][column] == "3":
+                ele = Elevator(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT,RED,screen, move=True, image=bridge_image)  
                 elevator_list.append(ele)
                 brick_list.append(ele)  
 
@@ -56,13 +64,16 @@ def game(level):
                 blocked_list.append(blocked)
             
             elif level[row][column] == "d":
-                door = Door(x_loc, y_loc-20, BRICK_WIDTH, DOOR_HEIGHT, GREY, screen)
+                door = Door(x_loc, y_loc-20, BRICK_WIDTH, DOOR_HEIGHT, GREY, screen, lock_image)
                 door_list.append(door)
 
             elif level[row][column] == "c":
                 box = Crate(x_loc, y_loc, BRICK_WIDTH, BRICK_HEIGHT, GREY, screen, image = crate_image)
                 boxes.append(box)
                 brick_list.append(box)
+
+            elif level[row][column] == "k":
+                key = Key(x_loc, y_loc, BRICK_WIDTH, BRICK_HEIGHT, GREY, screen, key_image)
 
     
     while playing == True:
@@ -82,7 +93,13 @@ def game(level):
             e.draw()
             e.moving(blocked_list)
 
-        me.update(brick_list, door_list, enemies)
+        obtained = False
+        if key.collect(me) == True:
+            obtained
+        key.draw()
+
+        me.update(brick_list, door_list, enemies, obtained)
+        print(obtained)
         me.draw()
         me.end()
 
@@ -98,13 +115,20 @@ def game(level):
         pg.display.flip()
         clock.tick(FPS)
 
+        click = False
+
         for event in pg.event.get():
                 if event.type == pg.QUIT:
                     playing = False
                     return "done"
                 elif event.type == pg.MOUSEBUTTONDOWN:
-                    for c in boxes:
-                        c.moving()
+                    click = True
+                elif event.type == pg.MOUSEBUTTONUP:
+                    click = False
+
+        for c in boxes:
+            c.moving(brick_list, click)
+
 
 
 def gameend():
@@ -163,7 +187,7 @@ def win(level):
 
 ###########################################################
 
-lev = 3
+lev = 1
 
 play = True
 
