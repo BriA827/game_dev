@@ -40,12 +40,17 @@ def game(level):
                 brick_list.append(brick)  
 
             elif level[row][column] == "3":
-                ele = Elevator(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT,RED,screen, move=True, image=bridge_image)  
+                ele = Elevator(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT/1.3,RED,screen, move=True, image=bridge_image, direction = False)  
+                elevator_list.append(ele)
+                brick_list.append(ele)  
+
+            elif level[row][column] == "4":
+                ele = Elevator(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT/1.3,RED,screen, move=True, image=bridge_image, direction = True)  
                 elevator_list.append(ele)
                 brick_list.append(ele)  
 
             elif level[row][column] == "l":
-                hei = Elevator(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT,YELLOW,screen) 
+                hei = Elevator(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT,YELLOW,screen, image = None) 
                 height_list.append(hei) 
 
             elif level[row][column] == "p":
@@ -68,7 +73,7 @@ def game(level):
                 door_list.append(door)
 
             elif level[row][column] == "c":
-                box = Crate(x_loc, y_loc, BRICK_WIDTH, BRICK_HEIGHT, GREY, screen, image = crate_image)
+                box = Crate(x_loc, y_loc-BRICK_HEIGHT-5, BRICK_WIDTH, BRICK_HEIGHT, GREY, screen, image = crate_image)
                 boxes.append(box)
                 brick_list.append(box)
 
@@ -81,7 +86,7 @@ def game(level):
 
         for e in elevator_list:
             e.draw()
-            e.lift(height_list)
+            e.lift(height_list, me)
 
         for d in door_list:
             d.draw()
@@ -94,12 +99,11 @@ def game(level):
             e.moving(blocked_list)
 
         obtained = False
-        if key.collect(me) == True:
-            obtained
+        if key.collect(me):
+            obtained = True
         key.draw()
 
         me.update(brick_list, door_list, enemies, obtained)
-        print(obtained)
         me.draw()
         me.end()
 
@@ -187,7 +191,7 @@ def win(level):
 
 ###########################################################
 
-lev = 1
+lev = 4
 
 play = True
 

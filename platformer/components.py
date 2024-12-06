@@ -46,7 +46,6 @@ class Player:
         
         y_change += self.y_velo
 
-
         for surface in surface_list:
             if surface.rect.colliderect(self.rect.x, self.rect.y + y_change, self.rect.width, self.rect.height):
                 if self.y_velo >= 0:
@@ -61,7 +60,7 @@ class Player:
                 x_change = 0
 
         for door in doors:
-            if door.rect.colliderect(self.rect.x + x_change, self.rect.y + y_change, self.rect.width, self.rect.height):
+            if door.rect.colliderect(self.rect.x + x_change, self.rect.y + y_change, self.rect.width, self.rect.height) and unlocked == True:
                 x_change = 0
                 self.y_velo = 0
                 self.win = True
@@ -111,21 +110,21 @@ class Brick:
             self.display.blit(self.image, self.rect)
 
 class Elevator:
-    def __init__(self, x, y, width, height, color, display, move=False, image=False):
-        if image == True:
-            self.image = pg.transform.scale(image, (width, height))
-            self.rect = self.image.get_rect()
-            self.self = self
-            self.rect.x = x
-            self.rect.y = y
-        else:
+    def __init__(self, x, y, width, height, color, display, move=False, image=False, direction=None):
+        self.self = self
+        if image == None:
             self.rect = pg.Rect(x,y,width,height)
             self.image = image
+        else:
+            self.image = pg.transform.scale(image, (width, height))
+            self.rect = self.image.get_rect()
 
-        self.self = self
+        self.rect.x = x
+        self.rect.y = y
         self.color = color
         self.display = display
         self.move = move
+        self.direction = direction
         self.velo = 2
 
     def draw(self):
@@ -134,11 +133,20 @@ class Elevator:
         else:
             self.display.blit(self.image, self.rect)
     
-    def lift(self, max):
-        for m in max:
-            if m.rect.colliderect(self.rect.x, self.rect.y - self.velo, self.rect.width, self.rect.height):
-                self.velo = self.velo * -1
-        self.rect.y -= self.velo
+    def lift(self, max, player):
+        if self.move == True:
+            if self.direction == False:
+                for m in max:
+                    if m.rect.colliderect(self.rect.x, self.rect.y - self.velo, self.rect.width, self.rect.height):
+                        self.velo = self.velo * -1
+                self.rect.y -= self.velo
+            else:
+                for m in max:
+                    if m.rect.colliderect(self.rect.x - self.velo, self.rect.y, self.rect.width, self.rect.height):
+                        self.velo = self.velo * -1
+                self.rect.x -= self.velo
+                if player.rect.colliderect(self.rect.x, self.rect.y, self.rect.width, self.rect.height):
+                    player.rect.x = self.rect.x
 
 class Enemy:
     def __init__(self, x, y, width, height, color, display, velo, confined, image):
@@ -184,7 +192,7 @@ class Door:
 
 class Crate:
     def __init__(self, x, y, width, height, color, display, image):
-        self.image = pg.transform.scale(image, (width, height))
+        self.image = pg.transform.scale(image, (width*2, height*2))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -222,10 +230,12 @@ class Key:
         self.collected = False
 
     def draw(self):
-        if self.collected == False:
-            self.display.blit(self.image, self.rect)
+        # if self.collected == False:
+        self.display.blit(self.image, self.rect)
 
     def collect(self, player):
         if player.rect.colliderect(self.rect.x, self.rect.y, self.rect.width, self.rect.height):
             self.collected = True
+            self.rect.x = player.rect.x
+            self.rect.y = player.rect.y - 27
             return True
