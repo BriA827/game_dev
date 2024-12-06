@@ -42,12 +42,10 @@ def game(level):
             elif level[row][column] == "3":
                 ele = Elevator(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT/1.3,RED,screen, move=True, image=bridge_image, direction = False)  
                 elevator_list.append(ele)
-                brick_list.append(ele)  
 
             elif level[row][column] == "4":
                 ele = Elevator(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT/1.3,RED,screen, move=True, image=bridge_image, direction = True)  
                 elevator_list.append(ele)
-                brick_list.append(ele)  
 
             elif level[row][column] == "l":
                 hei = Elevator(x_loc,y_loc,BRICK_WIDTH,BRICK_HEIGHT,YELLOW,screen, image = None) 
@@ -103,7 +101,7 @@ def game(level):
             obtained = True
         key.draw()
 
-        me.update(brick_list, door_list, enemies, obtained)
+        me.update(brick_list, door_list, elevator_list, enemies, obtained)
         me.draw()
         me.end()
 

@@ -21,7 +21,7 @@ class Player:
     def draw(self):
         self.display.blit(self.image, self.rect)
 
-    def update(self, surface_list, doors, monsters, unlocked):
+    def update(self, surface_list, doors, eles, monsters, unlocked):
         x_change = 0
         y_change = 0
 
@@ -65,6 +65,9 @@ class Player:
                 self.y_velo = 0
                 self.win = True
 
+        for ele in eles:
+            if ele.rect.colliderect(self.rect.x + x_change, self.rect.y + y_change, self.rect.width, self.rect.height):
+                self.rect.y = ele.rect.y
         for monster in monsters:
             if monster.rect.colliderect(self.rect.x + x_change, self.rect.y + y_change, self.rect.width, self.rect.height):
                 self.status = False
