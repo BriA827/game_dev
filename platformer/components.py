@@ -2,8 +2,11 @@ import pygame as pg
 from settings import *
 
 class Player:
-    def __init__(self,x,y,width,height,color,display, image):
+    def __init__(self,x,y,width,height,color,display, image, animation):
+        self.animation = animation
         self.image = pg.transform.scale(image, (width, height))
+        self.width = width
+        self.height = height
         self.rect = self.image.get_rect()
         self.self = self
         self.rect.x = x
@@ -81,6 +84,10 @@ class Player:
         
         self.rect.x += x_change
         self.rect.y += y_change
+
+        if x_change:
+            for i in range(0,len(self.animation)):
+                self.image = pg.transform.scale(self.animation[i], (self.width, self.height))
 
         if self.rect.y >= HEIGHT:
             self.status = False

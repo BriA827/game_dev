@@ -17,6 +17,15 @@ def game(level):
     lock_image = pg.image.load("platformer/images/lock_yellow.png")
     key_image = pg.image.load("platformer/images/key_yellow.png")
 
+    walk_list  = []
+    for i in range(1,12):
+        path = "platformer/images/walking/walk00"
+        num = "0"
+        if i >= 10:
+            num = ""
+        walk_list.append(pg.image.load(path+num+str(i)+".png"))
+
+
     brick_list = []
     elevator_list = []
     door_list = []
@@ -52,7 +61,7 @@ def game(level):
                 height_list.append(hei) 
 
             elif level[row][column] == "p":
-                me = Player(x_loc,y_loc,PLAYER_WIDTH,PLAYER_HEIGHT,YELLOW,screen, player_image) 
+                me = Player(x_loc,y_loc,PLAYER_WIDTH,PLAYER_HEIGHT,YELLOW,screen, player_image, walk_list) 
             
             elif level[row][column] == "m":
                 mon = Enemy(x_loc+BRICK_WIDTH,y_loc,ENEMY_WIDTH,ENEMY_HEIGHT,GREEN,screen, 3, True, enemy_image)
