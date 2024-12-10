@@ -67,15 +67,17 @@ class Player:
 
         for ele in eles:
             if ele.rect.colliderect(self.rect.x + x_change, self.rect.y + y_change, self.rect.width, self.rect.height):
-                self.rect.y = ele.rect.y
+                self.rect.y = ele.rect.y -35
+                self.landed
+                self.landed = True
+                self.jumping = False
+                self.y_velo = 0
+                if ele.direction == True and keys[pg.K_LEFT] != True and  keys[pg.K_RIGHT] != True:
+                    self.rect.x = ele.rect.x
+
         for monster in monsters:
             if monster.rect.colliderect(self.rect.x + x_change, self.rect.y + y_change, self.rect.width, self.rect.height):
                 self.status = False
-
-        # if self.rect.bottom + y_change > HEIGHT - BRICK_HEIGHT:
-        #     y_change = 0
-        #     self.rect.bottom = HEIGHT - BRICK_HEIGHT
-        #     self.landed = True
         
         self.rect.x += x_change
         self.rect.y += y_change
@@ -148,8 +150,6 @@ class Elevator:
                     if m.rect.colliderect(self.rect.x - self.velo, self.rect.y, self.rect.width, self.rect.height):
                         self.velo = self.velo * -1
                 self.rect.x -= self.velo
-                if player.rect.colliderect(self.rect.x, self.rect.y, self.rect.width, self.rect.height):
-                    player.rect.x = self.rect.x
 
 class Enemy:
     def __init__(self, x, y, width, height, color, display, velo, confined, image):
