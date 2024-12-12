@@ -2,22 +2,27 @@ import pygame as pg
 from settings import *
 
 class Player:
-    def __init__(self,x,y,width,height,color,display, image, animation):
-        self.animation = animation
-        self.image = pg.transform.scale(image, (width, height))
-        self.width = width
-        self.height = height
+    def __init__(self,x,y,display, right_ani, left_ani):
+        self.right_ani = right_ani
+        self.left_ani = left_ani
+        self.image = self.right_ani[0]
         self.rect = self.image.get_rect()
         self.self = self
         self.rect.x = x
         self.rect.y = y
         self.display = display
-        self.x_velo = 5
 
+        self.x_velo = 5
+        self.run = None #false = left, none = none, right = true
         self.y_velo = 5
         self.jumping = False
         self.landed = True
 
+        self.current_frame = 0
+        self.delay = 30
+        self.last = pg.time.get_ticks()
+
+        self.life = 100
         self.status = True
         self.win = False
 
@@ -31,9 +36,30 @@ class Player:
         keys = pg.key.get_pressed()
 
         if keys[pg.K_LEFT]:
+            self.now = pg.time.get_ticks()
+            if self.now - self.last > self.delay:
+                self.current_frame = (self.current_frame + 1) % len(self.left_ani)
+                self.image = self.left_ani[self.current_frame]
+                self.last = self.now
             x_change = -1* self.x_velo
-        if keys[pg.K_RIGHT]:
+            self.run = False
+
+        elif keys[pg.K_RIGHT]:
+            self.now = pg.time.get_ticks()
+            if self.now - self.last > self.delay:
+                self.current_frame = (self.current_frame + 1) % len(self.right_ani)
+                self.image = self.right_ani[self.current_frame]
+                self.last = self.now
             x_change = self.x_velo
+            self.run = True
+
+        else:
+            x_change = 0
+            if self.run == False:
+                self.image = self.left_ani[0]
+            elif self.run == True:
+                self.image = self.right_ani[0]
+            self.run = None
 
         if keys[pg.K_UP] and not self.jumping and self.landed:
             self.jumping = True
@@ -80,14 +106,12 @@ class Player:
 
         for monster in monsters:
             if monster.rect.colliderect(self.rect.x + x_change, self.rect.y + y_change, self.rect.width, self.rect.height):
-                self.status = False
+                self.life -= ENEMY_DAMAGE
+                if self.life == 0:
+                    self.status = False
         
         self.rect.x += x_change
         self.rect.y += y_change
-
-        if x_change:
-            for i in range(0,len(self.animation)):
-                self.image = pg.transform.scale(self.animation[i], (self.width, self.height))
 
         if self.rect.y >= HEIGHT:
             self.status = False

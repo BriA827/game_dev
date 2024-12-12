@@ -9,7 +9,6 @@ def game(level):
 
     dirt_image = pg.image.load("platformer/images/ground_dirt.png")
     grass_image = pg.image.load("platformer/images/ground.png")
-    player_image = pg.image.load("platformer/images/side.png")
     enemy_image = pg.image.load("platformer/images/slime_normal.png")
     crate_image = pg.image.load("platformer/images/crate.png")
     bridge_image = pg.image.load("platformer/images/bridge.png")
@@ -17,14 +16,14 @@ def game(level):
     lock_image = pg.image.load("platformer/images/lock_yellow.png")
     key_image = pg.image.load("platformer/images/key_yellow.png")
 
-    walk_list  = []
+    walk_right  = []
+    walk_left  = []
     for i in range(1,12):
-        path = "platformer/images/walking/walk00"
-        num = "0"
-        if i >= 10:
-            num = ""
-        walk_list.append(pg.image.load(path+num+str(i)+".png"))
-
+        img = pg.image.load(f"platformer/images/walking/walk000{str(i)}.png")
+        right = pg.transform.scale(img, (PLAYER_WIDTH, PLAYER_HEIGHT))
+        left = pg.transform.flip(right, True, False)
+        walk_right.append(right)
+        walk_left.append(left)
 
     brick_list = []
     elevator_list = []
@@ -61,7 +60,7 @@ def game(level):
                 height_list.append(hei) 
 
             elif level[row][column] == "p":
-                me = Player(x_loc,y_loc,PLAYER_WIDTH,PLAYER_HEIGHT,YELLOW,screen, player_image, walk_list) 
+                me = Player(x_loc,y_loc,screen, walk_right, walk_left) 
             
             elif level[row][column] == "m":
                 mon = Enemy(x_loc+BRICK_WIDTH,y_loc,ENEMY_WIDTH,ENEMY_HEIGHT,GREEN,screen, 3, True, enemy_image)
