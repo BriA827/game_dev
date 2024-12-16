@@ -106,6 +106,7 @@ class Player:
 
         for monster in monsters:
             if monster.rect.colliderect(self.rect.x + x_change, self.rect.y + y_change, self.rect.width, self.rect.height):
+                monster.rect.x = WIDTH + BRICK_WIDTH
                 self.life -= ENEMY_DAMAGE
                 if self.life == 0:
                     self.status = False
@@ -115,6 +116,8 @@ class Player:
 
         if self.rect.y >= HEIGHT:
             self.status = False
+
+        return self.life
 
     def end(self):
         if self.status == False:
@@ -273,3 +276,34 @@ class Key:
             self.rect.x = player.rect.x
             self.rect.y = player.rect.y - 27
             return True
+        
+class Heart:
+    def __init__(self, x, y, display, img_list):
+        self.img_list = img_list
+        self.self = self
+        self.x = x
+        self.y = y
+        self.display = display
+        self.heart_values = {"1":0, "2":0, "3":0}
+
+    def life_value(self, p_health):
+        if p_health == (100 - (100/6)):
+            self.heart_values["1"] = 1
+        elif p_health == (100 - ((100/6)*(2))):
+            self.heart_values["1"] = 2
+        elif p_health == (100 - ((100/6)*(3))):
+            self.heart_values["2"] = 1
+        elif p_health == (100 - ((100/6)*(4))):
+            self.heart_values["2"] = 2
+        elif p_health == (100 - ((100/6)*(5))):
+            self.heart_values["3"] = 1
+        elif p_health == (100 - ((100/6)*(6))):
+            self.heart_values["3"] = 2
+
+        print(self.heart_values)
+
+    def draw(self):
+        change = +10
+        for i in self.heart_values:
+            self.display.blit(self.img_list[int(i)-1], [self.x + change, self.y])
+            change -= 55

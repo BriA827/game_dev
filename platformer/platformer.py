@@ -16,6 +16,12 @@ def game(level):
     lock_image = pg.image.load("platformer/images/lock_yellow.png")
     key_image = pg.image.load("platformer/images/key_yellow.png")
 
+    hearts = []
+    for i in ["full", "half", "empty"]:
+        heart = pg.image.load(f"platformer/images/hearts/heart_{i}.png")
+        heart = pg.transform.scale(heart, (50, 50))
+        hearts.append(heart)
+
     walk_right  = []
     walk_left  = []
     for i in range(1,12):
@@ -86,6 +92,8 @@ def game(level):
             elif level[row][column] == "k":
                 key = Key(x_loc, y_loc, BRICK_WIDTH, BRICK_HEIGHT, GREY, screen, key_image)
 
+            elif level[row][column] == "*":
+                life = Heart(x_loc, y_loc, screen, hearts)
     
     while playing == True:
         screen.fill(BACK)
@@ -109,9 +117,12 @@ def game(level):
             obtained = True
         key.draw()
 
-        me.update(brick_list, door_list, elevator_list, enemies, obtained)
+        health = me.update(brick_list, door_list, elevator_list, enemies, obtained)
         me.draw()
         me.end()
+
+        life.life_value(health)
+        life.draw()
 
         if me.status == False:
             playing = False
