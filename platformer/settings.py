@@ -36,7 +36,7 @@ BLANK = ["1111111111111111111111111111111111111111",
 
 LAYOUT_1=["1111111111111111111111111111111111111111",
           "1                                      1",
-          "1   *                                  1",
+          "1 *                                    1",
           "1                                      1",
           "1                                      1",
           "1                                      1",
@@ -122,10 +122,11 @@ BRICK_HEIGHT = 40
 
 PLAYER_WIDTH = 40
 PLAYER_HEIGHT = 40
+PLAYER_HEARTS = 3
 
 ENEMY_WIDTH = 40
 ENEMY_HEIGHT = 40
-ENEMY_DAMAGE = 100/6
+# ENEMY_DAMAGE = 100/6
 
 DOOR_HEIGHT = 60
 

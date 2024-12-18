@@ -19,7 +19,7 @@ def game(level):
     hearts = []
     for i in ["full", "half", "empty"]:
         heart = pg.image.load(f"platformer/images/hearts/heart_{i}.png")
-        heart = pg.transform.scale(heart, (50, 50))
+        heart = pg.transform.scale(heart, (BRICK_WIDTH, BRICK_HEIGHT))
         hearts.append(heart)
 
     walk_right  = []
@@ -93,7 +93,7 @@ def game(level):
                 key = Key(x_loc, y_loc, BRICK_WIDTH, BRICK_HEIGHT, GREY, screen, key_image)
 
             elif level[row][column] == "*":
-                life = Heart(x_loc, y_loc, screen, hearts)
+                life = Heart(x_loc, y_loc, screen, hearts, PLAYER_HEARTS)
     
     while playing == True:
         screen.fill(BACK)

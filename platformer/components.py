@@ -22,7 +22,7 @@ class Player:
         self.delay = 30
         self.last = pg.time.get_ticks()
 
-        self.life = 100
+        self.life = 0
         self.status = True
         self.win = False
 
@@ -107,8 +107,8 @@ class Player:
         for monster in monsters:
             if monster.rect.colliderect(self.rect.x + x_change, self.rect.y + y_change, self.rect.width, self.rect.height):
                 monster.rect.x = WIDTH + BRICK_WIDTH
-                self.life -= ENEMY_DAMAGE
-                if self.life == 0:
+                self.life += 1
+                if self.life == 6:
                     self.status = False
         
         self.rect.x += x_change
@@ -278,32 +278,32 @@ class Key:
             return True
         
 class Heart:
-    def __init__(self, x, y, display, img_list):
+    def __init__(self, x, y, display, img_list, heart_num):
         self.img_list = img_list
         self.self = self
         self.x = x
         self.y = y
         self.display = display
-        self.heart_values = {"1":0, "2":0, "3":0}
+        self.heart_values = {}
+        self.heart_num = heart_num
+        self.hit_goal = 1
+        self.life_img = 1
+        self.life_index = 0
 
     def life_value(self, p_health):
-        if p_health == (100 - (100/6)):
-            self.heart_values["1"] = 1
-        elif p_health == (100 - ((100/6)*(2))):
-            self.heart_values["1"] = 2
-        elif p_health == (100 - ((100/6)*(3))):
-            self.heart_values["2"] = 1
-        elif p_health == (100 - ((100/6)*(4))):
-            self.heart_values["2"] = 2
-        elif p_health == (100 - ((100/6)*(5))):
-            self.heart_values["3"] = 1
-        elif p_health == (100 - ((100/6)*(6))):
-            self.heart_values["3"] = 2
+        for i in range(0, self.heart_num):
+            self.heart_values[str(i)] = 0
 
-        print(self.heart_values)
-
+        if p_health == self.hit_goal:
+            self.heart_values[str(self.life_index)] = self.life_img
+            self.hit_goal+=1
+            self.life_img+= 1
+            if self.life_img == 3:
+                self.life_index+= 1
+                self.life_img= 1
+                
     def draw(self):
-        change = +10
-        for i in self.heart_values:
-            self.display.blit(self.img_list[int(i)-1], [self.x + change, self.y])
-            change -= 55
+        change = (BRICK_WIDTH * self.heart_num) - (BRICK_WIDTH)
+        for i in (self.heart_values):
+            self.display.blit(self.img_list[self.heart_values[str(i)]], [self.x + change, self.y-15])
+            change -= BRICK_WIDTH +3
