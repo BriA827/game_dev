@@ -106,8 +106,8 @@ class Player:
 
         for monster in monsters:
             if monster.rect.colliderect(self.rect.x + x_change, self.rect.y + y_change, self.rect.width, self.rect.height):
-                monster.rect.x = WIDTH + BRICK_WIDTH
-                self.life += 1
+                # monster.rect.x = WIDTH + BRICK_WIDTH
+                self.life += .5
                 if self.life == 6:
                     self.status = False
         
@@ -289,10 +289,10 @@ class Heart:
         self.hit_goal = 1
         self.life_img = 1
         self.life_index = 0
-
-    def life_value(self, p_health):
         for i in range(0, self.heart_num):
             self.heart_values[str(i)] = 0
+
+    def life_value(self, p_health):
 
         if p_health == self.hit_goal:
             self.heart_values[str(self.life_index)] = self.life_img
