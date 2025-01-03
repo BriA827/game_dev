@@ -8,6 +8,15 @@ def game():
     clock = pg.time.Clock()
 
     playing = True
+
+    explosion_sheet = SpriteSheet("sprite_game/sprites/explosion.png")
+    explosion_list = []
+    for y in range(5):
+        for x in range(5):
+            locx = 64 * x
+            locy = 64 * y
+            image = explosion_sheet.get_image(locx, locy, 64, 64)
+            explosion_list.append(image)
     
     while playing == True:
         screen.fill(BACK)
@@ -21,8 +30,8 @@ def game():
         
         clock.tick(FPS)
 
-# play = True
-play = False
+play = True
+# play = False
 
 while play:
    game()
