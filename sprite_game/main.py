@@ -17,12 +17,14 @@ def game():
                 playing = False
                 pg.quit()
 
-        pg.display.flip()
+        # pg.display.flip()
         
         clock.tick(FPS)
 
-play = True
+# play = True
+play = False
 
-while play == True:
+while play:
    game()
+
 pg.quit()
