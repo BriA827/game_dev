@@ -15,6 +15,7 @@ def game():
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 playing = False
+                pg.quit()
 
 play = True
 
