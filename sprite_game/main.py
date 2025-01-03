@@ -16,24 +16,27 @@ def game():
             locx = 64 * x
             locy = 64 * y
             image = explosion_sheet.get_image(locx, locy, 64, 64)
+            image.set_colorkey(BLACK) #looks for that color and makes transparent
             explosion_list.append(image)
+
+    tile_sheet = SpriteSheet("sprite_game/sprites/tilemap.png")
+    bow_image = tile_sheet.get_image(16*10+11, 16*11+10, 16, 16)
+    bow_image.set_colorkey(BLACK) #looks for that color and makes transparent
     
     while playing == True:
         screen.fill(BACK)
+        
+        screen.blit(explosion_list[0], (100,100))
+        screen.blit(bow_image, (200,200))
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 playing = False
                 pg.quit()
 
-        # pg.display.flip()
+        pg.display.flip()
         
         clock.tick(FPS)
 
-play = True
-# play = False
 
-while play:
-   game()
-
-pg.quit()
+game()
