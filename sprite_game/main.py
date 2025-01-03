@@ -17,6 +17,10 @@ def game():
                 playing = False
                 pg.quit()
 
+        pg.display.flip()
+        
+        clock.tick(FPS)
+
 play = True
 
 while play == True:
