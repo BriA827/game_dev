@@ -28,7 +28,8 @@ class Game:
         self.bow_image = tile_sheet.get_image(11*16-7, 9*16+9, 16, 16, 2, 2)
         self.bow_image.set_colorkey(BLACK) #looks for that color and makes transparent
 
-        self.grass_image = tile_sheet.get_image(17*2, 0, 16,16,4,4)
+        self.flower_image = tile_sheet.get_image(17*2, 0, 16,16,4,4)
+        self.grass_image = tile_sheet.get_image(17, 0, 16,16,4,4)
 
         self.grass_sq = []
         for y in range(1,4):
@@ -49,13 +50,32 @@ class Game:
         self.king_still = chars_sheet.get_image(17,10*18-1, 32,46)
         self.king_still.set_colorkey(NEW_CHARS)
 
+        self.king_right = []
+        self.king_left = []
+        self.king_up = []
+
+        for i in range(10):
+            if i <= 5:
+                king_r = chars_sheet.get_image(784+(64*i),10*18-1, 32,46)
+                king_r.set_colorkey(NEW_CHARS)
+                self.king_right.append(king_r)
+                king_l = pg.transform.flip(king_r, True, False)
+                self.king_left.append(king_l)
+            else:
+                king_up = chars_sheet.get_image(784+64+(64*i),10*18-1, 32,46)
+                king_up.set_colorkey(NEW_CHARS)
+                self.king_up.append(king_up)
+
     def new(self):
         """Create all game objects, sprites, and groups. Call run() method"""
-
+        
+        self.player = Player(3*64,64,self.screen, self.king_right, self.king_left, self.king_up)
         self.run()
 
     def update(self):
         """Run all updates."""
+
+        self.player.update()
         pass
 
     def draw(self):
@@ -85,13 +105,16 @@ class Game:
                 elif MAP[row][column] == "8":
                     self.screen.blit(self.grass_sq[8], (x_loc, y_loc))
                 elif MAP[row][column] == "g":
+                    self.screen.blit(self.flower_image, (x_loc, y_loc))
+                elif MAP[row][column] == " ":
                     self.screen.blit(self.grass_image, (x_loc, y_loc))
         
-        self.screen.blit(self.explosion_list[0], (100,100))
-        self.screen.blit(self.bow_image, (100,200))
-        self.screen.blit(self.green_player_image, (100,300))
-        self.screen.blit(self.zombie_walk_image, (100,400))
-        self.screen.blit(self.king_still, (100,500))
+        # self.screen.blit(self.explosion_list[0], (100,100))
+        # self.screen.blit(self.bow_image, (100,200))
+        # self.screen.blit(self.green_player_image, (100,300))
+        # self.screen.blit(self.zombie_walk_image, (100,400))
+        # self.screen.blit(self.king_still, (100,500))
+        self.player.draw()
 
         pg.display.flip()
 
