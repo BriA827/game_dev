@@ -13,7 +13,7 @@ class SpriteSheet():
         return image
     
 class Player:
-    def __init__(self,x,y,display, right_ani, left_ani, up_ani):
+    def __init__(self,x,y, display, right_ani, left_ani, up_ani):
         self.right_ani = right_ani
         self.left_ani = left_ani
         self.up_ani = up_ani
@@ -89,3 +89,15 @@ class Player:
 
         self.rect.x += x_change
         self.rect.y += y_change
+
+class Wall:
+    def __init__(self, x, y, display, image):
+        self.self = self
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.display = display
+
+    def draw(self):
+        self.display.blit(self.image, self.rect)
