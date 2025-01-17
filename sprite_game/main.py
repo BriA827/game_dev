@@ -81,16 +81,20 @@ class Game:
     def new(self):
         """Create all game objects, sprites, and groups. Call run() method"""
         
-        self.player = Player(4*64,64,self.screen, self.king_right, self.king_left, self.king_up)
+        self.wall_sprites = pg.sprite.Group()
+        self.all_sprites = pg.sprite.Group()
 
-        self.walls = []
         for row in range(len(MAP)):
             y_loc = row * (16*4)
             for column in range(len(MAP[0])):
                 x_loc = column * (16*4)
                 if MAP[row][column] == "-":
                     w = Wall(x_loc, y_loc, self.screen, self.stone_image)
-                    self.walls.append(w)
+                    self.wall_sprites.add(w)
+                    self.all_sprites.add(w)
+
+        self.player = Player(4*64, 64 ,self.screen, self.king_right, self.king_left, self.king_up, self)
+        self.all_sprites.add(self.player)
 
         self.run()
 
@@ -131,16 +135,8 @@ class Game:
                 else:
                     self.screen.blit(self.grass_image, (x_loc, y_loc))
 
-        # self.screen.blit(self.explosion_list[0], (100,100))
-        # self.screen.blit(self.bow_image, (100,200))
-        # self.screen.blit(self.green_player_image, (100,300))
-        # self.screen.blit(self.zombie_walk_image, (100,400))
-        # self.screen.blit(self.king_still, (100,500))
+        self.all_sprites.draw(self.screen)
 
-        for i in self.walls:
-            i.draw()
-
-        self.player.draw()
         pg.display.flip()
 
     def events(self):

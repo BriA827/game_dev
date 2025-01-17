@@ -12,17 +12,21 @@ class SpriteSheet():
             image = pg.transform.scale(image, (width*scale_x, height*scale_y))
         return image
     
-class Player:
-    def __init__(self,x,y, display, right_ani, left_ani, up_ani):
+class Player(pg.sprite.Sprite):
+    def __init__(self,x,y, display, right_ani, left_ani, up_ani, game):
+        pg.sprite.Sprite.__init__(self)
+
         self.right_ani = right_ani
         self.left_ani = left_ani
         self.up_ani = up_ani
+
         self.image = self.right_ani[0]
         self.rect = self.image.get_rect()
         self.self = self
         self.rect.x = x
         self.rect.y = y
         self.display = display
+        self.game = game
 
         self.x_velo = 5
         self.run = None #-1 = left, none = none, 1 = right, 2 = up
@@ -30,9 +34,6 @@ class Player:
         self.current_frame = 0
         self.delay = 70
         self.last = pg.time.get_ticks()
-
-    def draw(self):
-        self.display.blit(self.image, self.rect)
 
     def update(self):
         x_change = 0
@@ -90,14 +91,13 @@ class Player:
         self.rect.x += x_change
         self.rect.y += y_change
 
-class Wall:
+class Wall(pg.sprite.Sprite):
     def __init__(self, x, y, display, image):
+        pg.sprite.Sprite.__init__(self)
+
         self.self = self
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.display = display
-
-    def draw(self):
-        self.display.blit(self.image, self.rect)
