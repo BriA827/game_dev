@@ -14,19 +14,8 @@ class Game:
     def load_images(self):
         """Load and get images."""
 
-        explosion_sheet = SpriteSheet("sprite_game/sprites/explosion.png")
-        self.explosion_list = []
-        for y in range(5):
-            for x in range(5):
-                locx = 64 * x
-                locy = 64 * y
-                image = explosion_sheet.get_image(locx, locy, 64, 64)
-                image.set_colorkey(BLACK) #looks for that color and makes transparent
-                self.explosion_list.append(image)
-
         tile_sheet = SpriteSheet("sprite_game/sprites/tilemap.png")
-        self.bow_image = tile_sheet.get_image(11*16-7, 9*16+9, 16, 16, 2, 2)
-        self.bow_image.set_colorkey(BLACK) #looks for that color and makes transparent
+        self.bow_image = tile_sheet.get_image(11*16-7, 9*16+9, 16, 16, 2, 2, True)
 
         self.flower_image = tile_sheet.get_image(17*2, 0, 16,16,4,4)
         self.grass_image = tile_sheet.get_image(17, 0, 16,16,4,4)
@@ -49,22 +38,20 @@ class Game:
                 locx = 17 * x
                 locy = 17 * y
                 image = tile_sheet.get_image(locx, locy, 16, 16, 4, 4)
-                image.set_colorkey(BLACK)
                 self.grass_sq.append(image)
 
         zombie_sheet = SpriteSheet("sprite_game/sprites/spritesheet_characters.png")
-        self.green_player_image = zombie_sheet.get_image(0,0,57,44)
-        self.green_player_image.set_colorkey(BLACK)
-        self.zombie_walk_image = zombie_sheet.get_image(425,0,37,44)
-        self.zombie_walk_image.set_colorkey(BLACK)
+        self.green_player_image = zombie_sheet.get_image(0,0,57,44,True)
+        self.zombie_walk_image = zombie_sheet.get_image(425,0,37,44,True)
 
         chars_sheet = SpriteSheet("sprite_game/sprites/new_chars.png")
-        self.king_still = chars_sheet.get_image(17,10*18-1, 32,46)
-        self.king_still.set_colorkey(NEW_CHARS)
+        self.king_still = chars_sheet.get_image(17,10*18-1, 32,46,True)
 
         self.king_right = []
         self.king_left = []
         self.king_up = []
+
+        self.snake_images = []
 
         for i in range(10):
             if i <= 5:
@@ -77,6 +64,11 @@ class Game:
                 king_up = chars_sheet.get_image(784+64+(64*i),10*18-1, 32,46)
                 king_up.set_colorkey(NEW_CHARS)
                 self.king_up.append(king_up)
+
+        for i in range(4):
+            snake = chars_sheet.get_image(15+64*i, 17*18-1, 32,46)
+            snake.set_colorkey(NEW_CHARS)
+            self.snake_images.append(snake)
 
     def new(self):
         """Create all game objects, sprites, and groups. Call run() method"""
@@ -92,6 +84,21 @@ class Game:
                     w = Wall(x_loc, y_loc, self.screen, self.stone_image)
                     self.wall_sprites.add(w)
                     self.all_sprites.add(w)
+                elif MAP[row][column] == "s":
+                    w = Wall(x_loc, y_loc, self.screen, self.tree_images[6])
+                    self.wall_sprites.add(w)
+                    self.all_sprites.add(w)
+                elif MAP[row][column] == "o":
+                    w = Wall(x_loc, y_loc, self.screen, self.tree_images[1])
+                    self.wall_sprites.add(w)
+                    self.all_sprites.add(w)
+                elif MAP[row][column] == "f":
+                    w = Wall(x_loc, y_loc, self.screen, self.tree_images[5])
+                    self.wall_sprites.add(w)
+                    self.all_sprites.add(w)
+                elif MAP[row][column] == "~":
+                    w = Snake(x_loc, y_loc, self.screen, self.snake_images[0], self)
+                    self.all_sprites.add(w)
 
         self.player = Player(4*64, 64 ,self.screen, self.king_right, self.king_left, self.king_up, self)
         self.all_sprites.add(self.player)
@@ -101,7 +108,7 @@ class Game:
     def update(self):
         """Run all updates."""
 
-        self.player.update()
+        self.all_sprites.update()
         pass
 
     def draw(self):
