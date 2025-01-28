@@ -39,6 +39,9 @@ class Player(pg.sprite.Sprite):
         self.delay = 70
         self.last = pg.time.get_ticks()
 
+        self.inv = []
+        self.use = False
+
     def update(self):
         self.x_change = 0
         self.y_change = 0
@@ -81,6 +84,9 @@ class Player(pg.sprite.Sprite):
             self.y_change = self.velo
             self.run = 1
 
+        elif keys[pg.K_e]:
+            self.use = True
+
         else:
             self.x_change = 0
             if self.run == -1:
@@ -94,29 +100,47 @@ class Player(pg.sprite.Sprite):
 
         self.rect.x += self.x_change
         self.collide_wall('x')
+
         self.rect.y += self.y_change
         self.collide_wall('y')
 
-    def collide_wall(self, dir):
-        if dir == 'x':
-            hits = pg.sprite.spritecollide(self, self.game.wall_sprites, False)
-            if hits:
-                if self.self.x_change > 0:
-                    self.x = hits[0].rect.left - self.rect.width
-                elif self.self.x_change < 0:
-                    self.x = hits[0].rect.right
-                self.self.x_change=0
-                self.rect.x = self.x
+        self.collide_snake()
+        self.collide_item()
 
-        if dir == 'y':
-            hits = pg.sprite.spritecollide(self, self.game.wall_sprites, False)
-            if hits:
-                if self.self.y_change > 0:
-                    self.y = hits[0].rect.top - self.rect.height
-                elif self.self.y_change < 0:
-                    self.y = hits[0].rect.bottom
-                self.self.y_change=0
-                self.rect.y = self.y
+    def collide_wall(self, dir):
+        if "Bomb" in self.inv and self.use is True:
+            hits = pg.sprite.spritecollide(self, self.game.wall_sprites, True)
+
+        else:
+            if dir == 'x':
+                hits = pg.sprite.spritecollide(self, self.game.wall_sprites, False)
+                if hits:
+                    if self.self.x_change > 0:
+                        self.x = hits[0].rect.left - self.rect.width
+                    elif self.self.x_change < 0:
+                        self.x = hits[0].rect.right
+                    self.self.x_change=0
+                    self.rect.x = self.x
+
+            if dir == 'y':
+                hits = pg.sprite.spritecollide(self, self.game.wall_sprites, False)
+                if hits:
+                    if self.self.y_change > 0:
+                        self.y = hits[0].rect.top - self.rect.height
+                    elif self.self.y_change < 0:
+                        self.y = hits[0].rect.bottom
+                    self.self.y_change=0
+                    self.rect.y = self.y
+
+    def collide_snake(self):
+        hits = pg.sprite.spritecollide(self, self.game.snake_sprites, True)
+
+    def collide_item(self):
+        sp = pg.sprite.Group.sprites(self.game.item_sprites)
+        hits = pg.sprite.spritecollide(self, self.game.item_sprites, True)
+        for i in sp:
+            if "Bomb" in str(type(i)) and i in hits:
+                self.inv.append("Bomb")
 
 class Wall(pg.sprite.Sprite):
     def __init__(self, x, y, display, image):
@@ -130,28 +154,47 @@ class Wall(pg.sprite.Sprite):
         self.display = display
 
 class Snake(pg.sprite.Sprite):
-    def __init__(self, x, y, display, image_list, game):
+    def __init__(self, x, y, display, right, left, game, d):
         pg.sprite.Sprite.__init__(self)
         self.game = game
         self.self = self
-        self.image_list = image_list
-        self.image = image_list[0]
+        self.right = right
+        self.left = left
+        self.image = right[0]
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.display = display
-        self.velo = 3
+        self.velo = 3 * d
+
+        self.current_frame = 0
+        self.delay = 70
+        self.last = pg.time.get_ticks()
     
     def update(self):
-        self.rect.x -= self.velo
+        self.rect.x += self.velo
         self.now = pg.time.get_ticks()
+
+        if self.velo > 0:
+            self.direct = self.right
+        elif self.velo < 0:
+            self.direct = self.left
+
         if self.now - self.last > self.delay:
-                self.current_frame = (self.current_frame + 1) % len(self.image_list)
-                self.image = self.image_list[self.current_frame]
+                self.current_frame = (self.current_frame + 1) % len(self.direct)
+                self.image = self.direct[self.current_frame]
                 self.last = self.now
         
         hits = pg.sprite.spritecollide(self, self.game.wall_sprites, False)
         if hits:
             self.velo = self.velo * -1
-            self.image
-            
+
+class Bomb(pg.sprite.Sprite):
+    def __init__(self, x, y, display, image):
+        pg.sprite.Sprite.__init__(self)
+        self.self = self
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.display = display

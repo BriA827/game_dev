@@ -1,4 +1,5 @@
 import pygame as pg
+import random as rand
 from settings import *
 from components import *
 
@@ -15,7 +16,7 @@ class Game:
         """Load and get images."""
 
         tile_sheet = SpriteSheet("sprite_game/sprites/tilemap.png")
-        self.bow_image = tile_sheet.get_image(11*16-7, 9*16+9, 16, 16, 2, 2, True)
+        self.bomb_image = tile_sheet.get_image(10*16-7, 8*16+9, 16, 16, 2, 2, True)
 
         self.flower_image = tile_sheet.get_image(17*2, 0, 16,16,4,4)
         self.grass_image = tile_sheet.get_image(17, 0, 16,16,4,4)
@@ -40,9 +41,9 @@ class Game:
                 image = tile_sheet.get_image(locx, locy, 16, 16, 4, 4)
                 self.grass_sq.append(image)
 
-        zombie_sheet = SpriteSheet("sprite_game/sprites/spritesheet_characters.png")
-        self.green_player_image = zombie_sheet.get_image(0,0,57,44,True)
-        self.zombie_walk_image = zombie_sheet.get_image(425,0,37,44,True)
+        # zombie_sheet = SpriteSheet("sprite_game/sprites/spritesheet_characters.png")
+        # self.green_player_image = zombie_sheet.get_image(0,0,57,44,True)
+        # self.zombie_walk_image = zombie_sheet.get_image(425,0,37,44,True)
 
         chars_sheet = SpriteSheet("sprite_game/sprites/new_chars.png")
         self.king_still = chars_sheet.get_image(17,10*18-1, 32,46,True)
@@ -51,7 +52,8 @@ class Game:
         self.king_left = []
         self.king_up = []
 
-        self.snake_images = []
+        self.snake_images_r = []
+        self.snake_images_l = []
 
         for i in range(10):
             if i <= 5:
@@ -66,15 +68,19 @@ class Game:
                 self.king_up.append(king_up)
 
         for i in range(4):
-            snake = chars_sheet.get_image(15+64*i, 17*18-1, 32,46)
+            snake = chars_sheet.get_image(17+64*i, 17*18-1, 32,46)
             snake.set_colorkey(NEW_CHARS)
-            self.snake_images.append(snake)
+            self.snake_images_r.append(snake)
+            snake = pg.transform.flip(snake, True, False)
+            self.snake_images_l.append(snake)
 
     def new(self):
         """Create all game objects, sprites, and groups. Call run() method"""
         
         self.wall_sprites = pg.sprite.Group()
+        self.snake_sprites = pg.sprite.Group()
         self.all_sprites = pg.sprite.Group()
+        self.item_sprites = pg.sprite.Group()
 
         for row in range(len(MAP)):
             y_loc = row * (16*4)
@@ -85,20 +91,25 @@ class Game:
                     self.wall_sprites.add(w)
                     self.all_sprites.add(w)
                 elif MAP[row][column] == "s":
-                    w = Wall(x_loc, y_loc, self.screen, self.tree_images[6])
-                    self.wall_sprites.add(w)
-                    self.all_sprites.add(w)
+                    t = Wall(x_loc, y_loc, self.screen, self.tree_images[6])
+                    self.wall_sprites.add(t)
+                    self.all_sprites.add(t)
                 elif MAP[row][column] == "o":
-                    w = Wall(x_loc, y_loc, self.screen, self.tree_images[1])
-                    self.wall_sprites.add(w)
-                    self.all_sprites.add(w)
+                    t = Wall(x_loc, y_loc, self.screen, self.tree_images[1])
+                    self.wall_sprites.add(t)
+                    self.all_sprites.add(t)
                 elif MAP[row][column] == "f":
-                    w = Wall(x_loc, y_loc, self.screen, self.tree_images[5])
-                    self.wall_sprites.add(w)
-                    self.all_sprites.add(w)
+                    t = Wall(x_loc, y_loc, self.screen, self.tree_images[5])
+                    self.wall_sprites.add(t)
+                    self.all_sprites.add(t)
                 elif MAP[row][column] == "~":
-                    w = Snake(x_loc, y_loc, self.screen, self.snake_images[0], self)
-                    self.all_sprites.add(w)
+                    s = Snake(x_loc, y_loc, self.screen, self.snake_images_r, self.snake_images_l, self, -1)
+                    self.snake_sprites.add(s)
+                    self.all_sprites.add(s)
+                elif MAP[row][column] == "b":
+                    b = Bomb(x_loc, y_loc, self.screen, self.bomb_image)
+                    self.item_sprites.add(b)
+                    self.all_sprites.add(b)
 
         self.player = Player(4*64, 64 ,self.screen, self.king_right, self.king_left, self.king_up, self)
         self.all_sprites.add(self.player)
@@ -108,8 +119,12 @@ class Game:
     def update(self):
         """Run all updates."""
 
+        if len(self.snake_sprites) == 0:
+            s = Snake(rand.randint(70, 930), rand.randint(70, 530), self.screen, self.snake_images_r, self.snake_images_l, self, rand.choice([-1,1]))
+            self.snake_sprites.add(s)
+            self.all_sprites.add(s)
+        
         self.all_sprites.update()
-        pass
 
     def draw(self):
         """Fill screen, draw objects, flip."""

@@ -19,7 +19,7 @@ MAP = ["----------------------------",
        "- 01112   ~                -",
        "- 34445   g                -",
        "- 64448                    -",
-       "- g345                 g   -",
+       "- g345    b            g   -",
        "-  345      g              -",
        "-  345    o                -",
        "-  678    sf          01111-",
@@ -30,7 +30,7 @@ MAP = ["----------------------------",
        "-                  34444444-",
        "----------------------------"]
 
-#ints = dirt_path, g = flowers, - = wall, o/s/f = tree, ~ = snake, blank = grass
+#ints = dirt_path, g = flowers, - = wall, o/s/f = tree, ~ = snake, blank = grass, b = bomb
 
 WIDTH = 1000
 HEIGHT = 600
