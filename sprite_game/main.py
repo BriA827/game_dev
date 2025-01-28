@@ -74,6 +74,16 @@ class Game:
             snake = pg.transform.flip(snake, True, False)
             self.snake_images_l.append(snake)
 
+        exp_sheet = SpriteSheet("sprite_game/sprites/explosion.png")
+        self.exp_list = []
+
+        for y in range(5):
+            for x in range(5):
+                locx = 64 * x
+                locy = 64 * y
+                image = exp_sheet.get_image(locx, locy, 64, 64, 1, 1, BLACK)
+                self.exp_list.append(image)
+
     def new(self):
         """Create all game objects, sprites, and groups. Call run() method"""
         
@@ -168,6 +178,14 @@ class Game:
                 if self.playing:
                     self.playing = False
                 self.running = False
+ 
+            if event.type == pg.KEYDOWN and event.key == pg.K_e:
+                self.player.use = True
+                self.e = Explosion(4*64,64,self.screen, self.exp_list)
+                self.e.update()
+
+            elif event.type == pg.KEYUP and event.key == pg.K_e:
+                self.player.use = False
 
     def run(self):
         """Contains main game loop."""

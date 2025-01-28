@@ -84,9 +84,6 @@ class Player(pg.sprite.Sprite):
             self.y_change = self.velo
             self.run = 1
 
-        elif keys[pg.K_e]:
-            self.use = True
-
         else:
             self.x_change = 0
             if self.run == -1:
@@ -110,6 +107,11 @@ class Player(pg.sprite.Sprite):
     def collide_wall(self, dir):
         if "Bomb" in self.inv and self.use is True:
             hits = pg.sprite.spritecollide(self, self.game.wall_sprites, True)
+            if hits:
+                self.inv.remove('Bomb')
+                # e = Explosion(hits[0].rect.center, hits[0].rect.center, self.display, self.game.exp_list)
+                # e.update()
+                # e.draw()
 
         else:
             if dir == 'x':
@@ -198,3 +200,26 @@ class Bomb(pg.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.display = display
+
+class Explosion():
+    def __init__(self, x, y, display, images):
+        self.self = self
+        self.x = x
+        self.y = y
+        self.images = images
+        self.image = images[0]
+        self.display = display
+
+        self.current_frame = 0
+        self.delay = 16
+        self.last = pg.time.get_ticks()
+
+    def update(self):
+        self.now = pg.time.get_ticks()
+        if self.now - self.last > self.delay:
+            self.current_frame = (self.current_frame + 1) % len(self.images)
+            self.image = self.images[self.current_frame]
+            self.last = self.now
+
+    def draw(self):
+        self.display.blit(self.image, (self.x, self.y))
