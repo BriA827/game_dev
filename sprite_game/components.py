@@ -105,37 +105,28 @@ class Player(pg.sprite.Sprite):
         self.collide_item()
 
     def collide_wall(self, dir):
-        if "Bomb" in self.inv and self.use is True:
-            hits = pg.sprite.spritecollide(self, self.game.wall_sprites, True)
-            if hits:
-                self.inv.remove('Bomb')
-                # e = Explosion(hits[0].rect.center, hits[0].rect.center, self.display, self.game.exp_list)
-                # e.update()
-                # e.draw()
+        if dir == 'x':
+            self.hits = pg.sprite.spritecollide(self, self.game.block_sprites, False)
+            if self.hits:
+                if self.x_change > 0:
+                    self.x = self.hits[0].rect.left - self.rect.width
+                elif self.self.x_change < 0:
+                    self.x = self.hits[0].rect.right
+                self.x_change=0
+                self.rect.x = self.x
 
-        else:
-            if dir == 'x':
-                hits = pg.sprite.spritecollide(self, self.game.wall_sprites, False)
-                if hits:
-                    if self.self.x_change > 0:
-                        self.x = hits[0].rect.left - self.rect.width
-                    elif self.self.x_change < 0:
-                        self.x = hits[0].rect.right
-                    self.self.x_change=0
-                    self.rect.x = self.x
-
-            if dir == 'y':
-                hits = pg.sprite.spritecollide(self, self.game.wall_sprites, False)
-                if hits:
-                    if self.self.y_change > 0:
-                        self.y = hits[0].rect.top - self.rect.height
-                    elif self.self.y_change < 0:
-                        self.y = hits[0].rect.bottom
-                    self.self.y_change=0
-                    self.rect.y = self.y
+        if dir == 'y':
+            self.hits = pg.sprite.spritecollide(self, self.game.block_sprites, False)
+            if self.hits:
+                if self.y_change > 0:
+                    self.y = self.hits[0].rect.top - self.rect.height
+                elif self.self.y_change < 0:
+                    self.y = self.hits[0].rect.bottom
+                self.y_change=0
+                self.rect.y = self.y
 
     def collide_snake(self):
-        hits = pg.sprite.spritecollide(self, self.game.snake_sprites, True)
+        pg.sprite.spritecollide(self, self.game.snake_sprites, True)
 
     def collide_item(self):
         sp = pg.sprite.Group.sprites(self.game.item_sprites)
@@ -145,7 +136,7 @@ class Player(pg.sprite.Sprite):
                 self.inv.append("Bomb")
 
 class Wall(pg.sprite.Sprite):
-    def __init__(self, x, y, display, image):
+    def __init__(self, x, y, display, image, bomb =False):
         pg.sprite.Sprite.__init__(self)
 
         self.self = self
@@ -154,6 +145,7 @@ class Wall(pg.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.display = display
+        self.bomb = bomb
 
 class Snake(pg.sprite.Sprite):
     def __init__(self, x, y, display, right, left, game, d):
@@ -201,13 +193,15 @@ class Bomb(pg.sprite.Sprite):
         self.rect.y = y
         self.display = display
 
-class Explosion():
+class Explosion(pg.sprite.Sprite):
     def __init__(self, x, y, display, images):
+        pg.sprite.Sprite.__init__(self)
         self.self = self
-        self.x = x
-        self.y = y
         self.images = images
         self.image = images[0]
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
         self.display = display
 
         self.current_frame = 0
@@ -221,5 +215,8 @@ class Explosion():
             self.image = self.images[self.current_frame]
             self.last = self.now
 
+        if self.image == self.images[-1]:
+            self.kill()
+
     def draw(self):
-        self.display.blit(self.image, (self.x, self.y))
+        self.display.blit(self.image, (self.rect.x, self.rect.y))

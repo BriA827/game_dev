@@ -88,6 +88,8 @@ class Game:
         """Create all game objects, sprites, and groups. Call run() method"""
         
         self.wall_sprites = pg.sprite.Group()
+        self.tree_sprites = pg.sprite.Group()
+        self.block_sprites = pg.sprite.Group()
         self.snake_sprites = pg.sprite.Group()
         self.all_sprites = pg.sprite.Group()
         self.item_sprites = pg.sprite.Group()
@@ -99,18 +101,22 @@ class Game:
                 if MAP[row][column] == "-":
                     w = Wall(x_loc, y_loc, self.screen, self.stone_image)
                     self.wall_sprites.add(w)
+                    self.block_sprites.add(w)
                     self.all_sprites.add(w)
                 elif MAP[row][column] == "s":
                     t = Wall(x_loc, y_loc, self.screen, self.tree_images[6])
-                    self.wall_sprites.add(t)
+                    self.tree_sprites.add(t)
+                    self.block_sprites.add(t)
                     self.all_sprites.add(t)
                 elif MAP[row][column] == "o":
                     t = Wall(x_loc, y_loc, self.screen, self.tree_images[1])
-                    self.wall_sprites.add(t)
+                    self.tree_sprites.add(t)
+                    self.block_sprites.add(t)
                     self.all_sprites.add(t)
                 elif MAP[row][column] == "f":
                     t = Wall(x_loc, y_loc, self.screen, self.tree_images[5])
-                    self.wall_sprites.add(t)
+                    self.tree_sprites.add(t)
+                    self.block_sprites.add(t)
                     self.all_sprites.add(t)
                 elif MAP[row][column] == "~":
                     s = Snake(x_loc, y_loc, self.screen, self.snake_images_r, self.snake_images_l, self, -1)
@@ -131,8 +137,19 @@ class Game:
 
         if len(self.snake_sprites) == 0:
             s = Snake(rand.randint(70, 930), rand.randint(70, 530), self.screen, self.snake_images_r, self.snake_images_l, self, rand.choice([-1,1]))
+            for i in self.wall_sprites:
+                if s.rect.x == i.rect.x and s.rect.y == i.rect.y:
+                    s.kill()
             self.snake_sprites.add(s)
             self.all_sprites.add(s)
+
+        if "Bomb" in self.player.inv and self.player.use == True and self.player.hits:
+            if self.player.hits[0] in self.wall_sprites:
+                self.player.hits[0].kill()
+                self.player.inv.remove("Bomb")
+                cx, cy = self.player.hits[0].rect.center
+                e = Explosion(cx-20, cy, self.screen, self.exp_list)
+                self.all_sprites.add(e)
         
         self.all_sprites.update()
 
@@ -181,8 +198,6 @@ class Game:
  
             if event.type == pg.KEYDOWN and event.key == pg.K_e:
                 self.player.use = True
-                self.e = Explosion(4*64,64,self.screen, self.exp_list)
-                self.e.update()
 
             elif event.type == pg.KEYUP and event.key == pg.K_e:
                 self.player.use = False
