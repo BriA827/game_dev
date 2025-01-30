@@ -57,13 +57,13 @@ class Game:
 
         for i in range(10):
             if i <= 5:
-                king_r = chars_sheet.get_image(784+(64*i),10*18-1, 32,46)
+                king_r = chars_sheet.get_image(786+(64*i),10*18-1, 30,46)
                 king_r.set_colorkey(NEW_CHARS)
                 self.king_right.append(king_r)
                 king_l = pg.transform.flip(king_r, True, False)
                 self.king_left.append(king_l)
             else:
-                king_up = chars_sheet.get_image(784+64+(64*i),10*18-1, 32,46)
+                king_up = chars_sheet.get_image(784+64+(64*i),10*18-1, 30,46)
                 king_up.set_colorkey(NEW_CHARS)
                 self.king_up.append(king_up)
 
@@ -127,7 +127,7 @@ class Game:
                     self.item_sprites.add(b)
                     self.all_sprites.add(b)
 
-        self.player = Player(4*64, 64 ,self.screen, self.king_right, self.king_left, self.king_up, self)
+        self.player = Player(4*64, 2*64 ,self.screen, self.king_right, self.king_left, self.king_up, self)
         self.all_sprites.add(self.player)
 
         self.run()
@@ -146,7 +146,7 @@ class Game:
         if "Bomb" in self.player.inv and self.player.use == True and self.player.hits:
             if self.player.hits[0] in self.wall_sprites:
                 self.player.hits[0].kill()
-                self.player.inv.remove("Bomb")
+                # self.player.inv.remove("Bomb")
                 cx, cy = self.player.hits[0].rect.center
                 e = Explosion(cx-20, cy, self.screen, self.exp_list)
                 self.all_sprites.add(e)
