@@ -220,3 +220,52 @@ class Explosion(pg.sprite.Sprite):
 
     def draw(self):
         self.display.blit(self.image, (self.rect.x, self.rect.y))
+
+class Camera():
+    def __init__(self, width, height):
+        self.self = self
+        self.camera = pg.Rect(0,0, width, height)
+        self.width = width
+        self.height = height
+
+    def get_view(self, sprite_object):
+        #all sprite objects will be moved based on camera position
+        return sprite_object.rect.move(self.camera.topleft)
+    
+    def update(self, target):
+        #shift map in opp direction
+        #add half window size
+        x = -target.rect.x + WIDTH//2
+        y = -target.rect.y + HEIGHT//2
+
+        #stop scrolling at end
+        #if too far left, reset to 0
+        x = min(0,x)
+        y = min(0,y)
+
+        #too far right, stay half
+        x = max(-1 * (self.width - WIDTH), x)
+        y = max(-1 * (self.height - HEIGHT), y)
+
+        self.camera = pg.Rect(x, y, self.width, self.height)
+
+class Background(pg.sprite.Sprite):
+    def __init__(self, x, y, image):
+        pg.sprite.Sprite.__init__(self)
+        self.self = self
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+class Tracker(pg.sprite.Sprite, pg.math.Vector2):
+    def __init__(self, x, y, owner, target, image):
+        pg.sprite.Sprite.__init__(self)
+        pg.math.Vector2.__init__(self)
+        self.self = self
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.owner = owner
+        self.target = target

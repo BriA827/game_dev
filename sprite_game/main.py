@@ -57,18 +57,18 @@ class Game:
 
         for i in range(10):
             if i <= 5:
-                king_r = chars_sheet.get_image(786+(64*i),10*18-1, 30,46)
+                king_r = chars_sheet.get_image(786+(TILE*i),10*18-1, 30,46)
                 king_r.set_colorkey(NEW_CHARS)
                 self.king_right.append(king_r)
                 king_l = pg.transform.flip(king_r, True, False)
                 self.king_left.append(king_l)
             else:
-                king_up = chars_sheet.get_image(784+64+(64*i),10*18-1, 30,46)
+                king_up = chars_sheet.get_image(784+TILE+(TILE*i),10*18-1, 30,46)
                 king_up.set_colorkey(NEW_CHARS)
                 self.king_up.append(king_up)
 
         for i in range(4):
-            snake = chars_sheet.get_image(17+64*i, 17*18-1, 32,46)
+            snake = chars_sheet.get_image(17+TILE*i, 17*18-1, 32,46)
             snake.set_colorkey(NEW_CHARS)
             self.snake_images_r.append(snake)
             snake = pg.transform.flip(snake, True, False)
@@ -79,10 +79,14 @@ class Game:
 
         for y in range(5):
             for x in range(5):
-                locx = 64 * x
-                locy = 64 * y
-                image = exp_sheet.get_image(locx, locy, 64, 64, 1, 1, BLACK)
+                locx = TILE * x
+                locy = TILE * y
+                image = exp_sheet.get_image(locx, locy, TILE, TILE, 1, 1, BLACK)
                 self.exp_list.append(image)
+
+        cursor_sheet = SpriteSheet("sprite_game/sprites/cursor.png")
+        self.cursor_image = cursor_sheet.get_image(11,1,16,16)
+        self.cursor_image.set_colorkey(WHITE)
 
     def new(self):
         """Create all game objects, sprites, and groups. Call run() method"""
@@ -95,9 +99,11 @@ class Game:
         self.item_sprites = pg.sprite.Group()
 
         for row in range(len(MAP)):
-            y_loc = row * (16*4)
+            y_loc = row * TILE
             for column in range(len(MAP[0])):
-                x_loc = column * (16*4)
+                x_loc = column * TILE
+                b = Background(x_loc, y_loc, self.grass_image)
+                self.all_sprites.add(b)
                 if MAP[row][column] == "-":
                     w = Wall(x_loc, y_loc, self.screen, self.stone_image)
                     self.wall_sprites.add(w)
@@ -127,8 +133,41 @@ class Game:
                     self.item_sprites.add(b)
                     self.all_sprites.add(b)
 
-        self.player = Player(4*64, 2*64 ,self.screen, self.king_right, self.king_left, self.king_up, self)
+                if MAP[row][column] == "0":
+                    b = Background(x_loc, y_loc, self.grass_sq[0])
+                    self.all_sprites.add(b)
+                elif MAP[row][column] == "1":
+                    b = Background(x_loc, y_loc, self.grass_sq[1])
+                    self.all_sprites.add(b)
+                elif MAP[row][column] == "2":
+                    b = Background(x_loc, y_loc, self.grass_sq[2])
+                    self.all_sprites.add(b)
+                elif MAP[row][column] == "3":
+                    b = Background(x_loc, y_loc, self.grass_sq[3])
+                    self.all_sprites.add(b)
+                elif MAP[row][column] == "4":
+                    b = Background(x_loc, y_loc, self.grass_sq[4])
+                    self.all_sprites.add(b)
+                elif MAP[row][column] == "5":
+                    b = Background(x_loc, y_loc, self.grass_sq[5])
+                    self.all_sprites.add(b)
+                elif MAP[row][column] == "6":
+                    b = Background(x_loc, y_loc, self.grass_sq[6])
+                    self.all_sprites.add(b)
+                elif MAP[row][column] == "7":
+                    b = Background(x_loc, y_loc, self.grass_sq[7])
+                    self.all_sprites.add(b)
+                elif MAP[row][column] == "8":
+                    b = Background(x_loc, y_loc, self.grass_sq[8])
+                    self.all_sprites.add(b)
+                elif MAP[row][column] == "g":
+                    b = Background(x_loc, y_loc, self.flower_image)
+                    self.all_sprites.add(b)
+
+        self.player = Player(4*TILE, 2*TILE ,self.screen, self.king_right, self.king_left, self.king_up, self)
         self.all_sprites.add(self.player)
+
+        self.game_viewer = Camera(MAP_WIDTH, MAP_HEIGHT)
 
         self.run()
 
@@ -153,38 +192,18 @@ class Game:
         
         self.all_sprites.update()
 
+        self.game_viewer.update(self.player)
+
     def draw(self):
         """Fill screen, draw objects, flip."""
         self.screen.fill(BACK)
 
-        for row in range(len(MAP)):
-            y_loc = row * (16*4)
-            for column in range(len(MAP[0])):
-                x_loc = column * (16*4)
-                if MAP[row][column] == "0":
-                    self.screen.blit(self.grass_sq[0], (x_loc, y_loc))
-                elif MAP[row][column] == "1":
-                    self.screen.blit(self.grass_sq[1], (x_loc, y_loc))
-                elif MAP[row][column] == "2":
-                    self.screen.blit(self.grass_sq[2], (x_loc, y_loc))
-                elif MAP[row][column] == "3":
-                    self.screen.blit(self.grass_sq[3], (x_loc, y_loc))
-                elif MAP[row][column] == "4":
-                    self.screen.blit(self.grass_sq[4], (x_loc, y_loc))
-                elif MAP[row][column] == "5":
-                    self.screen.blit(self.grass_sq[5], (x_loc, y_loc))
-                elif MAP[row][column] == "6":
-                    self.screen.blit(self.grass_sq[6], (x_loc, y_loc))
-                elif MAP[row][column] == "7":
-                    self.screen.blit(self.grass_sq[7], (x_loc, y_loc))
-                elif MAP[row][column] == "8":
-                    self.screen.blit(self.grass_sq[8], (x_loc, y_loc))
-                elif MAP[row][column] == "g":
-                    self.screen.blit(self.flower_image, (x_loc, y_loc))
-                else:
-                    self.screen.blit(self.grass_image, (x_loc, y_loc))
+        for sprite in self.all_sprites:
+            self.screen.blit(sprite.image, self.game_viewer.get_view(sprite))
 
-        self.all_sprites.draw(self.screen)
+        # self.all_sprites.draw(self.screen)
+        for i in self.all_sprites:
+            self.screen.blit(i.image, (self.game_viewer.get_view(i)))
 
         pg.display.flip()
 
