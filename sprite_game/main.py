@@ -87,6 +87,9 @@ class Game:
         cursor_sheet = SpriteSheet("sprite_game/sprites/cursor.png")
         self.cursor_image = cursor_sheet.get_image(11,1,16,16)
         self.cursor_image.set_colorkey(WHITE)
+        self.track_image = cursor_sheet.get_image(72,1,4,4,2.5,2.5)
+        self.track_image.set_colorkey(WHITE)
+        self.track_image = pg.transform.rotate(self.track_image, 45)
 
     def new(self):
         """Create all game objects, sprites, and groups. Call run() method"""
@@ -104,34 +107,6 @@ class Game:
                 x_loc = column * TILE
                 b = Background(x_loc, y_loc, self.grass_image)
                 self.all_sprites.add(b)
-                if MAP[row][column] == "-":
-                    w = Wall(x_loc, y_loc, self.screen, self.stone_image)
-                    self.wall_sprites.add(w)
-                    self.block_sprites.add(w)
-                    self.all_sprites.add(w)
-                elif MAP[row][column] == "s":
-                    t = Wall(x_loc, y_loc, self.screen, self.tree_images[6])
-                    self.tree_sprites.add(t)
-                    self.block_sprites.add(t)
-                    self.all_sprites.add(t)
-                elif MAP[row][column] == "o":
-                    t = Wall(x_loc, y_loc, self.screen, self.tree_images[1])
-                    self.tree_sprites.add(t)
-                    self.block_sprites.add(t)
-                    self.all_sprites.add(t)
-                elif MAP[row][column] == "f":
-                    t = Wall(x_loc, y_loc, self.screen, self.tree_images[5])
-                    self.tree_sprites.add(t)
-                    self.block_sprites.add(t)
-                    self.all_sprites.add(t)
-                elif MAP[row][column] == "~":
-                    s = Snake(x_loc, y_loc, self.screen, self.snake_images_r, self.snake_images_l, self, -1)
-                    self.snake_sprites.add(s)
-                    self.all_sprites.add(s)
-                elif MAP[row][column] == "b":
-                    b = Bomb(x_loc, y_loc, self.screen, self.bomb_image)
-                    self.item_sprites.add(b)
-                    self.all_sprites.add(b)
 
                 if MAP[row][column] == "0":
                     b = Background(x_loc, y_loc, self.grass_sq[0])
@@ -164,8 +139,41 @@ class Game:
                     b = Background(x_loc, y_loc, self.flower_image)
                     self.all_sprites.add(b)
 
+                if MAP[row][column] == "-":
+                    w = Wall(x_loc, y_loc, self.screen, self.stone_image)
+                    self.wall_sprites.add(w)
+                    self.block_sprites.add(w)
+                    self.all_sprites.add(w)
+                elif MAP[row][column] == "s":
+                    t = Wall(x_loc, y_loc, self.screen, self.tree_images[6])
+                    self.tree_sprites.add(t)
+                    self.block_sprites.add(t)
+                    self.all_sprites.add(t)
+                elif MAP[row][column] == "o":
+                    t = Wall(x_loc, y_loc, self.screen, self.tree_images[1])
+                    self.tree_sprites.add(t)
+                    self.block_sprites.add(t)
+                    self.all_sprites.add(t)
+                elif MAP[row][column] == "f":
+                    t = Wall(x_loc, y_loc, self.screen, self.tree_images[5])
+                    self.tree_sprites.add(t)
+                    self.block_sprites.add(t)
+                    self.all_sprites.add(t)
+                elif MAP[row][column] == "b":
+                    b = Bomb(x_loc, y_loc, self.screen, self.bomb_image)
+                    self.item_sprites.add(b)
+                    self.all_sprites.add(b)
+                elif MAP[row][column] == "~":
+                    s = Snake(x_loc, y_loc, self.screen, self.snake_images_r, self.snake_images_l, self, -1)
+                    self.snake_sprites.add(s)
+                    self.all_sprites.add(s)
+
         self.player = Player(4*TILE, 2*TILE ,self.screen, self.king_right, self.king_left, self.king_up, self)
         self.all_sprites.add(self.player)
+        self.tracker = Tracker(self.player, self.snake_sprites, self.cursor_image, self)
+        self.all_sprites.add(self.tracker)
+        self.tracked = Marker(self.track_image)
+        self.all_sprites.add(self.tracked)
 
         self.game_viewer = Camera(MAP_WIDTH, MAP_HEIGHT)
 
@@ -174,7 +182,7 @@ class Game:
     def update(self):
         """Run all updates."""
 
-        if len(self.snake_sprites) == 0:
+        if len(self.snake_sprites) < ENEMY_NUMBER:
             s = Snake(rand.randint(70, 930), rand.randint(70, 530), self.screen, self.snake_images_r, self.snake_images_l, self, rand.choice([-1,1]))
             for i in self.wall_sprites:
                 if s.rect.x == i.rect.x and s.rect.y == i.rect.y:

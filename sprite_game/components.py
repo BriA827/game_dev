@@ -1,5 +1,7 @@
 import pygame as pg
 from settings import *
+import math
+from pygame.math import Vector2 as vec
 
 class SpriteSheet():
     def __init__(self, filename):
@@ -19,13 +21,18 @@ class SpriteSheet():
 class Player(pg.sprite.Sprite):
     def __init__(self,x,y, display, right_ani, left_ani, up_ani, game):
         pg.sprite.Sprite.__init__(self)
-
         self.right_ani = right_ani
         self.left_ani = left_ani
         self.up_ani = up_ani
 
         self.image = self.right_ani[0]
         self.rect = self.image.get_rect()
+        self.hit_rect = pg.Rect(0,0,32,32)
+        self.rot_speed = 200
+        self.hit_rect.center = self.rect.center
+        self.vel = vec(0,0)
+        self.rot = 0
+        self.pos = vec(x,y) *TILE
         self.self = self
         self.rect.x = x
         self.rect.y = y
@@ -258,14 +265,33 @@ class Background(pg.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
-class Tracker(pg.sprite.Sprite, pg.math.Vector2):
-    def __init__(self, x, y, owner, target, image):
+class Marker(pg.sprite.Sprite):
+    def __init__(self, image):
         pg.sprite.Sprite.__init__(self)
-        pg.math.Vector2.__init__(self)
         self.self = self
         self.image = image
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+
+class Tracker(pg.sprite.Sprite):
+    def __init__(self, owner, target, image, game):
+        pg.sprite.Sprite.__init__(self)
+        self.self = self
+        self.game = game
+        self.image = image
+        self.rect = self.image.get_rect()
         self.owner = owner
-        self.target = target
+        self.targets = target
+        self.target = None
+        self.angle = (180+90)/2
+
+    def update(self):
+        self.target = min([s for s in self.targets], key= lambda s: math.sqrt(((s.rect.center[0] - self.owner.rect.center[0])**2) + ((s.rect.center[1] - self.owner.rect.center[1])**2)))
+        self.rect.x, self.rect.y = self.owner.rect.center[0] - 5,  self.owner.rect.top - 20
+        if self.target.velo < 0:
+            self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]-15, self.target.rect.top
+        else:
+             self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]+1, self.target.rect.top
+
+        angle = (math.atan(self.target.rect.center[1]/self.target.rect.center[0])) * (180/math.pi)
+        self.angle = self.angle + angle
+        self.image = pg.transform.rotate(self.image, self.angle)
