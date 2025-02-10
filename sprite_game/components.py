@@ -19,7 +19,7 @@ class SpriteSheet():
         return image
     
 class Player(pg.sprite.Sprite):
-    def __init__(self,x,y, display, right_ani, left_ani, up_ani, game):
+    def __init__(self, x, y, display, right_ani, left_ani, up_ani, game):
         pg.sprite.Sprite.__init__(self)
         self.right_ani = right_ani
         self.left_ani = left_ani
@@ -110,6 +110,7 @@ class Player(pg.sprite.Sprite):
 
         self.collide_snake()
         self.collide_item()
+        self.collide_door()
 
     def collide_wall(self, dir):
         if dir == 'x':
@@ -119,7 +120,7 @@ class Player(pg.sprite.Sprite):
                     self.x = self.hits[0].rect.left - self.rect.width
                 elif self.self.x_change < 0:
                     self.x = self.hits[0].rect.right
-                self.x_change=0
+                self.x_change = 0
                 self.rect.x = self.x
 
         if dir == 'y':
@@ -141,6 +142,12 @@ class Player(pg.sprite.Sprite):
         for i in sp:
             if "Bomb" in str(type(i)) and i in hits:
                 self.inv.append("Bomb")
+
+    def collide_door(self):
+        hits = pg.sprite.spritecollide(self, self.game.wall_sprites, False)
+        if hits:
+            if hits[0].image == self.game.house_images[13]:
+                current_map = HOUSE
 
 class Wall(pg.sprite.Sprite):
     def __init__(self, x, y, display, image, bomb =False):
@@ -293,5 +300,20 @@ class Tracker(pg.sprite.Sprite):
              self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]+1, self.target.rect.top
 
         angle = (math.atan(self.target.rect.center[1]/self.target.rect.center[0])) * (180/math.pi)
-        self.angle = self.angle + angle
-        self.image = pg.transform.rotate(self.image, self.angle)
+        # self.angle = self.angle + angle
+        # self.image = pg.transform.rotate(self.image, self.angle)
+
+# class House(pg.sprite.Sprite):
+#     def __init__(self, x, y, image, image_list, game, size):
+#         pg.sprite.Sprite.__init__(self)
+#         self.self = self
+#         self.image = image
+#         self.rect = self.image.get_rect()
+#         self.rect.x = x
+#         self.rect.y = y
+#         self.images = image_list
+#         self.game = game
+#         self.size = size
+
+#     def gen(self):
+        
