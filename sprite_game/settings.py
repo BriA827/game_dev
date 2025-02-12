@@ -10,8 +10,7 @@ ORANGE = [255, 69, 0]
 GREY = [120,120,120]
 NEW_CHARS = [160, 160, 160]
 TIES = [63, 38, 49]
-
-BACK = [30,57,22]
+DARK_GREEN = [30,57,22]
 
 FPS = 60
 
@@ -36,10 +35,10 @@ HOUSE = ["[______________]",
          "[              ]",
          "[              ]",
          "[              ]",
+         "[              ]",
+         "[              ]",
          "[__________D___]",
 ]
-
-current_map = OVERWORLD
 
 #ints = dirt_path, g = flowers, - = wall, o/s/f = tree, ~ = snake, blank = grass, b = bomb, h = house
 #lmcr = leftroof, middleroof, chimney, rightroof --- LMR = leftwall, middlewall, rightwall --- [_D] = side, wall, door, side
@@ -49,7 +48,10 @@ TILE = 64
 WIDTH = 1000
 HEIGHT = 600
 
-MAP_WIDTH = len(current_map[0]) * 64
-MAP_HEIGHT = len(current_map) * 64
+O_MAP_WIDTH = len(OVERWORLD[0]) * 64
+O_MAP_HEIGHT = len(OVERWORLD) * 64
+
+H_MAP_WIDTH = len(HOUSE[0]) * 64
+H_MAP_HEIGHT = len(HOUSE) * 64
 
 ENEMY_NUMBER = 2

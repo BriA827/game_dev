@@ -144,10 +144,12 @@ class Player(pg.sprite.Sprite):
                 self.inv.append("Bomb")
 
     def collide_door(self):
-        hits = pg.sprite.spritecollide(self, self.game.wall_sprites, False)
+        hits = pg.sprite.spritecollide(self, self.game.door_sprites, False)
         if hits:
-            if hits[0].image == self.game.house_images[13]:
-                current_map = HOUSE
+            if self.game.map == OVERWORLD:
+                return HOUSE
+            else:
+                return OVERWORLD
 
 class Wall(pg.sprite.Sprite):
     def __init__(self, x, y, display, image, bomb =False):
@@ -292,28 +294,25 @@ class Tracker(pg.sprite.Sprite):
         self.angle = (180+90)/2
 
     def update(self):
-        self.target = min([s for s in self.targets], key= lambda s: math.sqrt(((s.rect.center[0] - self.owner.rect.center[0])**2) + ((s.rect.center[1] - self.owner.rect.center[1])**2)))
-        self.rect.x, self.rect.y = self.owner.rect.center[0] - 5,  self.owner.rect.top - 20
-        if self.target.velo < 0:
-            self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]-15, self.target.rect.top
-        else:
-             self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]+1, self.target.rect.top
+        if self.game.map == OVERWORLD:
+            self.target = min([s for s in self.targets], key= lambda s: math.sqrt(((s.rect.center[0] - self.owner.rect.center[0])**2) + ((s.rect.center[1] - self.owner.rect.center[1])**2)))
+            self.rect.x, self.rect.y = self.owner.rect.center[0] - 5,  self.owner.rect.top - 20
+            if self.target.velo < 0:
+                self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]-15, self.target.rect.top
+            else:
+                self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]+1, self.target.rect.top
 
-        angle = (math.atan(self.target.rect.center[1]/self.target.rect.center[0])) * (180/math.pi)
-        # self.angle = self.angle + angle
-        # self.image = pg.transform.rotate(self.image, self.angle)
+            angle = (math.atan(self.target.rect.center[1]/self.target.rect.center[0])) * (180/math.pi)
+            # self.angle = self.angle + angle
+            # self.image = pg.transform.rotate(self.image, self.angle)
 
-# class House(pg.sprite.Sprite):
-#     def __init__(self, x, y, image, image_list, game, size):
-#         pg.sprite.Sprite.__init__(self)
-#         self.self = self
-#         self.image = image
-#         self.rect = self.image.get_rect()
-#         self.rect.x = x
-#         self.rect.y = y
-#         self.images = image_list
-#         self.game = game
-#         self.size = size
-
-#     def gen(self):
-        
+class Door(pg.sprite.Sprite):
+    def __init__(self, x, y, display, image, game):
+        pg.sprite.Sprite.__init__(self)
+        self.self = self
+        self.display = display
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.game = game

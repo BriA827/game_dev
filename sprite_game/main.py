@@ -99,8 +99,9 @@ class Game:
         self.track_image.set_colorkey(WHITE)
         self.track_image = pg.transform.rotate(self.track_image, 45)
 
-    def new(self):
+    def new(self, map, start):
         """Create all game objects, sprites, and groups. Call run() method"""
+        self.map = map
         
         self.wall_sprites = pg.sprite.Group()
         self.tree_sprites = pg.sprite.Group()
@@ -108,147 +109,151 @@ class Game:
         self.snake_sprites = pg.sprite.Group()
         self.all_sprites = pg.sprite.Group()
         self.item_sprites = pg.sprite.Group()
+        self.door_sprites = pg.sprite.Group()
 
-        for row in range(len(current_map)):
+        for row in range(len(map)):
             y_loc = row * TILE
-            for column in range(len(current_map[0])):
+            for column in range(len(map[0])):
                 x_loc = column * TILE
-                b = Background(x_loc, y_loc, self.grass_image)
-                self.all_sprites.add(b)
+                if map == OVERWORLD:
+                    b = Background(x_loc, y_loc, self.grass_image)
+                    self.all_sprites.add(b)
 
-                if current_map[row][column] == "0":
+                if map[row][column] == "0":
                     b = Background(x_loc, y_loc, self.grass_sq[0])
                     self.all_sprites.add(b)
-                elif current_map[row][column] == "1":
+                elif map[row][column] == "1":
                     b = Background(x_loc, y_loc, self.grass_sq[1])
                     self.all_sprites.add(b)
-                elif current_map[row][column] == "2":
+                elif map[row][column] == "2":
                     b = Background(x_loc, y_loc, self.grass_sq[2])
                     self.all_sprites.add(b)
-                elif current_map[row][column] == "3":
+                elif map[row][column] == "3":
                     b = Background(x_loc, y_loc, self.grass_sq[3])
                     self.all_sprites.add(b)
-                elif current_map[row][column] == "4":
+                elif map[row][column] == "4":
                     b = Background(x_loc, y_loc, self.grass_sq[4])
                     self.all_sprites.add(b)
-                elif current_map[row][column] == "5":
+                elif map[row][column] == "5":
                     b = Background(x_loc, y_loc, self.grass_sq[5])
                     self.all_sprites.add(b)
-                elif current_map[row][column] == "6":
+                elif map[row][column] == "6":
                     b = Background(x_loc, y_loc, self.grass_sq[6])
                     self.all_sprites.add(b)
-                elif current_map[row][column] == "7":
+                elif map[row][column] == "7":
                     b = Background(x_loc, y_loc, self.grass_sq[7])
                     self.all_sprites.add(b)
-                elif current_map[row][column] == "8":
+                elif map[row][column] == "8":
                     b = Background(x_loc, y_loc, self.grass_sq[8])
                     self.all_sprites.add(b)
-                elif current_map[row][column] == "g":
+                elif map[row][column] == "g":
                     b = Background(x_loc, y_loc, self.flower_image)
                     self.all_sprites.add(b)
 
-                if current_map[row][column] == "-":
+                if map[row][column] == "-":
                     w = Wall(x_loc, y_loc, self.screen, self.stone_image)
                     self.wall_sprites.add(w)
                     self.block_sprites.add(w)
                     self.all_sprites.add(w)
-                elif current_map[row][column] == "s":
+                elif map[row][column] == "s":
                     t = Wall(x_loc, y_loc, self.screen, self.tree_images[6])
                     self.tree_sprites.add(t)
                     self.block_sprites.add(t)
                     self.all_sprites.add(t)
-                elif current_map[row][column] == "o":
+                elif map[row][column] == "o":
                     t = Wall(x_loc, y_loc, self.screen, self.tree_images[1])
                     self.tree_sprites.add(t)
                     self.block_sprites.add(t)
                     self.all_sprites.add(t)
-                elif current_map[row][column] == "f":
+                elif map[row][column] == "f":
                     t = Wall(x_loc, y_loc, self.screen, self.tree_images[5])
                     self.tree_sprites.add(t)
                     self.block_sprites.add(t)
                     self.all_sprites.add(t)
-                elif current_map[row][column] == "b":
+                elif map[row][column] == "b":
                     b = Bomb(x_loc, y_loc, self.screen, self.bomb_image)
                     self.item_sprites.add(b)
                     self.all_sprites.add(b)
-                elif current_map[row][column] == "~":
+                elif map[row][column] == "~":
                     s = Snake(x_loc, y_loc, self.screen, self.snake_images_r, self.snake_images_l, self, -1)
                     self.snake_sprites.add(s)
                     self.all_sprites.add(s)
-                elif current_map[row][column] == "l":
+                elif map[row][column] == "l":
                     n = Wall(x_loc, y_loc, self.screen, self.house_images[0])
                     self.wall_sprites.add(n)
                     self.all_sprites.add(n)
                     self.block_sprites.add(n)
-                elif current_map[row][column] == "m":
+                elif map[row][column] == "m":
                     n = Wall(x_loc, y_loc, self.screen, self.house_images[1])
                     self.wall_sprites.add(n)
                     self.all_sprites.add(n)
                     self.block_sprites.add(n)
-                elif current_map[row][column] == "c":
+                elif map[row][column] == "c":
                     n = Wall(x_loc, y_loc, self.screen, self.house_images[3])
                     self.wall_sprites.add(n)
                     self.all_sprites.add(n)
                     self.block_sprites.add(n)
-                elif current_map[row][column] == "r":
+                elif map[row][column] == "r":
                     n = Wall(x_loc, y_loc, self.screen, self.house_images[2])
                     self.wall_sprites.add(n)
                     self.all_sprites.add(n)
                     self.block_sprites.add(n)
-                elif current_map[row][column] == "L":
+                elif map[row][column] == "L":
                     n = Wall(x_loc, y_loc, self.screen, self.house_images[4])
                     self.wall_sprites.add(n)
                     self.all_sprites.add(n)
                     self.block_sprites.add(n)
-                elif current_map[row][column] == "M":
+                elif map[row][column] == "M":
                     n = Wall(x_loc, y_loc, self.screen, self.house_images[5])
                     self.wall_sprites.add(n)
                     self.all_sprites.add(n)
                     self.block_sprites.add(n)
-                elif current_map[row][column] == "R":
+                elif map[row][column] == "R":
                     n = Wall(x_loc, y_loc, self.screen, self.house_images[6])
                     self.wall_sprites.add(n)
                     self.all_sprites.add(n)
                     self.block_sprites.add(n)
-                elif current_map[row][column] == "[":
+                elif map[row][column] == "[":
                     n = Wall(x_loc, y_loc, self.screen, self.house_images[8])
                     self.wall_sprites.add(n)
                     self.all_sprites.add(n)
                     self.block_sprites.add(n)
-                elif current_map[row][column] == "_":
+                elif map[row][column] == "_":
                     n = Wall(x_loc, y_loc, self.screen, self.house_images[9])
                     self.wall_sprites.add(n)
                     self.all_sprites.add(n)
                     self.block_sprites.add(n)
-                elif current_map[row][column] == "D":
-                    n = Wall(x_loc, y_loc, self.screen, self.house_images[13])
-                    self.wall_sprites.add(n)
+                elif map[row][column] == "D":
+                    n = Door(x_loc, y_loc, self.screen, self.house_images[13], self)
+                    self.door_sprites.add(n)
                     self.all_sprites.add(n)
-                elif current_map[row][column] == "]":
+                elif map[row][column] == "]":
                     n = Wall(x_loc, y_loc, self.screen, self.house_images[11])
                     self.wall_sprites.add(n)
                     self.all_sprites.add(n)
                     self.block_sprites.add(n)
 
-        self.player = Player(4*TILE, 2*TILE ,self.screen, self.king_right, self.king_left, self.king_up, self)
+        self.player = Player(start[0], start[1] ,self.screen, self.king_right, self.king_left, self.king_up, self)
         self.all_sprites.add(self.player)
-        self.tracker = Tracker(self.player, self.snake_sprites, self.cursor_image, self)
-        self.all_sprites.add(self.tracker)
-        self.tracked = Marker(self.track_image)
-        self.all_sprites.add(self.tracked)
 
-        self.game_viewer = Camera(MAP_WIDTH, MAP_HEIGHT)
+        if self.map == OVERWORLD:
+            self.tracker = Tracker(self.player, self.snake_sprites, self.cursor_image, self)
+            self.all_sprites.add(self.tracker)
+            self.tracked = Marker(self.track_image)
+            self.all_sprites.add(self.tracked)
+
+        if self.map == OVERWORLD:
+            self.game_viewer = Camera(O_MAP_WIDTH, O_MAP_HEIGHT)
+        elif self.map == HOUSE:
+             self.game_viewer = Camera(H_MAP_WIDTH, H_MAP_HEIGHT)
 
         self.run()
 
     def update(self):
         """Run all updates."""
 
-        if len(self.snake_sprites) < ENEMY_NUMBER:
+        if len(self.snake_sprites) < ENEMY_NUMBER and self.map == OVERWORLD:
             s = Snake(rand.randint(70, 930), rand.randint(70, 530), self.screen, self.snake_images_r, self.snake_images_l, self, rand.choice([-1,1]))
-            for i in self.wall_sprites:
-                if s.rect.x == i.rect.x and s.rect.y == i.rect.y:
-                    s.kill()
             self.snake_sprites.add(s)
             self.all_sprites.add(s)
 
@@ -264,9 +269,23 @@ class Game:
 
         self.game_viewer.update(self.player)
 
+        new_map = self.player.collide_door()
+        if new_map:
+            hits = pg.sprite.spritecollide(self.player, self.door_sprites, False)
+            if new_map == OVERWORLD:
+                new_start = None
+            elif new_map == HOUSE:
+               for i in new_map:
+                   if "D" in i:
+                       print(i)
+            game.new(new_map, new_start)
+
     def draw(self):
         """Fill screen, draw objects, flip."""
-        self.screen.fill(BACK)
+        if self.map == OVERWORLD:
+            self.screen.fill(DARK_GREEN)
+        elif self.map == HOUSE:
+            self.screen.fill(BLACK)
 
         # self.all_sprites.draw(self.screen)
         for i in self.all_sprites:
@@ -311,7 +330,7 @@ game = Game()
 game.show_start_screen()
 
 while game.running:
-    game.new()
-    game.game_over()
+    game.new(OVERWORLD, (4*TILE, 2*TILE))
+    # game.game_over()
 
 pg.quit()
