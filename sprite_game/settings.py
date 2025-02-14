@@ -14,7 +14,8 @@ DARK_GREEN = [30,57,22]
 
 FPS = 60
 
-OVERWORLD = ["----------------------------",
+OVERWORLD = [
+       "----------------------------",
        "- 01112                g   -",
        "- 34445   g       lmcr     -",
        "- 64448           LMMR     -",
@@ -37,7 +38,9 @@ HOUSE = ["[______________]",
          "[              ]",
          "[              ]",
          "[              ]",
-         "[__________D___]",
+         "[              ]",
+         "[              ]",
+         "[_________D____]",
 ]
 
 #ints = dirt_path, g = flowers, - = wall, o/s/f = tree, ~ = snake, blank = grass, b = bomb, h = house
@@ -48,10 +51,10 @@ TILE = 64
 WIDTH = 1000
 HEIGHT = 600
 
-O_MAP_WIDTH = len(OVERWORLD[0]) * 64
-O_MAP_HEIGHT = len(OVERWORLD) * 64
+O_MAP_WIDTH = len(OVERWORLD[0]) * TILE
+O_MAP_HEIGHT = len(OVERWORLD) * TILE
 
-H_MAP_WIDTH = len(HOUSE[0]) * 64
-H_MAP_HEIGHT = len(HOUSE) * 64
+H_MAP_WIDTH = len(HOUSE[0]) * TILE
+H_MAP_HEIGHT = len(HOUSE) * TILE
 
 ENEMY_NUMBER = 2

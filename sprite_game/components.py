@@ -27,12 +27,12 @@ class Player(pg.sprite.Sprite):
 
         self.image = self.right_ani[0]
         self.rect = self.image.get_rect()
-        self.hit_rect = pg.Rect(0,0,32,32)
-        self.rot_speed = 200
-        self.hit_rect.center = self.rect.center
-        self.vel = vec(0,0)
-        self.rot = 0
-        self.pos = vec(x,y) *TILE
+        # self.hit_rect = pg.Rect(0,0,32,32)
+        # self.rot_speed = 200
+        # self.hit_rect.center = self.rect.center
+        # self.vel = vec(0,0)
+        # self.rot = 0
+        # self.pos = vec(x,y) *TILE
         self.self = self
         self.rect.x = x
         self.rect.y = y
@@ -164,7 +164,7 @@ class Wall(pg.sprite.Sprite):
         self.bomb = bomb
 
 class Snake(pg.sprite.Sprite):
-    def __init__(self, x, y, display, right, left, game, d):
+    def __init__(self, x, y, display, right, left, game):
         pg.sprite.Sprite.__init__(self)
         self.game = game
         self.self = self
@@ -175,14 +175,30 @@ class Snake(pg.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.display = display
-        self.velo = 3 * d
+        self.velo = 3
 
         self.current_frame = 0
         self.delay = 70
         self.last = pg.time.get_ticks()
     
     def update(self):
+        self.targetx = self.game.player.rect.center[0]
+        self.targety = self.game.player.rect.center[1]
+        
         self.rect.x += self.velo
+
+        # if self.rect.center[0] > self.targetx:
+        #     self.rect.x -= self.velo
+        #     self.direct = self.left
+        # else:
+        #     self.rect.x += self.velo
+        #     self.direct = self.right
+
+        # if self.rect.center[1] > self.targety:
+        #     self.rect.y -= self.velo
+        # else:
+        #     self.rect.y += self.velo
+
         self.now = pg.time.get_ticks()
 
         if self.velo > 0:
@@ -198,6 +214,7 @@ class Snake(pg.sprite.Sprite):
         hits = pg.sprite.spritecollide(self, self.game.wall_sprites, False)
         if hits:
             self.velo = self.velo * -1
+            # self.velo = 0
 
 class Bomb(pg.sprite.Sprite):
     def __init__(self, x, y, display, image):
@@ -288,15 +305,23 @@ class Tracker(pg.sprite.Sprite):
         self.game = game
         self.image = image
         self.rect = self.image.get_rect()
+
         self.owner = owner
         self.targets = target
         self.target = None
+
         self.angle = (180+90)/2
+        self.hit_rect = pg.Rect(0,0,32,32)
+        self.rot_speed = 200
+        self.hit_rect.center = self.rect.center
+        self.vel = vec(0,0)
+        self.rot = 0
 
     def update(self):
         if self.game.map == OVERWORLD:
             self.target = min([s for s in self.targets], key= lambda s: math.sqrt(((s.rect.center[0] - self.owner.rect.center[0])**2) + ((s.rect.center[1] - self.owner.rect.center[1])**2)))
             self.rect.x, self.rect.y = self.owner.rect.center[0] - 5,  self.owner.rect.top - 20
+            self.pos = vec(self.rect.x,self.rect.y) *TILE
             if self.target.velo < 0:
                 self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]-15, self.target.rect.top
             else:
@@ -305,6 +330,10 @@ class Tracker(pg.sprite.Sprite):
             angle = (math.atan(self.target.rect.center[1]/self.target.rect.center[0])) * (180/math.pi)
             # self.angle = self.angle + angle
             # self.image = pg.transform.rotate(self.image, self.angle)
+        
+        # self.image = pg.transform.rotate(self.originl_image, self.rot)
+        # self.rect = self.image.get_rect()
+        # self.rect.center = self.pos
 
 class Door(pg.sprite.Sprite):
     def __init__(self, x, y, display, image, game):

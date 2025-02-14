@@ -49,6 +49,12 @@ class Game:
                 image = tile_sheet.get_image(locx, locy, 16, 16, 4, 4)
                 self.house_images.append(image)
 
+        self.floor_images = []
+        for i in range(4):
+            wood = SpriteSheet(f"sprite_game/sprites/spr_wood_texture_{i}.png")
+            img = wood.get_image(0,0, 16,16, 4,4)
+            self.floor_images.append(img)
+
         # zombie_sheet = SpriteSheet("sprite_game/sprites/spritesheet_characters.png")
         # self.green_player_image = zombie_sheet.get_image(0,0,57,44,True)
         # self.zombie_walk_image = zombie_sheet.get_image(425,0,37,44,True)
@@ -118,6 +124,9 @@ class Game:
                 if map == OVERWORLD:
                     b = Background(x_loc, y_loc, self.grass_image)
                     self.all_sprites.add(b)
+                elif map == HOUSE:
+                    b = Background(x_loc, y_loc, self.floor_images[1])
+                    self.all_sprites.add(b)
 
                 if map[row][column] == "0":
                     b = Background(x_loc, y_loc, self.grass_sq[0])
@@ -175,7 +184,7 @@ class Game:
                     self.item_sprites.add(b)
                     self.all_sprites.add(b)
                 elif map[row][column] == "~":
-                    s = Snake(x_loc, y_loc, self.screen, self.snake_images_r, self.snake_images_l, self, -1)
+                    s = Snake(x_loc, y_loc, self.screen, self.snake_images_r, self.snake_images_l, self)
                     self.snake_sprites.add(s)
                     self.all_sprites.add(s)
                 elif map[row][column] == "l":
@@ -225,6 +234,7 @@ class Game:
                     self.block_sprites.add(n)
                 elif map[row][column] == "D":
                     n = Door(x_loc, y_loc, self.screen, self.house_images[13], self)
+                    self.wall_sprites.add(n)
                     self.door_sprites.add(n)
                     self.all_sprites.add(n)
                 elif map[row][column] == "]":
@@ -253,7 +263,7 @@ class Game:
         """Run all updates."""
 
         if len(self.snake_sprites) < ENEMY_NUMBER and self.map == OVERWORLD:
-            s = Snake(rand.randint(70, 930), rand.randint(70, 530), self.screen, self.snake_images_r, self.snake_images_l, self, rand.choice([-1,1]))
+            s = Snake(rand.randint(70, 930), rand.randint(70, 530), self.screen, self.snake_images_r, self.snake_images_l, self)
             self.snake_sprites.add(s)
             self.all_sprites.add(s)
 
@@ -274,10 +284,14 @@ class Game:
             hits = pg.sprite.spritecollide(self.player, self.door_sprites, False)
             if new_map == OVERWORLD:
                 new_start = None
+                for i in range(len(new_map)):
+                    if "D" in new_map[i]:
+                       new_start = [new_map[i].index("D")*TILE, i*TILE + TILE]
             elif new_map == HOUSE:
-               for i in new_map:
-                   if "D" in i:
-                       print(i)
+                new_start = None
+                for i in range(len(new_map)):
+                    if "D" in new_map[i]:
+                       new_start = [new_map[i].index("D")*TILE, i*TILE - TILE]
             game.new(new_map, new_start)
 
     def draw(self):
