@@ -119,7 +119,7 @@ class Game:
         self.door_sprites = pg.sprite.Group()
 
         self.tile_map = pytmx.load_pygame("/Users/242413/Desktop/game_dev/tiles/test.tmx")
-
+        # print(dir(self.tile_map))
         for row in range(len(map)):
             y_loc = row * TILE
             for column in range(len(map[0])):
