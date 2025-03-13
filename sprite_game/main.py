@@ -2,6 +2,7 @@ import pygame as pg
 import random as rand
 from settings import *
 from components import *
+import pytmx
 
 class Game:
     def __init__(self):
@@ -116,6 +117,8 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.item_sprites = pg.sprite.Group()
         self.door_sprites = pg.sprite.Group()
+
+        self.tile_map = pytmx.load_pygame("/Users/242413/Desktop/game_dev/tiles/test.tmx")
 
         for row in range(len(map)):
             y_loc = row * TILE
