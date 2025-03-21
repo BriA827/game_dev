@@ -110,7 +110,6 @@ class Player(pg.sprite.Sprite):
 
         self.collide_snake()
         self.collide_item()
-        self.collide_door()
 
     def collide_wall(self, dir):
         if dir == 'x':
@@ -143,21 +142,24 @@ class Player(pg.sprite.Sprite):
             if "Bomb" in str(type(i)) and i in hits:
                 self.inv.append("Bomb")
 
-    def collide_door(self):
-        hits = pg.sprite.spritecollide(self, self.game.door_sprites, False)
-        if hits:
-            if self.game.map == OVERWORLD:
-                return HOUSE
-            else:
-                return OVERWORLD
+    # def collide_door(self):
+    #     hits = pg.sprite.spritecollide(self, self.game.door_sprites, False)
+    #     if hits:
+    #         if self.game.map == OVERWORLD:
+    #             return HOUSE
+    #         else:
+    #             return OVERWORLD
 
 class Wall(pg.sprite.Sprite):
-    def __init__(self, x, y, display, image, bomb =False):
+    def __init__(self, x, y, display, height, width, image = None, bomb = False):
         pg.sprite.Sprite.__init__(self)
 
         self.self = self
-        self.image = image
-        self.rect = self.image.get_rect()
+        if image:
+            self.image = image
+            self.rect = self.image.get_rect()
+        else:
+            self.rect = pg.Rect(x, y, width, height)
         self.rect.x = x
         self.rect.y = y
         self.display = display
@@ -211,12 +213,32 @@ class Snake(pg.sprite.Sprite):
                 self.image = self.direct[self.current_frame]
                 self.last = self.now
         
-        hits = pg.sprite.spritecollide(self, self.game.wall_sprites, False)
+        hits = pg.sprite.spritecollide(self, self.game.block_sprites, False)
         if hits:
             self.velo = self.velo * -1
             # self.velo = 0
 
 class Bomb(pg.sprite.Sprite):
+    def __init__(self, x, y, display, image):
+        pg.sprite.Sprite.__init__(self)
+        self.self = self
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.display = display
+
+class Key(pg.sprite.Sprite):
+    def __init__(self, x, y, display, image):
+        pg.sprite.Sprite.__init__(self)
+        self.self = self
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.display = display
+
+class Item(pg.sprite.Sprite):
     def __init__(self, x, y, display, image):
         pg.sprite.Sprite.__init__(self)
         self.self = self

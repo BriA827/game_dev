@@ -14,42 +14,10 @@ DARK_GREEN = [30,57,22]
 
 FPS = 60
 
-OVERWORLD = [
-       "----------------------------",
-       "- 01112                g   -",
-       "- 34445   g       lmcr     -",
-       "- 64448           LMMR     -",
-       "- g345            [_D]     -",
-       "-  345      g              -",
-       "-  345    o          g     -",
-       "-  678    sf          01111-",
-       "-     g              044444-",
-       "-                   0444444-",
-       "-                  04444444-",
-       "- g            g   34444444-",
-       "-                  34444444-",
-       "----------------------------"
-]
-
-HOUSE = ["[______________]",
-         "[              ]",
-         "[              ]",
-         "[              ]",
-         "[              ]",
-         "[              ]",
-         "[              ]",
-         "[              ]",
-         "[              ]",
-         "[_________D____]",
-]
-
-#ints = dirt_path, g = flowers, - = wall, o/s/f = tree, ~ = snake, blank = grass, b = bomb, h = house
-#lmcr = leftroof, middleroof, chimney, rightroof --- LMR = leftwall, middlewall, rightwall --- [_D] = side, wall, door, side
-
 TILE = 64
 
-WIDTH = 1200
-HEIGHT = 800
+WIDTH = 1000
+HEIGHT = 600
 
 # O_MAP_WIDTH = len(OVERWORLD[0]) * TILE
 # O_MAP_HEIGHT = len(OVERWORLD) * TILE

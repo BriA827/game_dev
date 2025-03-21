@@ -73,13 +73,13 @@ class Game:
 
         for i in range(10):
             if i <= 5:
-                king_r = chars_sheet.get_image(786+(TILE*i),10*18-1, 30,46,1.2,1.2)
+                king_r = chars_sheet.get_image(786+(TILE*i),10*18-1, 30,46,1.1,1.1)
                 king_r.set_colorkey(NEW_CHARS)
                 self.king_right.append(king_r)
                 king_l = pg.transform.flip(king_r, True, False)
                 self.king_left.append(king_l)
             else:
-                king_up = chars_sheet.get_image(784+TILE+(TILE*i),10*18-1, 30,46,1.2,1.2)
+                king_up = chars_sheet.get_image(784+TILE+(TILE*i),10*18-1, 30,46,1.1,1.1)
                 king_up.set_colorkey(NEW_CHARS)
                 self.king_up.append(king_up)
 
@@ -110,8 +110,7 @@ class Game:
     def new(self, start):
         """Create all game objects, sprites, and groups. Call run() method"""
         # self.map = map
-        
-        self.wall_sprites = pg.sprite.Group()
+
         self.tree_sprites = pg.sprite.Group()
         self.block_sprites = pg.sprite.Group()
         self.snake_sprites = pg.sprite.Group()
@@ -132,10 +131,26 @@ class Game:
             elif isinstance(layer, pytmx.TiledObjectGroup):
                 for obj in layer:
                     if obj.name == "key":
-                        k = Bomb((obj.x/16)*64, (obj.y/16)*64, self.screen, obj.image)
+                        im = pg.transform.scale(obj.image, (TILE/2,TILE/2))
+                        k = Key((obj.x/16)*64, (obj.y/16)*64, self.screen, im)
                         self.item_sprites.add(k)
                         self.all_sprites.add(k)
-
+                    elif obj.name == "mush" or obj.name == "pitchfork" or obj.name == "bow" or obj.name == "arrow" or obj.name == "log" or obj.name =="bucket":
+                        im = pg.transform.scale(obj.image, (TILE/2,TILE/2))
+                        it = Item((obj.x/16)*64, (obj.y/16)*64, self.screen, im)
+                        self.item_sprites.add(it)
+                        self.all_sprites.add(it)
+                    elif layer.name == "collide":
+                        w = Wall((obj.x/16)*64, (obj.y/16)*64, self.screen, (obj.height/16)*64, (obj.width/16)*64)
+                        self.block_sprites.add(w)
+                    # elif layer.name == "interact" and "door" not in obj.name and obj.image:
+                    #     im = pg.transform.scale(obj.image, (TILE/2,TILE/2))
+                    #     w = Wall((obj.x/16)*64, (obj.y/16)*64, self.screen, (obj.height/16)*64, (obj.width/16)*64, image=im)
+                    #     self.block_sprites.add(w)
+                    elif obj.name == "snake":
+                        s = Snake((obj.x/16)*64, (obj.y/16)*64, self.screen, self.snake_images_r, self.snake_images_l, self)
+                        self.snake_sprites.add(s)
+                        self.all_sprites.add(s)
         
         self.player = Player(start[0], start[1] ,self.screen, self.king_right, self.king_left, self.king_up, self)
         self.all_sprites.add(self.player)
@@ -146,8 +161,8 @@ class Game:
 
     def update(self):
         """Run all updates."""
-        for i in self.all_sprites:
-            i.update()
+        self.all_sprites.update()
+        self.block_sprites.update()
         self.game_viewer.update(self.player)
 
     def draw(self):
@@ -196,7 +211,7 @@ game = Game()
 game.show_start_screen()
 
 while game.running:
-    game.new((8.3*TILE, 3.9*TILE))
+    game.new((8.25*TILE, 4*TILE))
     # game.game_over()
 
 pg.quit()
