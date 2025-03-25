@@ -107,55 +107,61 @@ class Game:
         self.track_image.set_colorkey(WHITE)
         self.track_image = pg.transform.rotate(self.track_image, 45)
 
-    def new(self, start):
+    def new(self):
         """Create all game objects, sprites, and groups. Call run() method"""
         # self.map = map
 
-        self.tree_sprites = pg.sprite.Group()
         self.block_sprites = pg.sprite.Group()
         self.snake_sprites = pg.sprite.Group()
         self.all_sprites = pg.sprite.Group()
         self.item_sprites = pg.sprite.Group()
-        self.door_sprites = pg.sprite.Group()
 
         self.map_tiles = pg.sprite.Group()
+
+        self.map_width = 0
+        self.map_height = 0
             
         self.tile_map = pytmx.load_pygame("sprite_game/tiles/test.tmx")
         for layer in self.tile_map.visible_layers:
             if isinstance(layer, pytmx.TiledTileLayer):
-            # print(dir(layer))
                 for x, y, surf in layer.tiles():
                     pos = x*TILE,y*TILE
                     surf = pg.transform.scale(surf, (TILE,TILE))
-                    Tiled_Map(pos, surf, self.map_tiles)
+                    Tiled_Map(pos, surf, [self.map_tiles, self.all_sprites])
             elif isinstance(layer, pytmx.TiledObjectGroup):
                 for obj in layer:
-                    if obj.name == "key":
+                    if layer.name == "sprites":
                         im = pg.transform.scale(obj.image, (TILE/2,TILE/2))
-                        k = Key((obj.x/16)*64, (obj.y/16)*64, self.screen, im)
-                        self.item_sprites.add(k)
-                        self.all_sprites.add(k)
-                    elif obj.name == "mush" or obj.name == "pitchfork" or obj.name == "bow" or obj.name == "arrow" or obj.name == "log" or obj.name =="bucket":
-                        im = pg.transform.scale(obj.image, (TILE/2,TILE/2))
-                        it = Item((obj.x/16)*64, (obj.y/16)*64, self.screen, im)
+                        it = Item((obj.x/16)*64, (obj.y/16)*64, self.screen, im, obj.name)
                         self.item_sprites.add(it)
                         self.all_sprites.add(it)
-                    elif layer.name == "collide":
+
+                    elif layer.name == "collide" and obj.name != "tree":
                         w = Wall((obj.x/16)*64, (obj.y/16)*64, self.screen, (obj.height/16)*64, (obj.width/16)*64)
                         self.block_sprites.add(w)
-                    # elif layer.name == "interact" and "door" not in obj.name and obj.image:
-                    #     im = pg.transform.scale(obj.image, (TILE/2,TILE/2))
-                    #     w = Wall((obj.x/16)*64, (obj.y/16)*64, self.screen, (obj.height/16)*64, (obj.width/16)*64, image=im)
-                    #     self.block_sprites.add(w)
+
+                    elif "sign" in obj.name:
+                        im = pg.transform.scale(obj.image, (TILE/2,TILE/2))
+                        w = Wall((obj.x/16)*64, (obj.y/16)*64, self.screen, (obj.height/16)*64, (obj.width/16)*64, image=im)
+                        self.block_sprites.add(w)
+                        self.all_sprites.add(w)
+
+                    elif layer.name == "interact":
+                        im = pg.transform.scale(obj.image, (TILE,TILE))
+                        w = Wall((obj.x/16)*64, (obj.y/16)*64, self.screen, (obj.height/16)*64, (obj.width/16)*64, image=im)
+                        self.block_sprites.add(w)
+                        self.all_sprites.add(w)
+
                     elif obj.name == "snake":
                         s = Snake((obj.x/16)*64, (obj.y/16)*64, self.screen, self.snake_images_r, self.snake_images_l, self)
                         self.snake_sprites.add(s)
                         self.all_sprites.add(s)
-        
-        self.player = Player(start[0], start[1] ,self.screen, self.king_right, self.king_left, self.king_up, self)
-        self.all_sprites.add(self.player)
 
-        self.game_viewer = Camera(WIDTH, HEIGHT)
+                    elif obj.name == "player":
+                        self.player = Player((obj.x/16)*64, (obj.y/16)*64,self.screen, self.king_right, self.king_left, self.king_up, self)
+                        self.all_sprites.add(self.player)
+
+        self.game_viewer = Camera(self.tile_map.width*TILE, self.tile_map.height*TILE)
 
         self.run()
 
@@ -188,6 +194,10 @@ class Game:
             elif event.type == pg.KEYUP and event.key == pg.K_e:
                 self.player.use = False
 
+            elif event.type == pg.KEYDOWN:
+                if event.key == pg.K_i:
+                    print(self.player.inv)
+
     def run(self):
         """Contains main game loop."""
         self.playing = True
@@ -211,7 +221,7 @@ game = Game()
 game.show_start_screen()
 
 while game.running:
-    game.new((8.25*TILE, 4*TILE))
+    game.new()
     # game.game_over()
 
 pg.quit()
