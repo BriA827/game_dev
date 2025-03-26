@@ -117,9 +117,6 @@ class Game:
         self.item_sprites = pg.sprite.Group()
 
         self.map_tiles = pg.sprite.Group()
-
-        self.map_width = 0
-        self.map_height = 0
             
         self.tile_map = pytmx.load_pygame("sprite_game/tiles/test.tmx")
         for layer in self.tile_map.visible_layers:
@@ -127,7 +124,7 @@ class Game:
                 for x, y, surf in layer.tiles():
                     pos = x*TILE,y*TILE
                     surf = pg.transform.scale(surf, (TILE,TILE))
-                    Tiled_Map(pos, surf, [self.map_tiles, self.all_sprites])
+                    Tiled_Map(pos, surf, [self.map_tiles, self.all_sprites]) #key helper!!!!!
             elif isinstance(layer, pytmx.TiledObjectGroup):
                 for obj in layer:
                     if layer.name == "sprites":
