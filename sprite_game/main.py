@@ -101,8 +101,8 @@ class Game:
                 self.exp_list.append(image)
 
         cursor_sheet = SpriteSheet("sprite_game/sprites/cursor.png")
-        self.cursor_image = cursor_sheet.get_image(11,1,16,16)
-        self.cursor_image.set_colorkey(WHITE)
+        # self.cursor_image = cursor_sheet.get_image(11,1,16,16)
+        # self.cursor_image.set_colorkey(WHITE)
         self.track_image = cursor_sheet.get_image(72,1,4,4,2.5,2.5)
         self.track_image.set_colorkey(WHITE)
         self.track_image = pg.transform.rotate(self.track_image, 45)
@@ -117,6 +117,8 @@ class Game:
         self.item_sprites = pg.sprite.Group()
 
         self.map_tiles = pg.sprite.Group()
+
+        self.snake_spawns = []
             
         self.tile_map = pytmx.load_pygame("sprite_game/tiles/test.tmx")
         for layer in self.tile_map.visible_layers:
@@ -124,46 +126,63 @@ class Game:
                 for x, y, surf in layer.tiles():
                     pos = x*TILE,y*TILE
                     surf = pg.transform.scale(surf, (TILE,TILE))
-                    Tiled_Map(pos, surf, [self.map_tiles, self.all_sprites]) #key helper!!!!!
+                    Tiled_Map(pos, surf, [self.map_tiles, self.all_sprites]) # key helper!!!!! 
             elif isinstance(layer, pytmx.TiledObjectGroup):
                 for obj in layer:
                     if layer.name == "sprites":
                         im = pg.transform.scale(obj.image, (TILE/2,TILE/2))
-                        it = Item((obj.x/16)*64, (obj.y/16)*64, self.screen, im, obj.name)
+                        it = Item((obj.x/16)*TILE, (obj.y/16)*TILE, self.screen, im, obj.name)
                         self.item_sprites.add(it)
                         self.all_sprites.add(it)
 
                     elif layer.name == "collide" and obj.name != "tree":
-                        w = Wall((obj.x/16)*64, (obj.y/16)*64, self.screen, (obj.height/16)*64, (obj.width/16)*64)
+                        w = Wall((obj.x/16)*TILE, (obj.y/16)*TILE, self.screen, (obj.height/16)*TILE, (obj.width/16)*TILE)
                         self.block_sprites.add(w)
 
                     elif "sign" in obj.name:
                         im = pg.transform.scale(obj.image, (TILE/2,TILE/2))
-                        w = Wall((obj.x/16)*64, (obj.y/16)*64, self.screen, (obj.height/16)*64, (obj.width/16)*64, image=im)
+                        w = Wall((obj.x/16)*TILE, (obj.y/16)*TILE, self.screen, (obj.height/16)*TILE, (obj.width/16)*TILE, image=im)
                         self.block_sprites.add(w)
                         self.all_sprites.add(w)
 
                     elif layer.name == "interact":
                         im = pg.transform.scale(obj.image, (TILE,TILE))
-                        w = Wall((obj.x/16)*64, (obj.y/16)*64, self.screen, (obj.height/16)*64, (obj.width/16)*64, image=im)
+                        w = Wall((obj.x/16)*TILE, (obj.y/16)*TILE, self.screen, (obj.height/16)*TILE, (obj.width/16)*TILE, image=im)
                         self.block_sprites.add(w)
                         self.all_sprites.add(w)
 
-                    elif obj.name == "snake":
-                        s = Snake((obj.x/16)*64, (obj.y/16)*64, self.screen, self.snake_images_r, self.snake_images_l, self)
-                        self.snake_sprites.add(s)
-                        self.all_sprites.add(s)
+                    # elif obj.name == "snake":
+                    #     s = Snake((obj.x/16)*TILE, (obj.y/16)*TILE, self.screen, self.snake_images_r, self.snake_images_l, self)
+                    #     self.snake_sprites.add(s)
+                    #     self.all_sprites.add(s)
 
                     elif obj.name == "player":
-                        self.player = Player((obj.x/16)*64, (obj.y/16)*64,self.screen, self.king_right, self.king_left, self.king_up, self)
+                        self.player = Player((obj.x/16)*TILE, (obj.y/16)*TILE,self.screen, self.king_right, self.king_left, self.king_up, self)
                         self.all_sprites.add(self.player)
 
-        self.game_viewer = Camera(self.tile_map.width*TILE, self.tile_map.height*TILE)
+                    elif obj.name == "snake_spawn":
+                        self.snake_spawns.append([(obj.x/16)*TILE, (obj.y/16)*TILE, (obj.width/16)*TILE, (obj.height/16)*TILE])
+
+        self.tracker = Tracker(self.player, self.snake_sprites, self.track_image, self)
+        self.all_sprites.add(self.tracker)
+        self.tracked = Marker(self.track_image)
+        self.all_sprites.add(self.tracked)
+
+        self.game_viewer = Camera(self.tile_map.width*TILE, self.tile_map.height*TILE) # key helper!!!!!
 
         self.run()
 
     def update(self):
         """Run all updates."""
+
+        if len(self.snake_sprites) < ENEMY_NUMBER:
+            spawn = rand.randint(0,len(self.snake_spawns)-1)
+            x = rand.randrange(int(round(self.snake_spawns[spawn][0])), int(round(self.snake_spawns[spawn][0])) + int(round(self.snake_spawns[spawn][2])))
+            y = rand.randrange(int(round(self.snake_spawns[spawn][1])), int(round(self.snake_spawns[spawn][1])) + int(round(self.snake_spawns[spawn][3])))
+            s = Snake(x, y, self.screen, self.snake_images_r, self.snake_images_l, self)
+            self.snake_sprites.add(s)
+            self.all_sprites.add(s)
+
         self.all_sprites.update()
         self.block_sprites.update()
         self.game_viewer.update(self.player)
@@ -174,6 +193,8 @@ class Game:
         self.map_tiles.draw(self.screen)
         for i in self.all_sprites:
             self.screen.blit(i.image, (self.game_viewer.get_view(i)))
+
+        self.tracker.draw()
 
         pg.display.flip()
 

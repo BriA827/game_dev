@@ -319,23 +319,28 @@ class Tracker(pg.sprite.Sprite):
         self.vel = vec(0,0)
         self.rot = 0
 
-    # def update(self):
-    #     if self.game.map == OVERWORLD:
-    #         self.target = min([s for s in self.targets], key= lambda s: math.sqrt(((s.rect.center[0] - self.owner.rect.center[0])**2) + ((s.rect.center[1] - self.owner.rect.center[1])**2)))
-    #         self.rect.x, self.rect.y = self.owner.rect.center[0] - 5,  self.owner.rect.top - 20
-    #         self.pos = vec(self.rect.x,self.rect.y) *TILE
-    #         if self.target.velo < 0:
-    #             self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]-15, self.target.rect.top
-    #         else:
-    #             self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]+1, self.target.rect.top
+    def closest(self):
+        self.target = min([s for s in self.targets], key= lambda s: math.sqrt(((s.rect.center[0] - self.owner.rect.center[0])**2) + ((s.rect.center[1] - self.owner.rect.center[1])**2)))
+        self.rect.x, self.rect.y = self.owner.rect.center[0] - 5,  self.owner.rect.top - 20
+        self.pos = vec(self.rect.x,self.rect.y) *TILE
+        if self.target.velo < 0:
+            self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]-15, self.target.rect.top
+        else:
+            self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]+1, self.target.rect.top
 
-    #         angle = (math.atan(self.target.rect.center[1]/self.target.rect.center[0])) * (180/math.pi)
-    #         # self.angle = self.angle + angle
-    #         # self.image = pg.transform.rotate(self.image, self.angle)
+    def draw(self):
+        # pg.draw.ellipse(self.game.screen, WHITE, [self.owner.rect.topleft[0], self.owner.rect.topleft[1], self.owner.rect.topleft[0] + self.owner.rect.topright[0], self.owner.rect.topleft[1] + self.owner.rect.topright[1]]) fix tis
+
+    def update(self):
+        self.closest()
+            # angle = (math.atan(self.target.rect.center[1]/self.target.rect.center[0])) * (180/math.pi)
+            # self.angle = self.angle + angle
+            # self.image = pg.transform.rotate(self.image, self.angle)
         
-    #     # self.image = pg.transform.rotate(self.originl_image, self.rot)
-    #     # self.rect = self.image.get_rect()
-    #     # self.rect.center = self.pos
+        # self.image = pg.transform.rotate(self.originl_image, self.rot)
+        # self.rect = self.image.get_rect()
+        # self.rect.center = self.pos
+
 
 class Door(pg.sprite.Sprite):
     def __init__(self, x, y, display, image, game):
