@@ -27,12 +27,6 @@ class Player(pg.sprite.Sprite):
 
         self.image = self.right_ani[0]
         self.rect = self.image.get_rect()
-        # self.hit_rect = pg.Rect(0,0,32,32)
-        # self.rot_speed = 200
-        # self.hit_rect.center = self.rect.center
-        # self.vel = vec(0,0)
-        # self.rot = 0
-        # self.pos = vec(x,y) *TILE
         self.self = self
         self.rect.x = x
         self.rect.y = y
@@ -110,6 +104,7 @@ class Player(pg.sprite.Sprite):
 
         self.collide_snake()
         self.collide_item()
+        self.collide_tele()
 
     def collide_wall(self, dir):
         if dir == 'x':
@@ -149,6 +144,19 @@ class Player(pg.sprite.Sprite):
     #             return HOUSE
     #         else:
     #             return OVERWORLD
+
+    def collide_tele(self):
+        hits = pg.sprite.spritecollide(self, self.game.tele_sprites, False)
+        if hits:
+            new_name = hits[0].companion
+            for i in self.game.tele_sprites:
+                if i.name == new_name:
+                    new = i
+                    break
+            if new.displace == "down":
+                self.rect.x, self.rect.y = new.rect.x, new.rect.y + (TILE*.8)
+            else:
+                self.rect.x, self.rect.y = new.rect.x, new.rect.y - (TILE*.8)
 
 class Wall(pg.sprite.Sprite):
     def __init__(self, x, y, display, height, width, image = None, bomb = False):
@@ -230,7 +238,7 @@ class Item(pg.sprite.Sprite):
         self.id = name
 
 class Explosion(pg.sprite.Sprite):
-    def __init__(self, x, y, display, images):
+    def __init__(self, x, y, display, images, game):
         pg.sprite.Sprite.__init__(self)
         self.self = self
         self.images = images
@@ -253,6 +261,11 @@ class Explosion(pg.sprite.Sprite):
 
         if self.image == self.images[-1]:
             self.kill()
+
+        self.collide()
+
+    def collide(self):
+        hits = pg.sprite.spritecollide(self, self.game.snake_sprites, True) #fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     def draw(self):
         self.display.blit(self.image, (self.rect.x, self.rect.y))
@@ -305,41 +318,43 @@ class Tracker(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.self = self
         self.game = game
-        self.image = image
-        self.rect = self.image.get_rect()
 
         self.owner = owner
         self.targets = target
         self.target = None
 
-        self.angle = (180+90)/2
-        self.hit_rect = pg.Rect(0,0,32,32)
-        self.rot_speed = 200
-        self.hit_rect.center = self.rect.center
-        self.vel = vec(0,0)
-        self.rot = 0
+        self.image = image
+        self.base_image = image
+        self.rect = self.image.get_rect()
+
+        self.radius = (self.owner.rect.width + self.owner.rect.height) / 2
+        self.rect.x, self.rect.y = self.owner.rect.center[0] - 5,  self.owner.rect.top - 20
+
+        self.initial_angle = 90
 
     def closest(self):
         self.target = min([s for s in self.targets], key= lambda s: math.sqrt(((s.rect.center[0] - self.owner.rect.center[0])**2) + ((s.rect.center[1] - self.owner.rect.center[1])**2)))
-        self.rect.x, self.rect.y = self.owner.rect.center[0] - 5,  self.owner.rect.top - 20
-        self.pos = vec(self.rect.x,self.rect.y) *TILE
         if self.target.velo < 0:
             self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]-15, self.target.rect.top
         else:
             self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]+1, self.target.rect.top
 
-    def draw(self):
-        # pg.draw.ellipse(self.game.screen, WHITE, [self.owner.rect.topleft[0], self.owner.rect.topleft[1], self.owner.rect.topleft[0] + self.owner.rect.topright[0], self.owner.rect.topleft[1] + self.owner.rect.topright[1]]) fix tis
+    def angle_x_y(self):
+        rang = math.radians(self.angle)
+        self.rect.x = self.radius/math.cos(rang)
+        self.rect.y = self.radius/math.sin(rang)
+        #FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!
+
+    def rotate(self):
+        self.angle = self.initial_angle - math.atan2(self.target.rect.center[1]-self.rect.center[1], self.target.rect.center[0]-self.rect.center[0]) *  (180/math.pi) 
+        # self.initial_angle = angle
+        self.image = pg.transform.rotate(self.base_image, self.angle)
 
     def update(self):
         self.closest()
-            # angle = (math.atan(self.target.rect.center[1]/self.target.rect.center[0])) * (180/math.pi)
-            # self.angle = self.angle + angle
-            # self.image = pg.transform.rotate(self.image, self.angle)
-        
-        # self.image = pg.transform.rotate(self.originl_image, self.rot)
-        # self.rect = self.image.get_rect()
-        # self.rect.center = self.pos
+        self.rotate()
+        # self.angle_x_y()
+        self.rect.x, self.rect.y = self.owner.rect.center[0] - 5,  self.owner.rect.top - 20
 
 
 class Door(pg.sprite.Sprite):
@@ -352,3 +367,17 @@ class Door(pg.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.game = game
+
+class Teleporter(pg.sprite.Sprite):
+    def __init__(self, x, y, name, companion, displace, width=None, height=None, image = None):
+        pg.sprite.Sprite.__init__(self)
+        if image:
+            self.image = image
+            self.rect = self.image.get_rect()
+            self.rect.x = x
+            self.rect.y = y
+        else:
+            self.rect = pg.rect.Rect(x,y,width,height)
+        self.name = name
+        self.companion = companion
+        self.displace = displace

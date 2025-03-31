@@ -57,10 +57,6 @@ class Game:
             img = wood.get_image(0,0, 16,16, 4,4)
             self.floor_images.append(img)
 
-        # zombie_sheet = SpriteSheet("sprite_game/sprites/spritesheet_characters.png")
-        # self.green_player_image = zombie_sheet.get_image(0,0,57,44,True)
-        # self.zombie_walk_image = zombie_sheet.get_image(425,0,37,44,True)
-
         chars_sheet = SpriteSheet("sprite_game/sprites/new_chars.png")
         self.king_still = chars_sheet.get_image(17,10*18-1, 32,46,True)
 
@@ -101,8 +97,6 @@ class Game:
                 self.exp_list.append(image)
 
         cursor_sheet = SpriteSheet("sprite_game/sprites/cursor.png")
-        # self.cursor_image = cursor_sheet.get_image(11,1,16,16)
-        # self.cursor_image.set_colorkey(WHITE)
         self.track_image = cursor_sheet.get_image(72,1,4,4,2.5,2.5)
         self.track_image.set_colorkey(WHITE)
         self.track_image = pg.transform.rotate(self.track_image, 45)
@@ -115,6 +109,7 @@ class Game:
         self.snake_sprites = pg.sprite.Group()
         self.all_sprites = pg.sprite.Group()
         self.item_sprites = pg.sprite.Group()
+        self.tele_sprites = pg.sprite.Group()
 
         self.map_tiles = pg.sprite.Group()
 
@@ -151,17 +146,22 @@ class Game:
                         self.block_sprites.add(w)
                         self.all_sprites.add(w)
 
-                    # elif obj.name == "snake":
-                    #     s = Snake((obj.x/16)*TILE, (obj.y/16)*TILE, self.screen, self.snake_images_r, self.snake_images_l, self)
-                    #     self.snake_sprites.add(s)
-                    #     self.all_sprites.add(s)
-
                     elif obj.name == "player":
                         self.player = Player((obj.x/16)*TILE, (obj.y/16)*TILE,self.screen, self.king_right, self.king_left, self.king_up, self)
                         self.all_sprites.add(self.player)
 
                     elif obj.name == "snake_spawn":
                         self.snake_spawns.append([(obj.x/16)*TILE, (obj.y/16)*TILE, (obj.width/16)*TILE, (obj.height/16)*TILE])
+
+                    elif layer.name == "teleports":
+                        if obj.image:
+                            im = pg.transform.scale(obj.image, (TILE/2,TILE/2))
+                            t = Teleporter((obj.x/16)*TILE, (obj.y/16)*TILE, obj.name.split("_")[0], obj.name.split("_")[1], obj.name.split("_")[-1], image=im)
+                            self.tele_sprites.add(t)
+                            self.all_sprites.add(t)
+                        else:
+                            t = Teleporter((obj.x/16)*TILE, (obj.y/16)*TILE, obj.name.split("_")[0], obj.name.split("_")[1], obj.name.split("_")[-1], width=(obj.width/16)*TILE, height=(obj.height/16)*TILE)
+                            self.tele_sprites.add(t)
 
         self.tracker = Tracker(self.player, self.snake_sprites, self.track_image, self)
         self.all_sprites.add(self.tracker)
@@ -183,6 +183,11 @@ class Game:
             self.snake_sprites.add(s)
             self.all_sprites.add(s)
 
+        if "Bomb" in self.player.inv and self.player.use == True:
+                # self.player.inv.remove("Bomb")
+                e = Explosion(self.player.rect.center.x, self.player.rect.center.y, self.screen, self.exp_list, self.self)
+                self.all_sprites.add(e) #FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
         self.all_sprites.update()
         self.block_sprites.update()
         self.game_viewer.update(self.player)
@@ -193,8 +198,6 @@ class Game:
         self.map_tiles.draw(self.screen)
         for i in self.all_sprites:
             self.screen.blit(i.image, (self.game_viewer.get_view(i)))
-
-        self.tracker.draw()
 
         pg.display.flip()
 
@@ -208,6 +211,7 @@ class Game:
  
             if event.type == pg.KEYDOWN and event.key == pg.K_e:
                 self.player.use = True
+                print("use")
 
             elif event.type == pg.KEYUP and event.key == pg.K_e:
                 self.player.use = False
