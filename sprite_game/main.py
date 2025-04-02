@@ -14,6 +14,9 @@ class Game:
         self.running = True
         self.load_images()
 
+        self.path = pg.font.match_font("Perfect DOS VGA 437.ttf", 0, 0)
+        self.font = pg.font.Font(self.path, 128)
+
     def load_images(self):
         """Load and get images."""
 
@@ -104,12 +107,15 @@ class Game:
     def new(self):
         """Create all game objects, sprites, and groups. Call run() method"""
         # self.map = map
+        self.text = False
+        self.clear = True
 
         self.block_sprites = pg.sprite.Group()
         self.snake_sprites = pg.sprite.Group()
         self.all_sprites = pg.sprite.Group()
         self.item_sprites = pg.sprite.Group()
         self.tele_sprites = pg.sprite.Group()
+        self.text_sprites = pg.sprite.Group()
 
         self.map_tiles = pg.sprite.Group()
 
@@ -168,6 +174,11 @@ class Game:
         self.tracked = Marker(self.track_image)
         self.all_sprites.add(self.tracked)
 
+        for y in range (1,3):
+            for x in range(0, WIDTH, TILE):
+                im = Background(x, HEIGHT-(TILE*y), self.floor_images[1])
+                self.text_sprites.add(im)
+
         self.game_viewer = Camera(self.tile_map.width*TILE, self.tile_map.height*TILE) # key helper!!!!!
 
         self.run()
@@ -183,10 +194,13 @@ class Game:
             self.snake_sprites.add(s)
             self.all_sprites.add(s)
 
-        if "Bomb" in self.player.inv and self.player.use == True:
-                # self.player.inv.remove("Bomb")
-                e = Explosion(self.player.rect.center.x, self.player.rect.center.y, self.screen, self.exp_list, self.self)
+        if "bomb" in self.player.inv and self.player.use == True:
+                self.player.inv.remove("bomb")
+                e = Explosion(self.screen, self.exp_list, self)
                 self.all_sprites.add(e) #FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        if self.text:
+            self.text_sprite = TextBox(self.text, self.font, WHITE)
 
         self.all_sprites.update()
         self.block_sprites.update()
@@ -199,6 +213,11 @@ class Game:
         for i in self.all_sprites:
             self.screen.blit(i.image, (self.game_viewer.get_view(i)))
 
+        if self.clear == False: #FIX THIS!!!!!!!!!!!!!!!!!!!
+            for i in self.text_sprites:
+                self.screen.blit(i.image, (i.rect.x, i.rect.y))
+            self.screen.blit(self.text_sprite.image, (self.text_sprite.x,self.text_sprite.y))
+
         pg.display.flip()
 
     def events(self):
@@ -208,17 +227,20 @@ class Game:
                 if self.playing:
                     self.playing = False
                 self.running = False
- 
-            if event.type == pg.KEYDOWN and event.key == pg.K_e:
-                self.player.use = True
-                print("use")
-
-            elif event.type == pg.KEYUP and event.key == pg.K_e:
-                self.player.use = False
 
             elif event.type == pg.KEYDOWN:
-                if event.key == pg.K_i:
+                if event.key == pg.K_e:
+                    self.player.use = True
+                elif event.key == pg.K_i:
                     print(self.player.inv)
+                elif event.key == pg.K_RETURN:
+                    self.clear = True
+
+            elif event.type == pg.KEYUP:
+                if event.key == pg.K_e:
+                    self.player.use = False
+                elif event.key == pg.K_RETURN:
+                    self.text = None
 
     def run(self):
         """Contains main game loop."""

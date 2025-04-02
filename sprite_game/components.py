@@ -34,7 +34,7 @@ class Player(pg.sprite.Sprite):
         self.game = game
 
         self.velo = 5
-        self.run = None #-1 = left, none = none, 1 = right, 2 = up
+        self.run = None #-1 = left, none = none, 1 = right, 2 = up, -2 = down
 
         self.current_frame = 0
         self.delay = 70
@@ -83,18 +83,18 @@ class Player(pg.sprite.Sprite):
                 self.image = self.right_ani[self.current_frame]
                 self.last = self.now
             self.y_change = self.velo
-            self.run = 1
+            self.run = -2
 
         else:
             self.x_change = 0
             if self.run == -1:
                 self.image = self.left_ani[0]
-            elif self.run == 1:
+            elif self.run == 1 or self.run == -2:
                 self.image = self.right_ani[0]
             elif self.run == 2:
                 self.image = self.up_ani[0]
 
-            self.run = None
+            # self.run = None
 
         self.rect.x += self.x_change
         self.collide_wall('x')
@@ -132,10 +132,16 @@ class Player(pg.sprite.Sprite):
 
     def collide_item(self):
         sp = pg.sprite.Group.sprites(self.game.item_sprites)
-        hits = pg.sprite.spritecollide(self, self.game.item_sprites, True)
+        hits = pg.sprite.spritecollide(self, self.game.item_sprites, False)
         for i in sp:
             if i in hits:
-                self.inv.append(i.id)
+                if i.id not in self.inv:
+                    self.inv.append(i.id)
+                    i.kill()
+                else:
+                    self.game.text = INV_TEXT.replace("_", i.id+"s")
+                    self.game.clear = False
+                    hits.remove(i)
 
     # def collide_door(self):
     #     hits = pg.sprite.spritecollide(self, self.game.door_sprites, False)
@@ -238,19 +244,31 @@ class Item(pg.sprite.Sprite):
         self.id = name
 
 class Explosion(pg.sprite.Sprite):
-    def __init__(self, x, y, display, images, game):
+    def __init__(self, display, images, game):
         pg.sprite.Sprite.__init__(self)
         self.self = self
         self.images = images
         self.image = images[0]
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
         self.display = display
 
         self.current_frame = 0
         self.delay = 16
         self.last = pg.time.get_ticks()
+
+        self.game = game
+        if self.game.player.run == 1: #right
+            self.rect.x = self.game.player.rect.topleft[0]+40
+            self.rect.y = self.game.player.rect.topleft[1]-10
+        elif self.game.player.run == -1: #left
+            self.rect.x = self.game.player.rect.topleft[0]-70
+            self.rect.y = self.game.player.rect.topleft[1]-10
+        elif self.game.player.run == 2: #up
+            self.rect.x = self.game.player.rect.topleft[0]-10
+            self.rect.y = self.game.player.rect.topleft[1]-70
+        elif self.game.player.run == -2: #down
+            self.rect.x = self.game.player.rect.topleft[0]-10
+            self.rect.y = self.game.player.rect.topleft[1]+50
 
     def update(self):
         self.now = pg.time.get_ticks()
@@ -265,10 +283,7 @@ class Explosion(pg.sprite.Sprite):
         self.collide()
 
     def collide(self):
-        hits = pg.sprite.spritecollide(self, self.game.snake_sprites, True) #fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    def draw(self):
-        self.display.blit(self.image, (self.rect.x, self.rect.y))
+        pg.sprite.spritecollide(self, self.game.snake_sprites, True)
 
 class Camera():
     def __init__(self, width, height):
@@ -381,3 +396,10 @@ class Teleporter(pg.sprite.Sprite):
         self.name = name
         self.companion = companion
         self.displace = displace
+
+class TextBox(pg.sprite.Sprite):
+    def __init__(self, text, font, color):
+        pg.sprite.Sprite.__init__(self)
+        self.image = font.render(text, True, color)
+        self.x = WIDTH+TILE
+        self.y = HEIGHT-(2*TILE)

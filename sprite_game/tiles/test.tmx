@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="152">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="161">
  <tileset firstgid="1" source="town.tsx"/>
  <layer id="2" name="Tile Layer 2" width="25" height="25">
   <data encoding="csv">
@@ -69,7 +69,12 @@
   <object id="40" name="key" gid="118" x="243" y="29" width="9" height="8"/>
   <object id="78" name="mush" gid="30" x="179.333" y="206" width="9" height="9"/>
   <object id="79" name="mush" gid="30" x="161.333" y="47" width="9.66667" height="9.66667"/>
-  <object id="133" name="bomb" gid="106" x="307.667" y="141" width="10" height="9.33333"/>
+  <object id="133" name="bomb" gid="106" x="354.667" y="127" width="10" height="9.33333"/>
+  <object id="152" name="bomb" gid="106" x="357.5" y="241.833" width="10" height="9.33333"/>
+  <object id="153" name="bomb" gid="106" x="345" y="386.333" width="10" height="9.33333"/>
+  <object id="154" name="bomb" gid="106" x="3.5" y="397.333" width="10" height="9.33333"/>
+  <object id="158" name="bomb" gid="106" x="51.5" y="31.8333" width="10" height="9.33333"/>
+  <object id="160" name="bomb" gid="106" x="51" y="139.833" width="10" height="9.33333"/>
  </objectgroup>
  <objectgroup id="10" name="collide">
   <object id="55" name="house" x="110.958" y="16" width="48.875" height="32"/>

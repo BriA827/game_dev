@@ -16,8 +16,8 @@ FPS = 60
 
 TILE = 64
 
-WIDTH = 1000
-HEIGHT = 600
+WIDTH = 15*TILE
+HEIGHT = 10*TILE
 
 # O_MAP_WIDTH = len(OVERWORLD[0]) * TILE
 # O_MAP_HEIGHT = len(OVERWORLD) * TILE
@@ -26,3 +26,5 @@ HEIGHT = 600
 # H_MAP_HEIGHT = len(HOUSE) * TILE
 
 ENEMY_NUMBER = 5
+
+INV_TEXT = "You can't hold any more _!"
