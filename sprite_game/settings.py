@@ -26,5 +26,9 @@ HEIGHT = 10*TILE
 # H_MAP_HEIGHT = len(HOUSE) * TILE
 
 ENEMY_NUMBER = 5
+ENEMY_RESPAWN = False
+
+PLAYER_INV_MAX = 1
+PLAYER_HEARTS = 5
 
 INV_TEXT = "You can't hold any more _!"

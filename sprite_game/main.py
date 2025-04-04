@@ -14,8 +14,8 @@ class Game:
         self.running = True
         self.load_images()
 
-        self.path = pg.font.match_font("Perfect DOS VGA 437.ttf", 0, 0)
-        self.font = pg.font.Font(self.path, 128)
+        # self.path = pg.font.match_font("sprite_game/Perfect DOS VGA 437.ttf", 0, 0)
+        self.font = pg.font.SysFont("Perfect DOS VGA 437 Win", 30)
 
     def load_images(self):
         """Load and get images."""
@@ -104,6 +104,12 @@ class Game:
         self.track_image.set_colorkey(WHITE)
         self.track_image = pg.transform.rotate(self.track_image, 45)
 
+        self.hearts = []
+        for i in ["full", "half", "empty"]:
+            heart = pg.image.load(f"platformer/images/hearts/heart_{i}.png")
+            heart = pg.transform.scale(heart, (2*TILE/3, 2*TILE/3))
+            self.hearts.append(heart)
+
     def new(self):
         """Create all game objects, sprites, and groups. Call run() method"""
         # self.map = map
@@ -155,6 +161,7 @@ class Game:
                     elif obj.name == "player":
                         self.player = Player((obj.x/16)*TILE, (obj.y/16)*TILE,self.screen, self.king_right, self.king_left, self.king_up, self)
                         self.all_sprites.add(self.player)
+                        self.player_alive = True
 
                     elif obj.name == "snake_spawn":
                         self.snake_spawns.append([(obj.x/16)*TILE, (obj.y/16)*TILE, (obj.width/16)*TILE, (obj.height/16)*TILE])
@@ -168,16 +175,16 @@ class Game:
                         else:
                             t = Teleporter((obj.x/16)*TILE, (obj.y/16)*TILE, obj.name.split("_")[0], obj.name.split("_")[1], obj.name.split("_")[-1], width=(obj.width/16)*TILE, height=(obj.height/16)*TILE)
                             self.tele_sprites.add(t)
-
+        
         self.tracker = Tracker(self.player, self.snake_sprites, self.track_image, self)
-        self.all_sprites.add(self.tracker)
         self.tracked = Marker(self.track_image)
-        self.all_sprites.add(self.tracked)
 
         for y in range (1,3):
             for x in range(0, WIDTH, TILE):
                 im = Background(x, HEIGHT-(TILE*y), self.floor_images[1])
                 self.text_sprites.add(im)
+
+        self.heart_sprites = Heart(self.hearts, PLAYER_HEARTS)
 
         self.game_viewer = Camera(self.tile_map.width*TILE, self.tile_map.height*TILE) # key helper!!!!!
 
@@ -194,17 +201,28 @@ class Game:
             self.snake_sprites.add(s)
             self.all_sprites.add(s)
 
-        if "bomb" in self.player.inv and self.player.use == True:
+        if "bomb" in self.player.inv:
+            self.all_sprites.add(self.tracker)
+            self.all_sprites.add(self.tracked)
+            if self.player.use == True:
                 self.player.inv.remove("bomb")
                 e = Explosion(self.screen, self.exp_list, self)
                 self.all_sprites.add(e) #FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-        if self.text:
-            self.text_sprite = TextBox(self.text, self.font, WHITE)
+        else:
+            self.all_sprites.remove(self.tracker)
+            self.all_sprites.remove(self.tracked)
 
         self.all_sprites.update()
         self.block_sprites.update()
         self.game_viewer.update(self.player)
+
+        self.heart_sprites.update(self.player.life)
+
+        if self.text !=False:
+            self.text_sprite = TextBox(self.text, self.font, WHITE)
+
+        if self.player_alive == False:
+            self.playing = False
 
     def draw(self):
         """Fill screen, draw objects, flip."""
@@ -217,6 +235,11 @@ class Game:
             for i in self.text_sprites:
                 self.screen.blit(i.image, (i.rect.x, i.rect.y))
             self.screen.blit(self.text_sprite.image, (self.text_sprite.x,self.text_sprite.y))
+
+        change = (TILE * self.heart_sprites.heart_num) - (TILE)
+        for i in (self.heart_sprites.heart_values):
+            self.screen.blit(self.heart_sprites.img_list[self.heart_sprites.heart_values[str(i)]], [self.heart_sprites.x + change, self.heart_sprites.y-15])
+            change -= TILE-10
 
         pg.display.flip()
 
@@ -232,7 +255,11 @@ class Game:
                 if event.key == pg.K_e:
                     self.player.use = True
                 elif event.key == pg.K_i:
-                    print(self.player.inv)
+                    t = "Inventory: "
+                    for i in self.player.inv:
+                        t += i.capitalize() + " "
+                    self.text = t
+                    self.clear = False
                 elif event.key == pg.K_RETURN:
                     self.clear = True
 

@@ -43,6 +43,8 @@ class Player(pg.sprite.Sprite):
         self.inv = []
         self.use = False
 
+        self.life = 0
+
     def update(self):
         self.x_change = 0
         self.y_change = 0
@@ -108,34 +110,38 @@ class Player(pg.sprite.Sprite):
 
     def collide_wall(self, dir):
         if dir == 'x':
-            self.hits = pg.sprite.spritecollide(self, self.game.block_sprites, False)
-            if self.hits:
+            hits = pg.sprite.spritecollide(self, self.game.block_sprites, False)
+            if hits:
                 if self.x_change > 0:
-                    self.x = self.hits[0].rect.left - self.rect.width
+                    self.x = hits[0].rect.left - self.rect.width
                 elif self.self.x_change < 0:
-                    self.x = self.hits[0].rect.right
+                    self.x = hits[0].rect.right
                 self.x_change = 0
                 self.rect.x = self.x
 
         if dir == 'y':
-            self.hits = pg.sprite.spritecollide(self, self.game.block_sprites, False)
-            if self.hits:
+            hits = pg.sprite.spritecollide(self, self.game.block_sprites, False)
+            if hits:
                 if self.y_change > 0:
-                    self.y = self.hits[0].rect.top - self.rect.height
+                    self.y = hits[0].rect.top - self.rect.height
                 elif self.self.y_change < 0:
-                    self.y = self.hits[0].rect.bottom
+                    self.y = hits[0].rect.bottom
                 self.y_change=0
                 self.rect.y = self.y
 
     def collide_snake(self):
-        pg.sprite.spritecollide(self, self.game.snake_sprites, True)
+        hits = pg.sprite.spritecollide(self, self.game.snake_sprites, False)
+        if hits:
+            self.life += .5
+            if self.life == 10:
+                self.game.player_alive = False
 
     def collide_item(self):
         sp = pg.sprite.Group.sprites(self.game.item_sprites)
         hits = pg.sprite.spritecollide(self, self.game.item_sprites, False)
         for i in sp:
             if i in hits:
-                if i.id not in self.inv:
+                if self.inv.count(i.id) < PLAYER_INV_MAX:
                     self.inv.append(i.id)
                     i.kill()
                 else:
@@ -401,5 +407,29 @@ class TextBox(pg.sprite.Sprite):
     def __init__(self, text, font, color):
         pg.sprite.Sprite.__init__(self)
         self.image = font.render(text, True, color)
-        self.x = WIDTH+TILE
-        self.y = HEIGHT-(2*TILE)
+        self.x = TILE/2
+        self.y = HEIGHT-TILE-(TILE/2)
+
+class Heart(pg.sprite.Sprite):
+    def __init__(self, img_list, heart_num):
+        pg.sprite.Sprite.__init__(self)
+        self.img_list = img_list
+        self.self = self
+        self.x = 0 - TILE/3
+        self.y = TILE/2
+        self.heart_values = {}
+        self.heart_num = heart_num
+        self.hit_goal = 1
+        self.life_img = 1
+        self.life_index = 0
+        for i in range(0, self.heart_num):
+            self.heart_values[str(i)] = 0
+
+    def update(self, p_health):
+        if p_health == self.hit_goal:
+            self.heart_values[str(self.life_index)] = self.life_img
+            self.hit_goal+=1
+            self.life_img+= 1
+            if self.life_img == 3:
+                self.life_index+= 1
+                self.life_img= 1
