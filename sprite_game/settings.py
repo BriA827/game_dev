@@ -31,4 +31,4 @@ ENEMY_RESPAWN = False
 PLAYER_INV_MAX = 1
 PLAYER_HEARTS = 5
 
-INV_TEXT = "You can't hold any more _!"
+TEXTS = {"inv_full": "You can't hold any more _!"}

@@ -44,6 +44,10 @@ class Player(pg.sprite.Sprite):
         self.use = False
 
         self.life = 0
+        self.k_count  = 0
+
+        self.player_mask = pg.mask.from_surface(self.image)
+        self.mask_image = self.player_mask.to_surface()
 
     def update(self):
         self.x_change = 0
@@ -97,6 +101,8 @@ class Player(pg.sprite.Sprite):
                 self.image = self.up_ani[0]
 
             # self.run = None
+        self.player_mask = pg.mask.from_surface(self.image)
+        self.mask_image = self.player_mask.to_surface()
 
         self.rect.x += self.x_change
         self.collide_wall('x')
@@ -109,9 +115,10 @@ class Player(pg.sprite.Sprite):
         self.collide_tele()
 
     def collide_wall(self, dir):
-        if dir == 'x':
+        #collision rectangle
+        if pg.sprite.spritecollide(self, self.game.block_sprites, False):
             hits = pg.sprite.spritecollide(self, self.game.block_sprites, False)
-            if hits:
+            if dir == 'x':
                 if self.x_change > 0:
                     self.x = hits[0].rect.left - self.rect.width
                 elif self.self.x_change < 0:
@@ -119,15 +126,32 @@ class Player(pg.sprite.Sprite):
                 self.x_change = 0
                 self.rect.x = self.x
 
-        if dir == 'y':
-            hits = pg.sprite.spritecollide(self, self.game.block_sprites, False)
-            if hits:
+            elif dir == 'y':
                 if self.y_change > 0:
                     self.y = hits[0].rect.top - self.rect.height
                 elif self.self.y_change < 0:
                     self.y = hits[0].rect.bottom
                 self.y_change=0
                 self.rect.y = self.y
+
+        #collision mask
+        if pg.sprite.spritecollide(self, self.game.block_sprites, False):
+            hits = pg.sprite.spritecollide(self, self.game.block_sprites, False, pg.sprite.collide_mask)
+
+            if hits:
+                if self.x_change > 0:
+                    self.x = hits[0].rect.left - (self.rect.width)
+                if self.x_change < 0:
+                    self.x = hits[0].rect.right
+                if self.y_change > 0:
+                    self.x = hits[0].rect.top - self.rect.height
+                if self.y_change < 0:
+                    self.x = hits[0].rect.bottom
+
+                self.y_change = 0
+                self.x_change = 0
+                self.rect.y = self.y
+                self.rect.x = self.x
 
     def collide_snake(self):
         hits = pg.sprite.spritecollide(self, self.game.snake_sprites, False)
@@ -145,7 +169,7 @@ class Player(pg.sprite.Sprite):
                     self.inv.append(i.id)
                     i.kill()
                 else:
-                    self.game.text = INV_TEXT.replace("_", i.id+"s")
+                    self.game.text = TEXTS["inv_full"].replace("_", i.id+"s")
                     self.game.clear = False
                     hits.remove(i)
 
@@ -171,7 +195,7 @@ class Player(pg.sprite.Sprite):
                 self.rect.x, self.rect.y = new.rect.x, new.rect.y - (TILE*.8)
 
 class Wall(pg.sprite.Sprite):
-    def __init__(self, x, y, display, height, width, image = None, bomb = False):
+    def __init__(self, x, y, display, height, width, image = None, bomb = False, mask = False):
         pg.sprite.Sprite.__init__(self)
 
         self.self = self
@@ -184,6 +208,10 @@ class Wall(pg.sprite.Sprite):
         self.rect.y = y
         self.display = display
         self.bomb = bomb
+
+        if mask == True and image:
+            self.wall_mask = pg.mask.from_surface(self.image)
+            self.wall_mask_image = self.wall_mask.to_surface()
 
 class Snake(pg.sprite.Sprite):
     def __init__(self, x, y, display, right, left, game):
@@ -208,18 +236,6 @@ class Snake(pg.sprite.Sprite):
         self.targety = self.game.player.rect.center[1]
         
         self.rect.x += self.velo
-
-        # if self.rect.center[0] > self.targetx:
-        #     self.rect.x -= self.velo
-        #     self.direct = self.left
-        # else:
-        #     self.rect.x += self.velo
-        #     self.direct = self.right
-
-        # if self.rect.center[1] > self.targety:
-        #     self.rect.y -= self.velo
-        # else:
-        #     self.rect.y += self.velo
 
         self.now = pg.time.get_ticks()
 
@@ -289,7 +305,11 @@ class Explosion(pg.sprite.Sprite):
         self.collide()
 
     def collide(self):
-        pg.sprite.spritecollide(self, self.game.snake_sprites, True)
+        hits = pg.sprite.spritecollide(self, self.game.snake_sprites, False)
+        if hits:
+            hits[0].kill()
+            self.game.player.k_count +=1
+            print(self.game.player.k_count)
 
 class Camera():
     def __init__(self, width, height):

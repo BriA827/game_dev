@@ -142,9 +142,15 @@ class Game:
                         self.item_sprites.add(it)
                         self.all_sprites.add(it)
 
-                    elif layer.name == "collide" and obj.name != "tree":
+                    elif layer.name == "collide":
                         w = Wall((obj.x/16)*TILE, (obj.y/16)*TILE, self.screen, (obj.height/16)*TILE, (obj.width/16)*TILE)
                         self.block_sprites.add(w)
+
+                    elif obj.name == "tree":
+                        im = pg.transform.scale(obj.image, (TILE, TILE))
+                        w = Wall((obj.x/16)*TILE, (obj.y/16)*TILE, self.screen, (obj.height/16)*TILE, (obj.width/16)*TILE, image=im, mask=True)
+                        self.block_sprites.add(w)
+                        self.all_sprites.add(w)
 
                     elif "sign" in obj.name:
                         im = pg.transform.scale(obj.image, (TILE/2,TILE/2))
@@ -193,7 +199,7 @@ class Game:
     def update(self):
         """Run all updates."""
 
-        if len(self.snake_sprites) < ENEMY_NUMBER:
+        if len(self.snake_sprites) < ENEMY_NUMBER - self.player.k_count:
             spawn = rand.randint(0,len(self.snake_spawns)-1)
             x = rand.randrange(int(round(self.snake_spawns[spawn][0])), int(round(self.snake_spawns[spawn][0])) + int(round(self.snake_spawns[spawn][2])))
             y = rand.randrange(int(round(self.snake_spawns[spawn][1])), int(round(self.snake_spawns[spawn][1])) + int(round(self.snake_spawns[spawn][3])))
@@ -257,7 +263,10 @@ class Game:
                 elif event.key == pg.K_i:
                     t = "Inventory: "
                     for i in self.player.inv:
-                        t += i.capitalize() + " "
+                        if self.player.inv.index(i) == len(self.player.inv)-1:
+                            t += i.capitalize()
+                        else:
+                            t += i.capitalize() + ", "
                     self.text = t
                     self.clear = False
                 elif event.key == pg.K_RETURN:
