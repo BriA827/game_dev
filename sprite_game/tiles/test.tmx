@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="252">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="16" nextobjectid="252">
  <tileset firstgid="1" source="town.tsx"/>
- <layer id="2" name="Tile Layer 2" width="25" height="25">
+ <layer id="2" name="back" width="25" height="25">
   <data encoding="csv">
 1,1,1,1,1,1,1,1,2,2,2,2,1,1,1,1,1,1,1,1,2,2,2,2,1,
 1,1,1,1,1,1,1,1,1,1,1,2,2,1,1,1,1,1,1,1,1,1,2,2,1,
@@ -30,7 +30,7 @@
 26,26,26,26,26,26,26,26,26,26,26,27,1,1,1,1,1,1,1,1,1,3,2,2,2
 </data>
  </layer>
- <layer id="1" name="Tile Layer 1" width="25" height="25">
+ <layer id="1" name="front" width="25" height="25">
   <data encoding="csv">
 0,0,0,0,53,54,55,0,0,0,0,0,0,0,97,98,98,98,98,99,0,0,0,0,0,
 0,0,0,0,65,66,67,53,54,55,0,0,0,0,109,110,110,110,110,111,0,0,0,0,0,
@@ -57,6 +57,64 @@
 0,0,0,0,0,0,0,0,0,0,0,81,83,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,48,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,72,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="14" name="trees_collide" width="25" height="25">
+  <data encoding="csv">
+0,0,0,21,0,0,0,0,0,0,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,33,0,0,0,0,0,0,0,0,32,31,0,0,0,0,0,0,0,0,0,0,0,0,
+0,33,0,0,0,0,0,0,0,0,0,0,0,32,0,0,0,0,0,0,0,0,0,0,0,
+0,21,29,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,21,0,0,0,0,0,0,0,0,0,0,0,0,29,29,0,0,29,29,0,0,0,0,0,
+32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,16,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,28,4,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,16,28,0,0,0,4,0,0,0,0,0,0,8,7,9,0,0,0,0,0,0,0,
+0,0,0,0,0,0,28,0,16,0,0,0,0,0,7,0,0,0,21,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,0,0,0,21,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,32,32,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="15" name="trees_stay" width="25" height="25">
+  <data encoding="csv">
+20,20,20,0,0,0,0,0,0,0,0,20,20,20,0,0,0,0,0,0,0,0,0,0,0,
+20,20,0,0,0,0,0,0,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,
+20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,20,20,20,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,20,20,20,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
  <objectgroup id="5" name="sprites">
@@ -105,64 +163,7 @@
   <object id="140" name="fence" x="180.333" y="353.333" width="23.3333" height="12"/>
   <object id="141" name="fence" x="196" y="370" width="7.3333" height="27.3334"/>
  </objectgroup>
- <objectgroup id="13" name="trees">
-  <object id="188" name="tree" gid="21" x="48" y="16" width="16" height="16"/>
-  <object id="189" name="tree" gid="33" x="32" y="32" width="16" height="16"/>
-  <object id="190" name="tree" gid="33" x="15.9091" y="48.0909" width="16" height="16"/>
-  <object id="191" name="tree" gid="21" x="16" y="64.125" width="16" height="16"/>
-  <object id="192" name="tree" gid="21" x="16.125" y="79.875" width="16" height="16"/>
-  <object id="193" name="tree" gid="21" x="16.25" y="96" width="16" height="16"/>
-  <object id="194" name="tree" gid="29" x="32" y="64" width="16" height="16"/>
-  <object id="200" name="tree" gid="20" x="-0.181818" y="16.1818" width="16" height="16"/>
-  <object id="202" name="tree" gid="20" x="16" y="16.1818" width="16" height="16"/>
-  <object id="203" name="tree" gid="20" x="32" y="16" width="16" height="16"/>
-  <object id="204" name="tree" gid="20" x="16" y="32" width="16" height="16"/>
-  <object id="205" name="tree" gid="20" x="-0.181818" y="32" width="16" height="16"/>
-  <object id="206" name="tree" gid="20" x="-0.181818" y="48.1818" width="16" height="16"/>
-  <object id="207" name="tree" gid="20" x="0" y="64" width="16" height="16"/>
-  <object id="208" name="tree" gid="20" x="0.318182" y="80.1818" width="16" height="16"/>
-  <object id="209" name="tree" gid="20" x="0.363636" y="95.8182" width="16" height="16"/>
-  <object id="210" name="tree" gid="32" x="0" y="112" width="16" height="16"/>
-  <object id="211" name="tree" gid="4" x="16" y="176.25" width="16" height="16"/>
-  <object id="212" name="tree" gid="4" x="63.75" y="192" width="16" height="16"/>
-  <object id="213" name="tree" gid="4" x="48" y="208.25" width="16" height="16"/>
-  <object id="214" name="tree" gid="4" x="128" y="224.25" width="16" height="16"/>
-  <object id="216" name="tree" gid="16" x="16" y="192.25" width="16" height="16"/>
-  <object id="217" name="tree" gid="16" x="64" y="208" width="16" height="16"/>
-  <object id="218" name="tree" gid="16" x="128" y="240.25" width="16" height="16"/>
-  <object id="219" name="tree" gid="16" x="48" y="224" width="16" height="16"/>
-  <object id="220" name="tree" gid="28" x="63.75" y="224" width="16" height="16"/>
-  <object id="221" name="tree" gid="28" x="32.25" y="208" width="16" height="16"/>
-  <object id="222" name="tree" gid="28" x="96" y="239.75" width="16" height="16"/>
-  <object id="223" name="tree" gid="20" x="176.25" y="15.75" width="16" height="16"/>
-  <object id="224" name="tree" gid="20" x="192.25" y="15.75" width="16" height="16"/>
-  <object id="225" name="tree" gid="20" x="208.25" y="15.75" width="16" height="16"/>
-  <object id="226" name="tree" gid="20" x="208.25" y="32" width="16" height="16"/>
-  <object id="227" name="tree" gid="32" x="208" y="48.25" width="16" height="16"/>
-  <object id="228" name="tree" gid="32" x="176" y="32" width="16" height="16"/>
-  <object id="229" name="tree" gid="31" x="192.25" y="32" width="16" height="16"/>
-  <object id="230" name="tree" gid="31" x="160" y="15.75" width="16" height="16"/>
-  <object id="231" name="tree" gid="29" x="223.75" y="96" width="16" height="16"/>
-  <object id="232" name="tree" gid="29" x="239.75" y="95.75" width="16" height="16"/>
-  <object id="233" name="tree" gid="29" x="288.25" y="96.25" width="16" height="16"/>
-  <object id="234" name="tree" gid="29" x="304.25" y="95.75" width="16" height="16"/>
-  <object id="235" name="tree" gid="20" x="239.75" y="240.25" width="16" height="16"/>
-  <object id="236" name="tree" gid="20" x="256" y="240" width="16" height="16"/>
-  <object id="237" name="tree" gid="20" x="271.75" y="239.75" width="16" height="16"/>
-  <object id="238" name="tree" gid="20" x="272.25" y="256" width="16" height="16"/>
-  <object id="239" name="tree" gid="20" x="256.25" y="256" width="16" height="16"/>
-  <object id="240" name="tree" gid="20" x="239.75" y="256" width="16" height="16"/>
-  <object id="241" name="tree" gid="9" x="271.75" y="223.75" width="16" height="16"/>
-  <object id="242" name="tree" gid="7" x="255.75" y="223.75" width="16" height="16"/>
-  <object id="243" name="tree" gid="8" x="240" y="224.25" width="16" height="16"/>
-  <object id="244" name="tree" gid="7" x="224" y="240.25" width="16" height="16"/>
-  <object id="245" name="tree" gid="31" x="224" y="255.75" width="16" height="16"/>
-  <object id="246" name="tree" gid="32" x="240.25" y="272" width="16" height="16"/>
-  <object id="248" name="tree" gid="32" x="256.25" y="272" width="16" height="16"/>
-  <object id="249" name="tree" gid="32" x="272" y="272" width="16" height="16"/>
-  <object id="250" name="tree" gid="21" x="288" y="239.75" width="16" height="16"/>
-  <object id="251" name="tree" gid="21" x="288" y="256" width="16" height="16"/>
- </objectgroup>
+ <objectgroup id="13" name="trees"/>
  <objectgroup id="11" name="movement">
   <object id="129" name="player" x="131.334" y="80">
    <point/>

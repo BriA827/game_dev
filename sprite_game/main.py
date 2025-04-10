@@ -58,6 +58,7 @@ class Game:
         for i in range(4):
             wood = SpriteSheet(f"sprite_game/sprites/spr_wood_texture_{i}.png")
             img = wood.get_image(0,0, 16,16, 4,4)
+            img.set_alpha(150)
             self.floor_images.append(img)
 
         chars_sheet = SpriteSheet("sprite_game/sprites/new_chars.png")
@@ -100,6 +101,10 @@ class Game:
                 self.exp_list.append(image)
 
         cursor_sheet = SpriteSheet("sprite_game/sprites/cursor.png")
+        self.next_image = cursor_sheet.get_image(77,1,4,4,4.5,4.5)
+        self.next_image.set_colorkey(WHITE)
+        self.next_image = pg.transform.rotate(self.next_image, 45)
+
         self.track_image = cursor_sheet.get_image(72,1,4,4,2.5,2.5)
         self.track_image.set_colorkey(WHITE)
         self.track_image = pg.transform.rotate(self.track_image, 45)
@@ -117,6 +122,7 @@ class Game:
         self.clear = True
 
         self.block_sprites = pg.sprite.Group()
+        self.mask_sprites = pg.sprite.Group()
         self.snake_sprites = pg.sprite.Group()
         self.all_sprites = pg.sprite.Group()
         self.item_sprites = pg.sprite.Group()
@@ -133,7 +139,16 @@ class Game:
                 for x, y, surf in layer.tiles():
                     pos = x*TILE,y*TILE
                     surf = pg.transform.scale(surf, (TILE,TILE))
+
+                    # if layer.name == "trees_collide":
+                    #     for obj in layer:
+                    #         w = Wall(pos[0], pos[1], self.screen, TILE, TILE, image=surf, mask=True)
+                    #         # self.mask_sprites.add(w)
+                    #         self.block_sprites.add(w)
+                    #         self.all_sprites.add(w)
+                    
                     Tiled_Map(pos, surf, [self.map_tiles, self.all_sprites]) # key helper!!!!! 
+
             elif isinstance(layer, pytmx.TiledObjectGroup):
                 for obj in layer:
                     if layer.name == "sprites":
@@ -145,12 +160,6 @@ class Game:
                     elif layer.name == "collide":
                         w = Wall((obj.x/16)*TILE, (obj.y/16)*TILE, self.screen, (obj.height/16)*TILE, (obj.width/16)*TILE)
                         self.block_sprites.add(w)
-
-                    elif obj.name == "tree":
-                        im = pg.transform.scale(obj.image, (TILE, TILE))
-                        w = Wall((obj.x/16)*TILE, (obj.y/16)*TILE, self.screen, (obj.height/16)*TILE, (obj.width/16)*TILE, image=im, mask=True)
-                        self.block_sprites.add(w)
-                        self.all_sprites.add(w)
 
                     elif "sign" in obj.name:
                         im = pg.transform.scale(obj.image, (TILE/2,TILE/2))
@@ -189,10 +198,14 @@ class Game:
             for x in range(0, WIDTH, TILE):
                 im = Background(x, HEIGHT-(TILE*y), self.floor_images[1])
                 self.text_sprites.add(im)
+        self.next_text = Next(WIDTH-(2*TILE), HEIGHT-TILE+3, self.screen, self.next_image)
 
         self.heart_sprites = Heart(self.hearts, PLAYER_HEARTS)
 
         self.game_viewer = Camera(self.tile_map.width*TILE, self.tile_map.height*TILE) # key helper!!!!!
+
+        for i in self.item_sprites:
+            self.player.inv[i.id] = 0
 
         self.run()
 
@@ -207,11 +220,11 @@ class Game:
             self.snake_sprites.add(s)
             self.all_sprites.add(s)
 
-        if "bomb" in self.player.inv:
+        if self.player.inv["bomb"] > 0:
             self.all_sprites.add(self.tracker)
             self.all_sprites.add(self.tracked)
             if self.player.use == True:
-                self.player.inv.remove("bomb")
+                self.player.inv["bomb"] -= 1
                 e = Explosion(self.screen, self.exp_list, self)
                 self.all_sprites.add(e) #FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         else:
@@ -237,10 +250,13 @@ class Game:
         for i in self.all_sprites:
             self.screen.blit(i.image, (self.game_viewer.get_view(i)))
 
-        if self.clear == False: #FIX THIS!!!!!!!!!!!!!!!!!!!
+        if self.clear == False:
+            pg.draw.rect(self.screen, BLACK, (0,HEIGHT-(2.1*TILE), WIDTH, HEIGHT))
             for i in self.text_sprites:
                 self.screen.blit(i.image, (i.rect.x, i.rect.y))
             self.screen.blit(self.text_sprite.image, (self.text_sprite.x,self.text_sprite.y))
+            self.screen.blit(self.next_text.image, (self.next_text.rect.x, self.next_text.rect.y))
+            self.next_text.bounce()
 
         change = (TILE * self.heart_sprites.heart_num) - (TILE)
         for i in (self.heart_sprites.heart_values):
@@ -263,10 +279,12 @@ class Game:
                 elif event.key == pg.K_i:
                     t = "Inventory: "
                     for i in self.player.inv:
-                        if self.player.inv.index(i) == len(self.player.inv)-1:
-                            t += i.capitalize()
-                        else:
-                            t += i.capitalize() + ", "
+                        if self.player.inv[i] == 1:
+                            t += f"{i.capitalize()}, "
+                        elif self.player.inv[i] > 1:
+                            t += f"{i.capitalize()} ({self.player.inv[i]}), "
+                    if t[-2] == ",":
+                        t = t[0:-2]
                     self.text = t
                     self.clear = False
                 elif event.key == pg.K_RETURN:

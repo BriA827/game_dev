@@ -40,7 +40,7 @@ class Player(pg.sprite.Sprite):
         self.delay = 70
         self.last = pg.time.get_ticks()
 
-        self.inv = []
+        self.inv = {}
         self.use = False
 
         self.life = 0
@@ -135,8 +135,8 @@ class Player(pg.sprite.Sprite):
                 self.rect.y = self.y
 
         #collision mask
-        if pg.sprite.spritecollide(self, self.game.block_sprites, False):
-            hits = pg.sprite.spritecollide(self, self.game.block_sprites, False, pg.sprite.collide_mask)
+        if pg.sprite.spritecollide(self, self.game.mask_sprites, False):
+            hits = pg.sprite.spritecollide(self, self.game.mask_sprites, False, pg.sprite.collide_mask)
 
             if hits:
                 if self.x_change > 0:
@@ -144,9 +144,9 @@ class Player(pg.sprite.Sprite):
                 if self.x_change < 0:
                     self.x = hits[0].rect.right
                 if self.y_change > 0:
-                    self.x = hits[0].rect.top - self.rect.height
+                    self.y = hits[0].rect.top - self.rect.height
                 if self.y_change < 0:
-                    self.x = hits[0].rect.bottom
+                    self.y = hits[0].rect.bottom
 
                 self.y_change = 0
                 self.x_change = 0
@@ -165,8 +165,8 @@ class Player(pg.sprite.Sprite):
         hits = pg.sprite.spritecollide(self, self.game.item_sprites, False)
         for i in sp:
             if i in hits:
-                if self.inv.count(i.id) < PLAYER_INV_MAX:
-                    self.inv.append(i.id)
+                if self.inv[i.id] < PLAYER_INV_MAX:
+                    self.inv[i.id] += 1
                     i.kill()
                 else:
                     self.game.text = TEXTS["inv_full"].replace("_", i.id+"s")
@@ -453,3 +453,29 @@ class Heart(pg.sprite.Sprite):
             if self.life_img == 3:
                 self.life_index+= 1
                 self.life_img= 1
+
+class Next(pg.sprite.Sprite):
+    def __init__(self, x, y, display, image):
+        pg.sprite.Sprite.__init__(self)
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.start_y = y
+        self.rect.x = x
+        self.rect.y = y
+        self.display = display
+        self.speed = 2
+        self.dir = True
+
+    def bounce(self):
+        self.y_change = 0
+        if self.dir == True:
+            self.y_change -= self.speed
+            print(self.y_change)
+            if self.rect.y - self.start_y <= 10:
+                self.dir = False
+        else:
+            self.y_change += self.speed
+            if self.rect.y - self.start_y >= 10:
+                self.dir = True
+        self.rect.y += self.y_change
+        #FIX THIS LATERRRRRRRR
