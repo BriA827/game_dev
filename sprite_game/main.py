@@ -198,7 +198,7 @@ class Game:
             for x in range(0, WIDTH, TILE):
                 im = Background(x, HEIGHT-(TILE*y), self.floor_images[1])
                 self.text_sprites.add(im)
-        self.next_text = Next(WIDTH-(2*TILE), HEIGHT-TILE+3, self.screen, self.next_image)
+        self.next_text = Next(WIDTH-(2*TILE), HEIGHT-TILE, self.screen, self.next_image)
 
         self.heart_sprites = Heart(self.hearts, PLAYER_HEARTS)
 
@@ -226,7 +226,10 @@ class Game:
             if self.player.use == True:
                 self.player.inv["bomb"] -= 1
                 e = Explosion(self.screen, self.exp_list, self)
+                self.e_tick = pg.time.get_ticks()
                 self.all_sprites.add(e) #FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                if self.bomb_tick - self.e_tick < 10:
+                    self.player.use = False
         else:
             self.all_sprites.remove(self.tracker)
             self.all_sprites.remove(self.tracked)
@@ -236,6 +239,7 @@ class Game:
         self.game_viewer.update(self.player)
 
         self.heart_sprites.update(self.player.life)
+        self.heart_sprites.bounce()
 
         if self.text !=False:
             self.text_sprite = TextBox(self.text, self.font, WHITE)
@@ -257,10 +261,11 @@ class Game:
             self.screen.blit(self.text_sprite.image, (self.text_sprite.x,self.text_sprite.y))
             self.screen.blit(self.next_text.image, (self.next_text.rect.x, self.next_text.rect.y))
             self.next_text.bounce()
+            #FIX TEXT GETTING TOO WIDE
 
         change = (TILE * self.heart_sprites.heart_num) - (TILE)
         for i in (self.heart_sprites.heart_values):
-            self.screen.blit(self.heart_sprites.img_list[self.heart_sprites.heart_values[str(i)]], [self.heart_sprites.x + change, self.heart_sprites.y-15])
+            self.screen.blit(self.heart_sprites.img_list[self.heart_sprites.heart_values[str(i)][0]], [self.heart_sprites.x + change, self.heart_sprites.heart_values[i][1]-15])
             change -= TILE-10
 
         pg.display.flip()
@@ -276,6 +281,7 @@ class Game:
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_e:
                     self.player.use = True
+                    self.bomb_tick = pg.time.get_ticks()
                 elif event.key == pg.K_i:
                     t = "Inventory: "
                     for i in self.player.inv:

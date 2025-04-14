@@ -156,7 +156,7 @@ class Player(pg.sprite.Sprite):
     def collide_snake(self):
         hits = pg.sprite.spritecollide(self, self.game.snake_sprites, False)
         if hits:
-            self.life += .5
+            self.life += SNAKE_DMG
             if self.life == 10:
                 self.game.player_alive = False
 
@@ -374,11 +374,15 @@ class Tracker(pg.sprite.Sprite):
         self.initial_angle = 90
 
     def closest(self):
-        self.target = min([s for s in self.targets], key= lambda s: math.sqrt(((s.rect.center[0] - self.owner.rect.center[0])**2) + ((s.rect.center[1] - self.owner.rect.center[1])**2)))
-        if self.target.velo < 0:
-            self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]-15, self.target.rect.top
+        if ENEMY_NUMBER - self.owner.k_count > 0:
+            self.target = min([s for s in self.targets], key= lambda s: math.sqrt(((s.rect.center[0] - self.owner.rect.center[0])**2) + ((s.rect.center[1] - self.owner.rect.center[1])**2)))
+            if self.target.velo < 0:
+                self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]-15, self.target.rect.top
+            else:
+                self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]+1, self.target.rect.top
         else:
-            self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]+1, self.target.rect.top
+            self.kill()
+            self.game.tracked.kill()
 
     def angle_x_y(self):
         rang = math.radians(self.angle)
@@ -437,22 +441,46 @@ class Heart(pg.sprite.Sprite):
         self.self = self
         self.x = 0 - TILE/3
         self.y = TILE/2
+        self.start_y = TILE/2
         self.heart_values = {}
         self.heart_num = heart_num
         self.hit_goal = 1
         self.life_img = 1
         self.life_index = 0
         for i in range(0, self.heart_num):
-            self.heart_values[str(i)] = 0
+            self.heart_values[str(i)] = [0, self.y]
+
+        self.speed = 1
+        self.dir = True
 
     def update(self, p_health):
         if p_health == self.hit_goal:
-            self.heart_values[str(self.life_index)] = self.life_img
+            self.heart_values[str(self.life_index)][0] = self.life_img
             self.hit_goal+=1
             self.life_img+= 1
             if self.life_img == 3:
                 self.life_index+= 1
                 self.life_img= 1
+
+    def bounce(self):
+        for i in self.heart_values:
+            if self.heart_values[str(i)][0] > 0:
+                self.y_change = 0
+                if self.dir == True:
+                    self.y_change -= self.speed
+                    if self.heart_values[str(i)][1] - self.start_y == -3:
+                        self.dir = False
+                    elif self.heart_values[str(i)][1] <= self.y-3:
+                        self.dir = False
+                else:
+                    self.y_change += self.speed
+                    if self.heart_values[str(i)][1] - self.start_y == 3:
+                        self.dir = True
+                    elif self.heart_values[str(i)][1] >= self.y+3:
+                        self.dir = True
+                self.heart_values[str(i)][1] += self.y_change
+
+                #FIX THIS SECTION!!!!!!!!!!!!!!!!!!!!!!!S
 
 class Next(pg.sprite.Sprite):
     def __init__(self, x, y, display, image):
@@ -463,19 +491,17 @@ class Next(pg.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.display = display
-        self.speed = 2
+        self.speed = 1
         self.dir = True
 
     def bounce(self):
         self.y_change = 0
         if self.dir == True:
             self.y_change -= self.speed
-            print(self.y_change)
-            if self.rect.y - self.start_y <= 10:
+            if self.rect.y - self.start_y == -8:
                 self.dir = False
         else:
             self.y_change += self.speed
-            if self.rect.y - self.start_y >= 10:
+            if self.rect.y - self.start_y == 8:
                 self.dir = True
         self.rect.y += self.y_change
-        #FIX THIS LATERRRRRRRR

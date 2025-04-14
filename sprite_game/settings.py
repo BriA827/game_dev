@@ -27,8 +27,9 @@ HEIGHT = 10*TILE
 
 ENEMY_NUMBER = 5
 ENEMY_RESPAWN = False
+SNAKE_DMG = .5
 
-PLAYER_INV_MAX = 1
+PLAYER_INV_MAX = 99
 PLAYER_HEARTS = 5
 
 TEXTS = {"inv_full": "You can't hold any more _!"}
