@@ -33,7 +33,7 @@ class Player(pg.sprite.Sprite):
         self.display = display
         self.game = game
 
-        self.velo = 5
+        self.velo = 4
         self.run = None #-1 = left, none = none, 1 = right, 2 = up, -2 = down
 
         self.current_frame = 0
@@ -55,7 +55,7 @@ class Player(pg.sprite.Sprite):
 
         keys = pg.key.get_pressed()
 
-        if keys[pg.K_LEFT]:
+        if keys[pg.K_LEFT] or self.game.joy.get_axis(0) < 0 - JOY_MINIMUM:
             self.now = pg.time.get_ticks()
             if self.now - self.last > self.delay:
                 self.current_frame = (self.current_frame + 1) % len(self.left_ani)
@@ -64,7 +64,7 @@ class Player(pg.sprite.Sprite):
             self.x_change = -1* self.velo
             self.run = -1
 
-        elif keys[pg.K_RIGHT]:
+        elif keys[pg.K_RIGHT] or self.game.joy.get_axis(0) > JOY_MINIMUM:
             self.now = pg.time.get_ticks()
             if self.now - self.last > self.delay:
                 self.current_frame = (self.current_frame + 1) % len(self.right_ani)
@@ -73,7 +73,7 @@ class Player(pg.sprite.Sprite):
             self.x_change = self.velo
             self.run = 1
 
-        elif keys[pg.K_UP]:
+        elif keys[pg.K_UP]or self.game.joy.get_axis(1) < 0 - JOY_MINIMUM:
             self.now = pg.time.get_ticks()
             if self.now - self.last > self.delay:
                 self.current_frame = (self.current_frame + 1) % len(self.up_ani)
@@ -82,7 +82,7 @@ class Player(pg.sprite.Sprite):
             self.y_change = -1 * self.velo
             self.run = 2
 
-        elif keys[pg.K_DOWN]:
+        elif keys[pg.K_DOWN] or self.game.joy.get_axis(1) > JOY_MINIMUM:
             self.now = pg.time.get_ticks()
             if self.now - self.last > self.delay:
                 self.current_frame = (self.current_frame + 1) % len(self.right_ani)
@@ -101,6 +101,7 @@ class Player(pg.sprite.Sprite):
                 self.image = self.up_ani[0]
 
             # self.run = None
+
         self.player_mask = pg.mask.from_surface(self.image)
         self.mask_image = self.player_mask.to_surface()
 
@@ -464,7 +465,7 @@ class Heart(pg.sprite.Sprite):
 
     def bounce(self):
         for i in self.heart_values:
-            if self.heart_values[str(i)][0] > 0:
+            if self.heart_values[str(i)][0] ==1:
                 self.y_change = 0
                 if self.dir == True:
                     self.y_change -= self.speed
@@ -479,6 +480,9 @@ class Heart(pg.sprite.Sprite):
                     elif self.heart_values[str(i)][1] >= self.y+3:
                         self.dir = True
                 self.heart_values[str(i)][1] += self.y_change
+
+            else:
+                self.heart_values[str(i)][1] = self.start_y
 
                 #FIX THIS SECTION!!!!!!!!!!!!!!!!!!!!!!!S
 

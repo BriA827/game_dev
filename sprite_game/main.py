@@ -9,6 +9,7 @@ class Game:
     def __init__(self):
         pg.init()
         pg.mixer.init()
+        pg.joystick.init()
         self.screen = pg.display.set_mode([WIDTH, HEIGHT])
         self.clock = pg.time.Clock()
         self.running = True
@@ -16,6 +17,7 @@ class Game:
 
         # self.path = pg.font.match_font("sprite_game/Perfect DOS VGA 437.ttf", 0, 0)
         self.font = pg.font.SysFont("Perfect DOS VGA 437 Win", 30)
+        self.joy = None
 
     def load_images(self):
         """Load and get images."""
@@ -282,7 +284,7 @@ class Game:
                 if event.key == pg.K_e:
                     self.player.use = True
                     self.bomb_tick = pg.time.get_ticks()
-                elif event.key == pg.K_i:
+                elif event.key == pg.K_i :
                     t = "Inventory: "
                     for i in self.player.inv:
                         if self.player.inv[i] == 1:
@@ -302,6 +304,28 @@ class Game:
                 elif event.key == pg.K_RETURN:
                     self.text = None
 
+            elif event.type == pg.JOYDEVICEADDED:
+               self.joy = pg.joystick.Joystick(event.device_index)
+
+            elif event.type == pg.JOYBUTTONDOWN:
+                if event.dict["button"] == 0:
+                    self.player.use = True
+                    self.bomb_tick = pg.time.get_ticks()
+                elif event.dict["button"] == 2:
+                    t = "Inventory: "
+                    for i in self.player.inv:
+                        if self.player.inv[i] == 1:
+                            t += f"{i.capitalize()}, "
+                        elif self.player.inv[i] > 1:
+                            t += f"{i.capitalize()} ({self.player.inv[i]}), "
+                    if t[-2] == ",":
+                        t = t[0:-2]
+                    self.text = t
+                    self.clear = False
+                elif event.dict["button"] ==1 :
+                    self.clear = True
+
+
     def run(self):
         """Contains main game loop."""
         self.playing = True
@@ -311,9 +335,16 @@ class Game:
             self.draw()
             self.clock.tick(FPS)
 
-    def show_start_screen(self):
+    def start_screen(self):
         """Screen to start game."""
-        pass
+        self.screen.fill(BLACK)
+        self.screen.blit(self.font.render(TEXTS["start"], True, WHITE), (0, HEIGHT//2))
+        pg.display.flip()
+        
+        for event in pg.event.get():
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_RETURN:
+                    return
 
     def game_over(self):
         """Screen to end game."""
@@ -322,10 +353,10 @@ class Game:
 ############################## PLAY ###################################
 
 game = Game()
-game.show_start_screen()
 
 while game.running:
+    game.start_screen()
     game.new()
-    # game.game_over()
+    game.game_over()
 
 pg.quit()

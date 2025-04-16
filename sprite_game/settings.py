@@ -29,7 +29,9 @@ ENEMY_NUMBER = 5
 ENEMY_RESPAWN = False
 SNAKE_DMG = .5
 
-PLAYER_INV_MAX = 99
+PLAYER_INV_MAX = 3
 PLAYER_HEARTS = 5
 
-TEXTS = {"inv_full": "You can't hold any more _!"}
+JOY_MINIMUM = 0.004
+
+TEXTS = {"start": "Press Enter/A to start", "inv_full": "You can't hold any more _!"}
