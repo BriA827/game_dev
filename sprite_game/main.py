@@ -252,6 +252,13 @@ class Game:
         if self.player_alive == False:
             self.playing = False
 
+        if self.player.rect.x == WIDTH: #FIX THIS SECTION
+            if self.tile_map == pytmx.load_pygame("sprite_game/tiles/test.tmx"):
+                self.tile_map= pytmx.load_pygame("sprite_game/tiles/second.tmx")
+        elif self.player.rect.x == 0:
+            if self.tile_map== pytmx.load_pygame("sprite_game/tiles/second.tmx"):
+                self.tile_map = pytmx.load_pygame("sprite_game/tiles/test.tmx")
+
     def draw(self):
         """Fill screen, draw objects, flip."""
 
