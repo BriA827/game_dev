@@ -18,6 +18,7 @@ class Game:
         # self.path = pg.font.match_font("sprite_game/Perfect DOS VGA 437.ttf", 0, 0)
         self.font = pg.font.SysFont("Perfect DOS VGA 437 Win", 30)
         self.joy = None
+        self.control = "Keys"
 
     def load_images(self):
         """Load and get images."""
@@ -245,6 +246,8 @@ class Game:
 
         if self.text !=False:
             self.text_sprite = TextBox(self.text, self.font, WHITE)
+            if (self.text_sprite.image.get_width() + self.text_sprite.x) >= (self.next_text.rect.x - self.next_text.image.get_width()):
+                self.text = self.text.split() #FIX THIS
 
         if self.player_alive == False:
             self.playing = False
@@ -337,14 +340,15 @@ class Game:
 
     def start_screen(self):
         """Screen to start game."""
-        self.screen.fill(BLACK)
-        self.screen.blit(self.font.render(TEXTS["start"], True, WHITE), (0, HEIGHT//2))
-        pg.display.flip()
+        while True:
+            self.screen.fill(BLACK)
+            self.screen.blit(self.font.render(TEXTS["start"], True, WHITE), (0, HEIGHT//2))
+            pg.display.flip()
         
-        for event in pg.event.get():
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_RETURN:
-                    return
+            for event in pg.event.get():
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_RETURN:
+                        return
 
     def game_over(self):
         """Screen to end game."""
@@ -353,9 +357,9 @@ class Game:
 ############################## PLAY ###################################
 
 game = Game()
+game.start_screen()
 
 while game.running:
-    game.start_screen()
     game.new()
     game.game_over()
 

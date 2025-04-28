@@ -55,50 +55,98 @@ class Player(pg.sprite.Sprite):
 
         keys = pg.key.get_pressed()
 
-        if keys[pg.K_LEFT] or self.game.joy.get_axis(0) < 0 - JOY_MINIMUM:
-            self.now = pg.time.get_ticks()
-            if self.now - self.last > self.delay:
-                self.current_frame = (self.current_frame + 1) % len(self.left_ani)
-                self.image = self.left_ani[self.current_frame]
-                self.last = self.now
-            self.x_change = -1* self.velo
-            self.run = -1
+        if self.game.control == "Keys":
 
-        elif keys[pg.K_RIGHT] or self.game.joy.get_axis(0) > JOY_MINIMUM:
-            self.now = pg.time.get_ticks()
-            if self.now - self.last > self.delay:
-                self.current_frame = (self.current_frame + 1) % len(self.right_ani)
-                self.image = self.right_ani[self.current_frame]
-                self.last = self.now
-            self.x_change = self.velo
-            self.run = 1
+            if keys[pg.K_LEFT]:
+                self.now = pg.time.get_ticks()
+                if self.now - self.last > self.delay:
+                    self.current_frame = (self.current_frame + 1) % len(self.left_ani)
+                    self.image = self.left_ani[self.current_frame]
+                    self.last = self.now
+                self.x_change = -1* self.velo
+                self.run = -1
 
-        elif keys[pg.K_UP]or self.game.joy.get_axis(1) < 0 - JOY_MINIMUM:
-            self.now = pg.time.get_ticks()
-            if self.now - self.last > self.delay:
-                self.current_frame = (self.current_frame + 1) % len(self.up_ani)
-                self.image = self.up_ani[self.current_frame]
-                self.last = self.now
-            self.y_change = -1 * self.velo
-            self.run = 2
+            elif keys[pg.K_RIGHT]:
+                self.now = pg.time.get_ticks()
+                if self.now - self.last > self.delay:
+                    self.current_frame = (self.current_frame + 1) % len(self.right_ani)
+                    self.image = self.right_ani[self.current_frame]
+                    self.last = self.now
+                self.x_change = self.velo
+                self.run = 1
 
-        elif keys[pg.K_DOWN] or self.game.joy.get_axis(1) > JOY_MINIMUM:
-            self.now = pg.time.get_ticks()
-            if self.now - self.last > self.delay:
-                self.current_frame = (self.current_frame + 1) % len(self.right_ani)
-                self.image = self.right_ani[self.current_frame]
-                self.last = self.now
-            self.y_change = self.velo
-            self.run = -2
+            elif keys[pg.K_UP]:
+                self.now = pg.time.get_ticks()
+                if self.now - self.last > self.delay:
+                    self.current_frame = (self.current_frame + 1) % len(self.up_ani)
+                    self.image = self.up_ani[self.current_frame]
+                    self.last = self.now
+                self.y_change = -1 * self.velo
+                self.run = 2
 
+            elif keys[pg.K_DOWN]:
+                self.now = pg.time.get_ticks()
+                if self.now - self.last > self.delay:
+                    self.current_frame = (self.current_frame + 1) % len(self.right_ani)
+                    self.image = self.right_ani[self.current_frame]
+                    self.last = self.now
+                self.y_change = self.velo
+                self.run = -2
+
+            else:
+                self.x_change = 0
+                if self.run == -1:
+                    self.image = self.left_ani[0]
+                elif self.run == 1 or self.run == -2:
+                    self.image = self.right_ani[0]
+                elif self.run == 2:
+                    self.image = self.up_ani[0]
+            
         else:
-            self.x_change = 0
-            if self.run == -1:
-                self.image = self.left_ani[0]
-            elif self.run == 1 or self.run == -2:
-                self.image = self.right_ani[0]
-            elif self.run == 2:
-                self.image = self.up_ani[0]
+            if self.game.joy.get_axis(0) < 0 - JOY_MINIMUM:
+                self.now = pg.time.get_ticks()
+                if self.now - self.last > self.delay:
+                    self.current_frame = (self.current_frame + 1) % len(self.left_ani)
+                    self.image = self.left_ani[self.current_frame]
+                    self.last = self.now
+                self.x_change = -1* self.velo
+                self.run = -1
+
+            elif self.game.joy.get_axis(0) > JOY_MINIMUM:
+                self.now = pg.time.get_ticks()
+                if self.now - self.last > self.delay:
+                    self.current_frame = (self.current_frame + 1) % len(self.right_ani)
+                    self.image = self.right_ani[self.current_frame]
+                    self.last = self.now
+                self.x_change = self.velo
+                self.run = 1
+
+            elif self.game.joy.get_axis(1) < 0 - JOY_MINIMUM:
+                self.now = pg.time.get_ticks()
+                if self.now - self.last > self.delay:
+                    self.current_frame = (self.current_frame + 1) % len(self.up_ani)
+                    self.image = self.up_ani[self.current_frame]
+                    self.last = self.now
+                self.y_change = -1 * self.velo
+                self.run = 2
+
+            elif self.game.joy.get_axis(1) > JOY_MINIMUM:
+                self.now = pg.time.get_ticks()
+                if self.now - self.last > self.delay:
+                    self.current_frame = (self.current_frame + 1) % len(self.right_ani)
+                    self.image = self.right_ani[self.current_frame]
+                    self.last = self.now
+                self.y_change = self.velo
+                self.run = -2
+
+            else:
+                self.x_change = 0
+                if self.run == -1:
+                    self.image = self.left_ani[0]
+                elif self.run == 1 or self.run == -2:
+                    self.image = self.right_ani[0]
+                elif self.run == 2:
+                    self.image = self.up_ani[0]
 
             # self.run = None
 
