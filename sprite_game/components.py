@@ -247,9 +247,8 @@ class Player(pg.sprite.Sprite):
     def collide_newmap(self):
         hits = pg.sprite.spritecollide(self, self.game.newmap_sprites, False)
         if hits:
-            self.game.map_name = hits[0].companion
+            self.game.new(hits[0].companion) #fix this
             for i in self.game.newmap_sprites:
-                print(i.name, self.game.map_name)
                 if i.name == self.game.map_name:
                     new = i
                     break

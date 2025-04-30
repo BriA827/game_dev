@@ -21,7 +21,6 @@ class Game:
         self.font = pg.font.SysFont("Perfect DOS VGA 437 Win", 30)
         self.joy = None
         self.control = "Keys"
-        self.map_name = "forest"
 
     def load_images(self):
         """Load and get images."""
@@ -121,7 +120,7 @@ class Game:
             heart = pg.transform.scale(heart, (2*TILE/3, 2*TILE/3))
             self.hearts.append(heart)
 
-    def new(self):
+    def new(self, map_name):
         """Create all game objects, sprites, and groups. Call run() method"""
         # self.map = map
         self.text = False
@@ -140,7 +139,7 @@ class Game:
 
         self.snake_spawns = []
             
-        self.tile_map = pytmx.load_pygame(f"sprite_game/tiles/{self.map_name}.tmx")
+        self.tile_map = pytmx.load_pygame(f"sprite_game/tiles/{map_name}.tmx")
         for layer in self.tile_map.visible_layers:
             if isinstance(layer, pytmx.TiledTileLayer):
                 for x, y, surf in layer.tiles():
@@ -375,7 +374,7 @@ game = Game()
 game.start_screen()
 
 while game.running:
-    game.new()
+    game.new("town")
     game.game_over()
 
 pg.quit()
