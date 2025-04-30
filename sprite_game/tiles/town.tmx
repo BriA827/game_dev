@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="16" nextobjectid="254">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="259">
  <tileset firstgid="1" source="town.tsx"/>
  <layer id="2" name="back" width="25" height="25">
   <data encoding="csv">
@@ -44,19 +44,19 @@
 0,69,83,0,81,73,85,86,76,0,0,0,105,0,0,0,0,0,0,0,127,127,127,127,127,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,127,126,127,126,127,
 0,0,0,0,0,0,81,82,46,82,83,0,0,0,0,0,0,0,0,0,127,127,127,127,127,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,45,46,47,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,48,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,60,
+0,45,46,47,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,60,
+0,60,0,60,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,72,
 0,60,0,60,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,60,0,60,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,60,0,72,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,60,0,0,0,0,0,0,0,0,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,72,0,0,0,0,0,0,0,0,60,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,60,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,72,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,81,83,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,48,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,72,0,0,0,0,0,0,0,0,0,0,0,0
+0,60,0,72,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,48,
+0,60,0,0,0,0,0,0,0,0,48,0,0,0,0,0,0,0,0,0,0,0,0,0,60,
+0,72,0,0,0,0,0,0,0,0,60,0,0,0,0,0,0,0,0,0,0,0,0,0,60,
+0,0,0,0,0,0,0,0,0,0,60,0,0,0,0,0,0,0,0,0,0,0,0,0,60,
+0,0,0,0,0,0,0,0,0,0,72,0,0,0,0,0,0,0,0,0,0,0,0,0,60,
+0,0,0,0,0,0,0,0,0,0,0,81,83,0,0,0,0,0,0,0,0,0,0,0,60,
+0,0,0,0,0,0,0,0,0,0,0,0,48,0,0,0,0,0,0,0,0,0,0,0,60,
+0,0,0,0,0,0,0,0,0,0,0,0,72,0,0,0,0,0,0,0,0,0,0,0,72
 </data>
  </layer>
  <layer id="14" name="trees_collide" width="25" height="25">
@@ -155,7 +155,7 @@
   <object id="73" name="fence" x="50.6667" y="236.333" width="10" height="49.6667"/>
   <object id="74" name="fence" x="19.6667" y="237.667" width="8.66667" height="80.6667"/>
   <object id="98" name="house" x="65.8333" y="48.1666" width="93.9583" height="5.6667"/>
-  <object id="106" name="wall" x="400" y="-0.666683" width="1.66667" height="192.667"/>
+  <object id="106" name="wall" x="400" y="-0.666683" width="1.66667" height="255.667"/>
   <object id="107" name="wall" x="-2" y="400" width="403.666" height="2.00003"/>
   <object id="134" name="wall" x="-1.99983" y="-2.00002" width="404" height="2.00003"/>
   <object id="136" name="wall" x="-2.16667" y="-2.66667" width="1.66667" height="404.667"/>
@@ -164,22 +164,27 @@
   <object id="141" name="fence" x="196" y="370" width="7.3333" height="27.3334"/>
   <object id="252" name="wall" x="319.667" y="138" width="80.1667" height="53"/>
   <object id="253" name="wall" x="395.667" y="-0.08335" width="4.66667" height="136.667"/>
+  <object id="254" name="wall" x="400.167" y="271.667" width="1.66667" height="130.667"/>
+  <object id="255" name="fence" x="387.833" y="273.833" width="7.3333" height="123.333"/>
+  <object id="256" name="fence" x="388.333" y="192.834" width="7.3333" height="61.333"/>
  </objectgroup>
  <objectgroup id="13" name="trees"/>
  <objectgroup id="11" name="movement">
   <object id="129" name="player" x="131.334" y="80">
    <point/>
   </object>
-  <object id="138" name="snake_spawn" x="211.5" y="346.167" width="174.333" height="40.3334"/>
-  <object id="139" name="snake_spawn" x="187.166" y="294.5" width="198.667" height="43"/>
+  <object id="139" name="snake_spawn" x="195.666" y="294.5" width="160.167" height="36.5"/>
   <object id="142" name="snake_spawn" x="17.3332" y="332.167" width="124.334" height="54.3333"/>
  </objectgroup>
  <objectgroup id="12" name="teleports">
-  <object id="148" name="gate_lad_down" x="264.212" y="63.2727" width="16.0606" height="3.48485"/>
-  <object id="151" name="lad_gate_up" gid="104" x="241.076" y="30.7273" width="13.6667" height="14"/>
+  <object id="148" name="gate_lad_down" x="264.212" y="63.2727" width="16.0606" height="6.46681"/>
+  <object id="151" name="lad_gate_up" gid="104" x="234.516" y="40.2696" width="13.6667" height="14"/>
+ </objectgroup>
+ <objectgroup id="16" name="newmaps">
+  <object id="258" name="town_forest_left" x="392.929" y="260.684" width="14.5" height="13"/>
  </objectgroup>
  <objectgroup id="9" name="interact">
-  <object id="75" name="bucket" gid="132" x="211.667" y="157.375" width="6" height="6.1667"/>
+  <object id="75" name="bucket" gid="132" x="210.474" y="151.411" width="6" height="6.1667"/>
   <object id="76" name="wheels" gid="58" x="82" y="286.667" width="11.1667" height="11.3333"/>
   <object id="77" name="target" gid="96" x="32" y="249.333" width="15.3333" height="15.6667"/>
   <object id="85" name="door_3" gid="90" x="128" y="64.1667" width="16" height="15.875"/>

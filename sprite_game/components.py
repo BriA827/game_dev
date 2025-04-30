@@ -162,6 +162,7 @@ class Player(pg.sprite.Sprite):
         self.collide_snake()
         self.collide_item()
         self.collide_tele()
+        self.collide_newmap()
 
     def collide_wall(self, dir):
         #collision rectangle
@@ -238,6 +239,21 @@ class Player(pg.sprite.Sprite):
                 if i.name == new_name:
                     new = i
                     break
+            if new.displace == "down":
+                self.rect.x, self.rect.y = new.rect.x, new.rect.y + (TILE*.8)
+            else:
+                self.rect.x, self.rect.y = new.rect.x, new.rect.y - (TILE*.8)
+
+    def collide_newmap(self):
+        hits = pg.sprite.spritecollide(self, self.game.newmap_sprites, False)
+        if hits:
+            self.game.map_name = hits[0].companion
+            for i in self.game.newmap_sprites:
+                print(i.name, self.game.map_name)
+                if i.name == self.game.map_name:
+                    new = i
+                    break
+
             if new.displace == "down":
                 self.rect.x, self.rect.y = new.rect.x, new.rect.y + (TILE*.8)
             else:

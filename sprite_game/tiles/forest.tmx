@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-up" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="2">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-up" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="19">
  <tileset firstgid="1" source="town.tsx"/>
  <layer id="1" name="back" width="25" height="25">
   <data encoding="csv">
@@ -59,7 +59,24 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="4" name="sprites">
-  <object id="1" name="bag" gid="108" x="87.4227" y="213.159" width="8.24691" height="9.43969"/>
+ <objectgroup id="4" name="collide">
+  <object id="3" name="wall" x="-1.50967" y="-0.387467" width="1.66667" height="272.962"/>
+  <object id="4" name="wall" x="-1.31101" y="286.426" width="1.66667" height="113.879"/>
+  <object id="5" name="wall" x="-0.833" y="400" width="400.666" height="2.00003"/>
+  <object id="6" name="wall" x="-1.333" y="-2.33335" width="400.666" height="2.00003"/>
+  <object id="7" name="wall" x="400.167" y="-1.981" width="1.66667" height="403.462"/>
+ </objectgroup>
+ <objectgroup id="6" name="sprites">
+  <object id="9" name="bag" gid="108" x="87.4227" y="213.159" width="8.24691" height="9.43969"/>
+  <object id="18" name="bomb" gid="106" x="106.525" y="306.053" width="10" height="9.33333"/>
+ </objectgroup>
+ <objectgroup id="5" name="newmaps">
+  <object id="8" name="forest_town_right" x="4.75464" y="276.786" width="8.38247" height="13"/>
+ </objectgroup>
+ <objectgroup id="7" name="movement">
+  <object id="16" name="player" x="27.434" y="288.057">
+   <point/>
+  </object>
+  <object id="17" name="snake_spawn" x="52.9366" y="339.018" width="33.0861" height="19.7426"/>
  </objectgroup>
 </map>

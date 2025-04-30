@@ -15,10 +15,13 @@ class Game:
         self.running = True
         self.load_images()
 
+        self.explode_sound = pg.mixer.Sound("sprite_game/sounds/explosion.wav")
+
         # self.path = pg.font.match_font("sprite_game/Perfect DOS VGA 437.ttf", 0, 0)
         self.font = pg.font.SysFont("Perfect DOS VGA 437 Win", 30)
         self.joy = None
         self.control = "Keys"
+        self.map_name = "forest"
 
     def load_images(self):
         """Load and get images."""
@@ -130,13 +133,14 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.item_sprites = pg.sprite.Group()
         self.tele_sprites = pg.sprite.Group()
+        self.newmap_sprites = pg.sprite.Group()
         self.text_sprites = pg.sprite.Group()
 
         self.map_tiles = pg.sprite.Group()
 
         self.snake_spawns = []
             
-        self.tile_map = pytmx.load_pygame("sprite_game/tiles/test.tmx")
+        self.tile_map = pytmx.load_pygame(f"sprite_game/tiles/{self.map_name}.tmx")
         for layer in self.tile_map.visible_layers:
             if isinstance(layer, pytmx.TiledTileLayer):
                 for x, y, surf in layer.tiles():
@@ -193,6 +197,16 @@ class Game:
                         else:
                             t = Teleporter((obj.x/16)*TILE, (obj.y/16)*TILE, obj.name.split("_")[0], obj.name.split("_")[1], obj.name.split("_")[-1], width=(obj.width/16)*TILE, height=(obj.height/16)*TILE)
                             self.tele_sprites.add(t)
+
+                    elif layer.name == "newmaps":
+                        if obj.image:
+                            im = pg.transform.scale(obj.image, (TILE/2,TILE/2))
+                            t = Teleporter((obj.x/16)*TILE, (obj.y/16)*TILE, obj.name.split("_")[0], obj.name.split("_")[1], obj.name.split("_")[-1], image=im)
+                            self.newmap_sprites.add(t)
+                            self.all_sprites.add(t)
+                        else:
+                            t = Teleporter((obj.x/16)*TILE, (obj.y/16)*TILE, obj.name.split("_")[0], obj.name.split("_")[1], obj.name.split("_")[-1], width=(obj.width/16)*TILE, height=(obj.height/16)*TILE)
+                            self.newmap_sprites.add(t)
         
         self.tracker = Tracker(self.player, self.snake_sprites, self.track_image, self)
         self.tracked = Marker(self.track_image)
@@ -229,8 +243,9 @@ class Game:
             if self.player.use == True:
                 self.player.inv["bomb"] -= 1
                 e = Explosion(self.screen, self.exp_list, self)
+                # self.explode_sound.play(1)
                 self.e_tick = pg.time.get_ticks()
-                self.all_sprites.add(e) #FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                self.all_sprites.add(e)
                 if self.bomb_tick - self.e_tick < 10:
                     self.player.use = False
         else:
@@ -251,13 +266,6 @@ class Game:
 
         if self.player_alive == False:
             self.playing = False
-
-        if self.player.rect.x == WIDTH: #FIX THIS SECTION
-            if self.tile_map == pytmx.load_pygame("sprite_game/tiles/test.tmx"):
-                self.tile_map= pytmx.load_pygame("sprite_game/tiles/second.tmx")
-        elif self.player.rect.x == 0:
-            if self.tile_map== pytmx.load_pygame("sprite_game/tiles/second.tmx"):
-                self.tile_map = pytmx.load_pygame("sprite_game/tiles/test.tmx")
 
     def draw(self):
         """Fill screen, draw objects, flip."""
