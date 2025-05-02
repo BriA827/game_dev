@@ -16,22 +16,19 @@ FPS = 60
 
 TILE = 64
 
+#size of the pygame WINDOW
 WIDTH = 15*TILE
 HEIGHT = 10*TILE
-
-# O_MAP_WIDTH = len(OVERWORLD[0]) * TILE
-# O_MAP_HEIGHT = len(OVERWORLD) * TILE
-
-# H_MAP_WIDTH = len(HOUSE[0]) * TILE
-# H_MAP_HEIGHT = len(HOUSE) * TILE
 
 ENEMY_NUMBER = 5
 ENEMY_RESPAWN = False
 SNAKE_DMG = .25
 
+#max of each item
 PLAYER_INV_MAX = 3
 PLAYER_HEARTS = 5
 
+#controller has slight drift, adjusts for that
 JOY_MINIMUM = 0.004
 
 TEXTS = {"start": "Press Enter/A to start", "inv_full": "You can't hold any more _!"}

@@ -21,6 +21,7 @@ class SpriteSheet():
 class Player(pg.sprite.Sprite):
     def __init__(self, x, y, display, right_ani, left_ani, up_ani, game):
         pg.sprite.Sprite.__init__(self)
+        #image lists
         self.right_ani = right_ani
         self.left_ani = left_ani
         self.up_ani = up_ani
@@ -56,7 +57,7 @@ class Player(pg.sprite.Sprite):
         keys = pg.key.get_pressed()
 
         if self.game.control == "Keys":
-
+            #changes the picture based on the direction
             if keys[pg.K_LEFT]:
                 self.now = pg.time.get_ticks()
                 if self.now - self.last > self.delay:
@@ -103,6 +104,7 @@ class Player(pg.sprite.Sprite):
                     self.image = self.up_ani[0]
             
         else:
+            #same process but with the controller
             if self.game.joy.get_axis(0) < 0 - JOY_MINIMUM:
                 self.now = pg.time.get_ticks()
                 if self.now - self.last > self.delay:
@@ -140,6 +142,7 @@ class Player(pg.sprite.Sprite):
                 self.run = -2
 
             else:
+                #if no longer moving, sets the image to be used for the proper direction
                 self.x_change = 0
                 if self.run == -1:
                     self.image = self.left_ani[0]
@@ -206,6 +209,7 @@ class Player(pg.sprite.Sprite):
     def collide_snake(self):
         hits = pg.sprite.spritecollide(self, self.game.snake_sprites, False)
         if hits:
+            #lowers health if collide with snake
             self.life += SNAKE_DMG
             if self.life == 10:
                 self.game.player_alive = False
@@ -215,30 +219,27 @@ class Player(pg.sprite.Sprite):
         hits = pg.sprite.spritecollide(self, self.game.item_sprites, False)
         for i in sp:
             if i in hits:
-                if self.inv[i.id] < PLAYER_INV_MAX:
+                #if the amount of a certain item is less than the max, add it to the inventory and kill the sprite
+                if i.id in self.inv and self.inv[i.id] < PLAYER_INV_MAX:
                     self.inv[i.id] += 1
                     i.kill()
                 else:
+                    #else say that the inv is full and launch the text on screen
                     self.game.text = TEXTS["inv_full"].replace("_", i.id+"s")
                     self.game.clear = False
                     hits.remove(i)
 
-    # def collide_door(self):
-    #     hits = pg.sprite.spritecollide(self, self.game.door_sprites, False)
-    #     if hits:
-    #         if self.game.map == OVERWORLD:
-    #             return HOUSE
-    #         else:
-    #             return OVERWORLD
-
     def collide_tele(self):
         hits = pg.sprite.spritecollide(self, self.game.tele_sprites, False)
         if hits:
+            #the new teleport locaiton
             new_name = hits[0].companion
             for i in self.game.tele_sprites:
-                if i.name == new_name:
+                if i.name == new_name: #seaching for the sprite match (name and companion)
                     new = i
                     break
+
+            # sets the players x,y to the new values
             if new.displace == "down":
                 self.rect.x, self.rect.y = new.rect.x, new.rect.y + (TILE*.8)
             else:
@@ -247,11 +248,15 @@ class Player(pg.sprite.Sprite):
     def collide_newmap(self):
         hits = pg.sprite.spritecollide(self, self.game.newmap_sprites, False)
         if hits:
-            self.game.new(hits[0].companion) #fix this
             for i in self.game.newmap_sprites:
-                if i.name == self.game.map_name:
+                if i.name == self.game.game_map:
                     new = i
                     break
+            
+            #if the player interacts with a new_map sprite
+            #find the companion and set the map to the new key
+            self.game.game_map = hits[0].companion
+            self.game.change_map = True
 
             if new.displace == "down":
                 self.rect.x, self.rect.y = new.rect.x, new.rect.y + (TILE*.8)
@@ -271,6 +276,8 @@ class Wall(pg.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.display = display
+
+        #is it able to be blown up T/F
         self.bomb = bomb
 
         if mask == True and image:
@@ -296,6 +303,7 @@ class Snake(pg.sprite.Sprite):
         self.last = pg.time.get_ticks()
     
     def update(self):
+        #cords for the tracker
         self.targetx = self.game.player.rect.center[0]
         self.targety = self.game.player.rect.center[1]
         
@@ -303,6 +311,7 @@ class Snake(pg.sprite.Sprite):
 
         self.now = pg.time.get_ticks()
 
+        #all images and animation
         if self.velo > 0:
             self.direct = self.right
         elif self.velo < 0:
@@ -312,11 +321,11 @@ class Snake(pg.sprite.Sprite):
                 self.current_frame = (self.current_frame + 1) % len(self.direct)
                 self.image = self.direct[self.current_frame]
                 self.last = self.now
-        
+
+        #makes it turn around when hitting a wall
         hits = pg.sprite.spritecollide(self, self.game.block_sprites, False)
         if hits:
             self.velo = self.velo * -1
-            # self.velo = 0
 
 class Item(pg.sprite.Sprite):
     def __init__(self, x, y, display, image, name):
@@ -342,6 +351,7 @@ class Explosion(pg.sprite.Sprite):
         self.delay = 16
         self.last = pg.time.get_ticks()
 
+        #fixes the x,y for the explosion based on where the player is looking
         self.game = game
         if self.game.player.run == 1: #right
             self.rect.x = self.game.player.rect.topleft[0]+40
@@ -357,6 +367,7 @@ class Explosion(pg.sprite.Sprite):
             self.rect.y = self.game.player.rect.topleft[1]+50
 
     def update(self):
+        #animation
         self.now = pg.time.get_ticks()
         if self.now - self.last > self.delay:
             self.current_frame = (self.current_frame + 1) % len(self.images)
@@ -369,6 +380,7 @@ class Explosion(pg.sprite.Sprite):
         self.collide()
 
     def collide(self):
+        #kills snakes that touch the explosion
         hits = pg.sprite.spritecollide(self, self.game.snake_sprites, False)
         if hits:
             hits[0].kill()
@@ -403,6 +415,7 @@ class Camera():
         self.camera = pg.Rect(x, y, self.width, self.height)
 
 class Background(pg.sprite.Sprite):
+    #these tiles are just decorative
     def __init__(self, x, y, image):
         pg.sprite.Sprite.__init__(self)
         self.self = self
@@ -412,6 +425,7 @@ class Background(pg.sprite.Sprite):
         self.rect.y = y
 
 class Marker(pg.sprite.Sprite):
+    #decorative sprite that marks which snake is the target
     def __init__(self, image):
         pg.sprite.Sprite.__init__(self)
         self.self = self
@@ -438,13 +452,17 @@ class Tracker(pg.sprite.Sprite):
         self.initial_angle = 90
 
     def closest(self):
+        #while there are still enemies
         if ENEMY_NUMBER - self.owner.k_count > 0:
+            #find the closest enemy center to the owner's center
             self.target = min([s for s in self.targets], key= lambda s: math.sqrt(((s.rect.center[0] - self.owner.rect.center[0])**2) + ((s.rect.center[1] - self.owner.rect.center[1])**2)))
+            #fixes position for the tracking sprite
             if self.target.velo < 0:
                 self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]-15, self.target.rect.top
             else:
                 self.game.tracked.rect.x, self.game.tracked.rect.y = self.target.rect.center[0]+1, self.target.rect.top
         else:
+            #no enemies, no tracking
             self.kill()
             self.game.tracked.kill()
 
@@ -455,6 +473,7 @@ class Tracker(pg.sprite.Sprite):
         #FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!
 
     def rotate(self):
+        #rotates the owner's tracker to point at the target's center
         self.angle = self.initial_angle - math.atan2(self.target.rect.center[1]-self.rect.center[1], self.target.rect.center[0]-self.rect.center[0]) *  (180/math.pi) 
         # self.initial_angle = angle
         self.image = pg.transform.rotate(self.base_image, self.angle)
@@ -465,21 +484,10 @@ class Tracker(pg.sprite.Sprite):
         # self.angle_x_y()
         self.rect.x, self.rect.y = self.owner.rect.center[0] - 5,  self.owner.rect.top - 20
 
-
-class Door(pg.sprite.Sprite):
-    def __init__(self, x, y, display, image, game):
-        pg.sprite.Sprite.__init__(self)
-        self.self = self
-        self.display = display
-        self.image = image
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.game = game
-
 class Teleporter(pg.sprite.Sprite):
     def __init__(self, x, y, name, companion, displace, width=None, height=None, image = None):
         pg.sprite.Sprite.__init__(self)
+        #some teleports are tiled-objects but some are just areas, this makes it so it preserves any images
         if image:
             self.image = image
             self.rect = self.image.get_rect()
@@ -503,31 +511,41 @@ class Heart(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.img_list = img_list
         self.self = self
+
         self.x = 0 - TILE/3
         self.y = TILE/2
         self.start_y = TILE/2
+        #two y values because one bounces, need to track the og space for it to return to
+
         self.heart_values = {}
         self.heart_num = heart_num
         self.hit_goal = 1
         self.life_img = 1
         self.life_index = 0
+
+        #dictionary makes heart_num number of hearts (all hearts are one sprite)
         for i in range(0, self.heart_num):
             self.heart_values[str(i)] = [0, self.y]
 
+        #for bounce
         self.speed = 1
         self.dir = True
 
     def update(self, p_health):
+        # if the player's damage has met the amount for deduction
         if p_health == self.hit_goal:
+            #change the image to reflect the change, ie: from 0 (full) to 1 (half) to 2 (empty)
             self.heart_values[str(self.life_index)][0] = self.life_img
             self.hit_goal+=1
             self.life_img+= 1
             if self.life_img == 3:
+                #if it reaches three, move onto the next heart
                 self.life_index+= 1
                 self.life_img= 1
 
     def bounce(self):
         for i in self.heart_values:
+            #if the current heart is a half heart, make it bounce up and down
             if self.heart_values[str(i)][0] ==1:
                 self.y_change = 0
                 if self.dir == True:
@@ -561,7 +579,10 @@ class Next(pg.sprite.Sprite):
         self.speed = 1
         self.dir = True
 
+        #decorative sprite for the text box
+
     def bounce(self):
+        #bounces it up and down
         self.y_change = 0
         if self.dir == True:
             self.y_change -= self.speed

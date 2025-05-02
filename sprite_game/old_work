@@ -220,3 +220,30 @@
 
 # #ints = dirt_path, g = flowers, - = wall, o/s/f = tree, ~ = snake, blank = grass, b = bomb, h = house
 # #lmcr = leftroof, middleroof, chimney, rightroof --- LMR = leftwall, middlewall, rightwall --- [_D] = side, wall, door, side
+
+
+# O_MAP_WIDTH = len(OVERWORLD[0]) * TILE
+# O_MAP_HEIGHT = len(OVERWORLD) * TILE
+
+# H_MAP_WIDTH = len(HOUSE[0]) * TILE
+# H_MAP_HEIGHT = len(HOUSE) * TILE
+
+
+   # def collide_door(self):
+    #     hits = pg.sprite.spritecollide(self, self.game.door_sprites, False)
+    #     if hits:
+    #         if self.game.map == OVERWORLD:
+    #             return HOUSE
+    #         else:
+    #             return OVERWORLD
+
+# class Door(pg.sprite.Sprite):
+#     def __init__(self, x, y, display, image, game):
+#         pg.sprite.Sprite.__init__(self)
+#         self.self = self
+#         self.display = display
+#         self.image = image
+#         self.rect = self.image.get_rect()
+#         self.rect.x = x
+#         self.rect.y = y
+#         self.game = game
