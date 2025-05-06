@@ -22,7 +22,7 @@ class Game:
         self.joy = None
 
         #changes in start screen based on user input
-        self.control = "Keys"
+        self.control = None
 
         #sets the map keyword
         self.game_map = "town"
@@ -30,40 +30,6 @@ class Game:
 
     def load_images(self):
         """Load and get images."""
-
-        tile_sheet = SpriteSheet("sprite_game/sprites/tilemap.png")
-        self.bomb_image = tile_sheet.get_image(10*16-7, 8*16+9, 16, 16, 2, 2, True)
-
-        self.flower_image = tile_sheet.get_image(17*2, 0, 16,16,4,4)
-        self.grass_image = tile_sheet.get_image(17, 0, 16,16,4,4)
-        self.green_image = tile_sheet.get_image(0, 0, 16,16,4,4)
-
-        self.stone_image = tile_sheet.get_image(17*6, 17*10, 16,16,4,4)
-
-        self.tree_images = []
-        for y in range(3):
-            for x in range(6,9):
-                locx = 17 * x
-                locy = 17 * y
-                image = tile_sheet.get_image(locx, locy, 16, 16, 4, 4)
-                image.set_colorkey(BLACK)
-                self.tree_images.append(image)
-
-        self.grass_sq = []
-        for y in range(1,4):
-            for x in range(0,3):
-                locx = 17 * x
-                locy = 17 * y
-                image = tile_sheet.get_image(locx, locy, 16, 16, 4, 4)
-                self.grass_sq.append(image)
-
-        self.house_images = []
-        for y in range(4,8):
-            for x in range(4):
-                locx = 17 * x
-                locy = 17 * y
-                image = tile_sheet.get_image(locx, locy, 16, 16, 4, 4)
-                self.house_images.append(image)
 
         self.floor_images = []
         for i in range(4):
@@ -208,7 +174,9 @@ class Game:
                             else:
                                 self.newmap_sprites.add(t)
 
-    #fix the game not workingnow HAHAHAH
+        # if self.game_map == "forest":
+        #     w = Wall(83, 1107, self.screen, 33, 50,self.king_still)
+        #     self.all_sprites.add(w)
 
     def new(self):
         """Create all game objects, sprites, and groups. Call run() method"""
@@ -221,9 +189,10 @@ class Game:
         for layer in self.tile_map.visible_layers:
             if isinstance(layer, pytmx.TiledObjectGroup):
                 for obj in layer:
-                    self.player = Player((obj.x/16)*TILE, (obj.y/16)*TILE,self.screen, self.king_right, self.king_left, self.king_up, self)
-                    self.all_sprites.add(self.player)
-                    self.player_alive = True
+                    if obj.name == "player":
+                        self.player = Player((obj.x/16)*TILE, (obj.y/16)*TILE,self.screen, self.king_right, self.king_left, self.king_up, self)
+                        self.all_sprites.add(self.player)
+                        self.player_alive = True
         
         #creates a tracker for the player that looks for the closest snake
         self.tracker = Tracker(self.player, self.snake_sprites, self.track_image, self)
@@ -238,16 +207,15 @@ class Game:
 
         self.heart_sprites = Heart(self.hearts, PLAYER_HEARTS)
 
-        self.game_viewer = Camera(self.tile_map.width*TILE, self.tile_map.height*TILE) # key helper!!!!!
-
         for i in self.item_sprites:
             self.player.inv[i.id] = 0
+
+        self.game_viewer = Camera(self.tile_map.width*TILE, self.tile_map.height*TILE)
 
         self.run()
 
     def update(self):
         """Run all updates."""
-        print(self.player.inv)
 
         #spawns snake randomly in the confines of the snake_spawn areas
         if len(self.snake_sprites) < ENEMY_NUMBER - self.player.k_count:
@@ -388,7 +356,6 @@ class Game:
     def run(self):
         """Contains main game loop."""
         self.playing = True
-        print(self.player.inv)
         while self.playing:
             self.events()
             self.update()
@@ -397,20 +364,62 @@ class Game:
             if self.change_map ==True:
                 self.tile_generation(self.game_map)
                 self.change_map = False
+                self.player.newmap_spawn()
 
     def start_screen(self):
         """Screen to start game."""
         #displays intro text
-        while True:
-            self.screen.fill(BLACK)
-            self.screen.blit(self.font.render(TEXTS["start"], True, WHITE), (0, HEIGHT//2))
+        start = True
+
+        self.selected = "Keys"
+
+        while start:
+            self.screen.fill(TIES)
+
+            #text section for keyboard
+            self.screen.blit(self.font.render("Keyboard", True, WHITE), (WIDTH//4 + 20, HEIGHT//4))
+            k = Next(WIDTH//3 - 10, HEIGHT//3, self.screen, self.next_image)
+            self.screen.blit(k.image, (k.rect.x, k.rect.y))
+
+            #text section for controller
+            self.screen.blit(self.font.render("Controller", True, WHITE), (WIDTH//2+ 30, HEIGHT//4))
+            j = Next(2*WIDTH//3 - 60, HEIGHT//3, self.screen, self.next_image)
+            self.screen.blit(j.image, (j.rect.x, j.rect.y))
+
+            self.screen.blit(self.font.render(TEXTS["start"], True, WHITE), (WIDTH//4+ 40, HEIGHT//2))
+
+            #draw a circle around whichever one is currently selected
+            if self.selected == "Keys":
+                pg.draw.ellipse(self.screen, BLACK, (WIDTH//3 - 20, HEIGHT//3-10, 45,45), 5)
+                k.image = self.track_image
+            else:
+                pg.draw.ellipse(self.screen, BLACK, (2*WIDTH//3 - 70, HEIGHT//3-10, 45,45), 5)
+
             pg.display.flip()
         
             for event in pg.event.get():
+                if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
+                    self.running = False
+                    start = False
+
                 if event.type == pg.KEYDOWN:
                     #return ends this screen and begins the game
+                    #sets the game input as either keys or controller ----(ALLOW THIS TO BE CHANGED IN PAUSE MENU IF IMPLEMENTED)
                     if event.key == pg.K_RETURN:
+                        self.control = self.selected
                         return
+                    
+                    #changes selected based on player input
+                    if event.key == pg.K_LEFT or event.key == pg.K_RIGHT:
+                        if self.selected == "Keys":
+                            self.selected = "Joy"
+                        else:
+                            self.selected = "Keys"
+
+                # elif event.type == pg.JOYDEVICEADDED:
+                #     self.joy = pg.joystick.Joystick(event.device_index)
+                #add this in later to make a warning for if joy is selected but nothing is connected
+
 
     def game_over(self):
         """Screen to end game."""

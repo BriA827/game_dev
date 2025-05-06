@@ -74,7 +74,7 @@
   <object id="8" name="forest_town_right" x="4.75464" y="276.786" width="8.38247" height="13"/>
  </objectgroup>
  <objectgroup id="7" name="movement">
-  <object id="16" name="player" x="27.434" y="288.057">
+  <object id="16" name="player" x="212.315" y="220.068">
    <point/>
   </object>
   <object id="17" name="snake_spawn" x="52.9366" y="339.018" width="33.0861" height="19.7426"/>

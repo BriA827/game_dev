@@ -170,7 +170,7 @@
  </objectgroup>
  <objectgroup id="13" name="trees"/>
  <objectgroup id="11" name="movement">
-  <object id="129" name="player" x="131.334" y="80">
+  <object id="129" name="player" x="353.788" y="266.671">
    <point/>
   </object>
   <object id="139" name="snake_spawn" x="195.666" y="294.5" width="160.167" height="36.5"/>

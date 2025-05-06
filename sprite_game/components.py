@@ -248,6 +248,8 @@ class Player(pg.sprite.Sprite):
     def collide_newmap(self):
         hits = pg.sprite.spritecollide(self, self.game.newmap_sprites, False)
         if hits:
+            #search the newmap_sprites for which one the player collided with
+            #if found and the name is the same as the map, continue
             for i in self.game.newmap_sprites:
                 if i.name == self.game.game_map:
                     new = i
@@ -258,10 +260,22 @@ class Player(pg.sprite.Sprite):
             self.game.game_map = hits[0].companion
             self.game.change_map = True
 
-            if new.displace == "down":
-                self.rect.x, self.rect.y = new.rect.x, new.rect.y + (TILE*.8)
-            else:
-                self.rect.x, self.rect.y = new.rect.x, new.rect.y - (TILE*.8)
+    def newmap_spawn(self):
+        #continuation of collide newmap, only triggers when map has fully changed
+            for i in self.game.newmap_sprites:
+                if i.name == self.game.game_map:
+                    #if found and is the corret map, save the sprite
+                    t = i
+                    break
+
+            if t.displace == "down":
+                self.rect.x, self.rect.y = t.rect.x, t.rect.y + (TILE*.8)
+            elif t.displace == "up":
+                self.rect.x, self.rect.y = t.rect.x, t.rect.y - (TILE*.8)
+            elif t.displace == "left":
+                self.rect.x, self.rect.y = t.rect.x - (TILE), t.rect.y
+            elif t.displace == "right":
+                self.rect.x, self.rect.y = t.rect.x + (TILE), t.rect.y
 
 class Wall(pg.sprite.Sprite):
     def __init__(self, x, y, display, height, width, image = None, bomb = False, mask = False):
