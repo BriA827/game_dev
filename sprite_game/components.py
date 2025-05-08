@@ -42,6 +42,7 @@ class Player(pg.sprite.Sprite):
         self.last = pg.time.get_ticks()
 
         self.inv = {}
+        self.inv_codes = []
         self.use = False
 
         self.life = 0
@@ -222,6 +223,11 @@ class Player(pg.sprite.Sprite):
                 #if the amount of a certain item is less than the max, add it to the inventory and kill the sprite
                 if i.id in self.inv and self.inv[i.id] < PLAYER_INV_MAX:
                     self.inv[i.id] += 1
+                    self.inv_codes.append(i.code)
+                    i.kill()
+                elif i.id not in self.inv:
+                    self.inv[i.id] = 1
+                    self.inv_codes.append(i.code)
                     i.kill()
                 else:
                     #else say that the inv is full and launch the text on screen
@@ -252,30 +258,29 @@ class Player(pg.sprite.Sprite):
             #if found and the name is the same as the map, continue
             for i in self.game.newmap_sprites:
                 if i.name == self.game.game_map:
-                    new = i
-                    break
-            
-            #if the player interacts with a new_map sprite
-            #find the companion and set the map to the new key
-            self.game.game_map = hits[0].companion
-            self.game.change_map = True
+
+                    #if the player interacts with a new_map sprite
+                    #find the companion and set the map to the new key
+                    self.game.game_map = hits[0].companion
+                    self.game.change_map = True
+                    self.game.persistant["player"] = {"inv":self.inv, "codes":self.inv_codes, "kills":self.k_count, "life":self.life}
+                    self.game.persistant["new_map"] = hits[0].loc
 
     def newmap_spawn(self):
         #continuation of collide newmap, only triggers when map has fully changed
             for i in self.game.newmap_sprites:
-                if i.name == self.game.game_map:
-                    #if found and is the corret map, save the sprite
+                if i.name == self.game.game_map and i.loc == self.game.persistant["new_map"]:
+                    #if found and is the corret map, save the sprite, move the player
                     t = i
-                    break
 
-            if t.displace == "down":
-                self.rect.x, self.rect.y = t.rect.x, t.rect.y + (TILE*.8)
-            elif t.displace == "up":
-                self.rect.x, self.rect.y = t.rect.x, t.rect.y - (TILE*.8)
-            elif t.displace == "left":
-                self.rect.x, self.rect.y = t.rect.x - (TILE), t.rect.y
-            elif t.displace == "right":
-                self.rect.x, self.rect.y = t.rect.x + (TILE), t.rect.y
+                    if t.displace == "down":
+                        self.rect.x, self.rect.y = t.rect.x, t.rect.y + (TILE*.8)
+                    elif t.displace == "up":
+                        self.rect.x, self.rect.y = t.rect.x, t.rect.y - (TILE*.8)
+                    elif t.displace == "left":
+                        self.rect.x, self.rect.y = t.rect.x - (TILE), t.rect.y
+                    elif t.displace == "right":
+                        self.rect.x, self.rect.y = t.rect.x + (TILE), t.rect.y
 
 class Wall(pg.sprite.Sprite):
     def __init__(self, x, y, display, height, width, image = None, bomb = False, mask = False):
@@ -342,7 +347,7 @@ class Snake(pg.sprite.Sprite):
             self.velo = self.velo * -1
 
 class Item(pg.sprite.Sprite):
-    def __init__(self, x, y, display, image, name):
+    def __init__(self, x, y, display, image, name, code):
         pg.sprite.Sprite.__init__(self)
         self.self = self
         self.image = image
@@ -351,6 +356,7 @@ class Item(pg.sprite.Sprite):
         self.rect.y = y
         self.display = display
         self.id = name
+        self.code = code
 
 class Explosion(pg.sprite.Sprite):
     def __init__(self, display, images, game):
@@ -399,7 +405,6 @@ class Explosion(pg.sprite.Sprite):
         if hits:
             hits[0].kill()
             self.game.player.k_count +=1
-            print(self.game.player.k_count)
 
 class Camera():
     def __init__(self, width, height):
@@ -493,13 +498,16 @@ class Tracker(pg.sprite.Sprite):
         self.image = pg.transform.rotate(self.base_image, self.angle)
 
     def update(self):
-        self.closest()
-        self.rotate()
-        # self.angle_x_y()
-        self.rect.x, self.rect.y = self.owner.rect.center[0] - 5,  self.owner.rect.top - 20
+        try:
+            self.closest()
+            self.rotate()
+            # self.angle_x_y()
+            self.rect.x, self.rect.y = self.owner.rect.center[0] - 5,  self.owner.rect.top - 20
+        except:
+            pass
 
 class Teleporter(pg.sprite.Sprite):
-    def __init__(self, x, y, name, companion, displace, width=None, height=None, image = None):
+    def __init__(self, x, y, name, companion, displace, loc=None, width=None, height=None, image = None):
         pg.sprite.Sprite.__init__(self)
         #some teleports are tiled-objects but some are just areas, this makes it so it preserves any images
         if image:
@@ -512,6 +520,7 @@ class Teleporter(pg.sprite.Sprite):
         self.name = name
         self.companion = companion
         self.displace = displace
+        self.loc = loc
 
 class TextBox(pg.sprite.Sprite):
     def __init__(self, text, font, color):

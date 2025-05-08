@@ -28,6 +28,10 @@ class Game:
         self.game_map = "town"
         self.change_map = False
 
+        #saves important data across maps
+        self.persistant = {}
+        self.sprite_code = 0
+
     def load_images(self):
         """Load and get images."""
 
@@ -94,7 +98,7 @@ class Game:
 
     def tile_generation(self, map):
         #this function gets the current map and re-adjusts the tiles to create/display
-        #called once upon creation and subsequently when player interacts with a "new_map" sprite
+        #called once upon creation and subsequently when player interacts with a "newmap" sprite
 
         self.block_sprites = pg.sprite.Group()
         self.mask_sprites = pg.sprite.Group()
@@ -127,12 +131,13 @@ class Game:
 
             elif isinstance(layer, pytmx.TiledObjectGroup):
                 for obj in layer:
-                    #pick up items
+                    #pick-up items
                     if layer.name == "sprites":
                         im = pg.transform.scale(obj.image, (TILE/2,TILE/2))
-                        it = Item((obj.x/16)*TILE, (obj.y/16)*TILE, self.screen, im, obj.name)
+                        it = Item((obj.x/16)*TILE, (obj.y/16)*TILE, self.screen, im, obj.name, self.sprite_code)
                         self.item_sprites.add(it)
                         self.all_sprites.add(it)
+                        self.sprite_code +=1
 
                     #walls
                     elif layer.name == "collide":
@@ -158,38 +163,22 @@ class Game:
                         self.snake_spawns.append([(obj.x/16)*TILE, (obj.y/16)*TILE, (obj.width/16)*TILE, (obj.height/16)*TILE])
 
                     #teleports for images and areas
-                    elif layer.name == "teleports" or layer.name == "newmaps":
+                    elif layer.name == "teleports":
                         if obj.image:
                             im = pg.transform.scale(obj.image, (TILE/2,TILE/2))
                             t = Teleporter((obj.x/16)*TILE, (obj.y/16)*TILE, obj.name.split("_")[0], obj.name.split("_")[1], obj.name.split("_")[-1], image=im)
-                            if layer.name =="teleports":
-                                self.tele_sprites.add(t)
-                            else:
-                                self.newmap_sprites.add(t)
+                            self.tele_sprites.add(t)
                             self.all_sprites.add(t)
                         else:
                             t = Teleporter((obj.x/16)*TILE, (obj.y/16)*TILE, obj.name.split("_")[0], obj.name.split("_")[1], obj.name.split("_")[-1], width=(obj.width/16)*TILE, height=(obj.height/16)*TILE)
-                            if layer.name =="teleports":
-                                self.tele_sprites.add(t)
-                            else:
-                                self.newmap_sprites.add(t)
+                            self.tele_sprites.add(t)
 
-        # if self.game_map == "forest":
-        #     w = Wall(83, 1107, self.screen, 33, 50,self.king_still)
-        #     self.all_sprites.add(w)
-
-    def new(self):
-        """Create all game objects, sprites, and groups. Call run() method"""
-        self.text = False
-        self.clear = True
-
-        self.tile_generation(self.game_map)
-
-        #player created seperately from base position
-        for layer in self.tile_map.visible_layers:
-            if isinstance(layer, pytmx.TiledObjectGroup):
-                for obj in layer:
-                    if obj.name == "player":
+                    elif layer.name == "newmaps":
+                        t = Teleporter((obj.x/16)*TILE, (obj.y/16)*TILE, obj.name.split("_")[0], obj.name.split("_")[1], obj.name.split("_")[-1], loc=obj.name.split("_")[2], width=(obj.width/16)*TILE, height=(obj.height/16)*TILE)
+                        self.newmap_sprites.add(t)
+                        
+                    #player
+                    elif obj.name == "player":
                         self.player = Player((obj.x/16)*TILE, (obj.y/16)*TILE,self.screen, self.king_right, self.king_left, self.king_up, self)
                         self.all_sprites.add(self.player)
                         self.player_alive = True
@@ -205,10 +194,14 @@ class Game:
                 self.text_sprites.add(im)
         self.next_text = Next(WIDTH-(2*TILE), HEIGHT-TILE, self.screen, self.next_image)
 
-        self.heart_sprites = Heart(self.hearts, PLAYER_HEARTS)
+    def new(self):
+        """Create all game objects, sprites, and groups. Call run() method"""
+        self.text = False
+        self.clear = True
 
-        for i in self.item_sprites:
-            self.player.inv[i.id] = 0
+        self.tile_generation(self.game_map)
+
+        self.heart_sprites = Heart(self.hearts, PLAYER_HEARTS)
 
         self.game_viewer = Camera(self.tile_map.width*TILE, self.tile_map.height*TILE)
 
@@ -227,7 +220,7 @@ class Game:
             self.all_sprites.add(s)
 
         #if the player has a bomb, the player's snake tracker is now active and visible. it disapears (but still exists) if the player runs out of bombs
-        if self.player.inv["bomb"] > 0:
+        if "bomb" in self.player.inv:
             self.all_sprites.add(self.tracker)
             self.all_sprites.add(self.tracked)
             if self.player.use == True:
@@ -362,9 +355,21 @@ class Game:
             self.draw()
             self.clock.tick(FPS)
             if self.change_map ==True:
+                self.sprite_code = 0
+                #checks to see if the player is changing the map area. first, changes the map and hten updates the players persistant data
                 self.tile_generation(self.game_map)
                 self.change_map = False
                 self.player.newmap_spawn()
+                self.player.inv = self.persistant["player"]["inv"]
+                self.player.inv_codes = self.persistant["player"]["codes"]
+                self.player.k_count = self.persistant["player"]["kills"]
+                self.player.life = self.persistant["player"]["life"]
+
+                #sprite codes (when paired with sprite ids) identify and remove sprites from the map if they are already in the player's inventory
+                #(ie "bomb" 1 is in inv so take it off map, but dont remove "mush" 1)
+                for i in self.item_sprites:
+                    if i.id in self.player.inv and i.code in self.player.inv_codes:
+                        i.kill()
 
     def start_screen(self):
         """Screen to start game."""
