@@ -49,6 +49,10 @@ class Game:
         self.king_left = []
         self.king_up = []
 
+        self.green_right = []
+        self.green_left = []
+        self.green_up = []
+
         self.snake_images_r = []
         self.snake_images_l = []
 
@@ -63,6 +67,18 @@ class Game:
                 king_up = chars_sheet.get_image(784+TILE+(TILE*i),10*18-1, 30,46,1.1,1.1)
                 king_up.set_colorkey(NEW_CHARS)
                 self.king_up.append(king_up)
+
+        for i in range(10):
+            if i <= 5:
+                green_r = chars_sheet.get_image(780+(TILE*i),13.5*18-3, 39,48,1.1,1.1)
+                green_r.set_colorkey(NEW_CHARS)
+                self.green_right.append(green_r)
+                green_l = pg.transform.flip(green_r, True, False)
+                self.green_left.append(green_l)
+            else:
+                green_up = chars_sheet.get_image(780+(TILE*i),13.5*18-3, 39,48,1.1,1.1)
+                green_up.set_colorkey(NEW_CHARS)
+                self.green_up.append(green_up)
 
         for i in range(4):
             snake = chars_sheet.get_image(17+TILE*i, 17*18-1, 32,46)
@@ -179,7 +195,7 @@ class Game:
                         
                     #player
                     elif obj.name == "player":
-                        self.player = Player((obj.x/16)*TILE, (obj.y/16)*TILE,self.screen, self.king_right, self.king_left, self.king_up, self)
+                        self.player = Player((obj.x/16)*TILE, (obj.y/16)*TILE,self.screen, self.green_right, self.green_left, self.green_up, self)
                         self.all_sprites.add(self.player)
                         self.player_alive = True
         

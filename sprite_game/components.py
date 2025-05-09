@@ -618,3 +618,27 @@ class Next(pg.sprite.Sprite):
             if self.rect.y - self.start_y == 8:
                 self.dir = True
         self.rect.y += self.y_change
+
+class Npc(pg.sprite.Sprite):
+    def __init__(self, x, y, display, right, left, game):
+        pg.sprite.Sprite.__init__(self)
+        self.game = game
+        self.self = self
+        self.right = right
+        self.left = left
+        self.image = right[0]
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.display = display
+        self.velo = 3.5
+
+        self.current_frame = 0
+        self.delay = 70
+        self.last = pg.time.get_ticks()
+    
+    def update(self):
+        
+        self.rect.x += self.velo
+
+        self.now = pg.time.get_ticks()
