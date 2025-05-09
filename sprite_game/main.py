@@ -264,6 +264,7 @@ class Game:
             self.screen.blit(i.image, (self.game_viewer.get_view(i)))
 
         if self.clear == False:
+            self.player.velo = 0
             #draws the textbox and text, bounces the next button
             pg.draw.rect(self.screen, BLACK, (0,HEIGHT-(2.1*TILE), WIDTH, HEIGHT))
             for i in self.text_sprites:
@@ -310,6 +311,7 @@ class Game:
                 #return closes the inventory 
                 elif event.key == pg.K_RETURN:
                     self.clear = True
+                    self.player.velo = PLAYER_VELO
 
             elif event.type == pg.KEYUP:
                 if event.key == pg.K_e:
@@ -317,10 +319,6 @@ class Game:
 
                 elif event.key == pg.K_RETURN:
                     self.text = None
-
-            #connects a controller
-            elif event.type == pg.JOYDEVICEADDED:
-               self.joy = pg.joystick.Joystick(event.device_index)
             
             #all actions are the same as the keyboard, just to different buttons
             elif event.type == pg.JOYBUTTONDOWN:
@@ -377,6 +375,7 @@ class Game:
         start = True
 
         self.selected = "Keys"
+        control_error = False
 
         while start:
             self.screen.fill(TIES)
@@ -400,6 +399,10 @@ class Game:
             else:
                 pg.draw.ellipse(self.screen, BLACK, (2*WIDTH//3 - 70, HEIGHT//3-10, 45,45), 5)
 
+            #display error text
+            if control_error:
+                self.screen.blit(self.font.render("No controller connected!", True, WHITE), (WIDTH//4+ 25, HEIGHT//1.5))
+
             pg.display.flip()
         
             for event in pg.event.get():
@@ -407,12 +410,16 @@ class Game:
                     self.running = False
                     start = False
 
-                if event.type == pg.KEYDOWN:
+                elif event.type == pg.KEYDOWN:
                     #return ends this screen and begins the game
                     #sets the game input as either keys or controller ----(ALLOW THIS TO BE CHANGED IN PAUSE MENU IF IMPLEMENTED)
                     if event.key == pg.K_RETURN:
-                        self.control = self.selected
-                        return
+                        #if controller is selected but there is none, raise an error
+                        if self.selected == "Joy" and self.joy == None:
+                            control_error = True
+                        else:
+                            self.control = self.selected
+                            return
                     
                     #changes selected based on player input
                     if event.key == pg.K_LEFT or event.key == pg.K_RIGHT:
@@ -421,9 +428,10 @@ class Game:
                         else:
                             self.selected = "Keys"
 
-                # elif event.type == pg.JOYDEVICEADDED:
-                #     self.joy = pg.joystick.Joystick(event.device_index)
-                #add this in later to make a warning for if joy is selected but nothing is connected
+                #connects a controller, checks if joy is the selected type
+                elif event.type == pg.JOYDEVICEADDED and self.selected == "Joy":
+                    control_error = False
+                    self.joy = pg.joystick.Joystick(event.device_index)
 
 
     def game_over(self):

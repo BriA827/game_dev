@@ -168,7 +168,7 @@
  </objectgroup>
  <objectgroup id="13" name="trees"/>
  <objectgroup id="11" name="movement">
-  <object id="129" name="player" x="353.788" y="266.671">
+  <object id="129" name="player" x="55.288" y="94.171">
    <point/>
   </object>
   <object id="139" name="snake_spawn" x="195.666" y="294.5" width="160.167" height="36.5"/>
@@ -179,7 +179,7 @@
   <object id="151" name="lad_gate_up" gid="104" x="234.516" y="40.2696" width="13.6667" height="14"/>
  </objectgroup>
  <objectgroup id="16" name="newmaps">
-  <object id="258" name="town_forest_gate_left" x="392.929" y="260.684" width="14.5" height="13"/>
+  <object id="258" name="town_forest_gate_left" x="392.929" y="257.684" width="14.5" height="13"/>
   <object id="259" name="town_forest_castle_left" x="397.793" y="7.40361" width="1.77113" height="129.363"/>
  </objectgroup>
  <objectgroup id="9" name="interact">

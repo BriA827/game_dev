@@ -27,6 +27,7 @@ SNAKE_DMG = .25
 #max of each item
 PLAYER_INV_MAX = 3
 PLAYER_HEARTS = 5
+PLAYER_VELO = 4
 
 #controller has slight drift, adjusts for that
 JOY_MINIMUM = 0.004

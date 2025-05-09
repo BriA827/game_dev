@@ -34,7 +34,7 @@ class Player(pg.sprite.Sprite):
         self.display = display
         self.game = game
 
-        self.velo = 4
+        self.velo = PLAYER_VELO
         self.run = None #-1 = left, none = none, 1 = right, 2 = up, -2 = down
 
         self.current_frame = 0
@@ -58,99 +58,101 @@ class Player(pg.sprite.Sprite):
         keys = pg.key.get_pressed()
 
         if self.game.control == "Keys":
-            #changes the picture based on the direction
-            if keys[pg.K_LEFT]:
-                self.now = pg.time.get_ticks()
-                if self.now - self.last > self.delay:
-                    self.current_frame = (self.current_frame + 1) % len(self.left_ani)
-                    self.image = self.left_ani[self.current_frame]
-                    self.last = self.now
-                self.x_change = -1* self.velo
-                self.run = -1
+            if self.velo > 0:
+                #changes the picture based on the direction
+                if keys[pg.K_LEFT]:
+                    self.now = pg.time.get_ticks()
+                    if self.now - self.last > self.delay:
+                        self.current_frame = (self.current_frame + 1) % len(self.left_ani)
+                        self.image = self.left_ani[self.current_frame]
+                        self.last = self.now
+                    self.x_change = -1* self.velo
+                    self.run = -1
 
-            elif keys[pg.K_RIGHT]:
-                self.now = pg.time.get_ticks()
-                if self.now - self.last > self.delay:
-                    self.current_frame = (self.current_frame + 1) % len(self.right_ani)
-                    self.image = self.right_ani[self.current_frame]
-                    self.last = self.now
-                self.x_change = self.velo
-                self.run = 1
+                elif keys[pg.K_RIGHT]:
+                    self.now = pg.time.get_ticks()
+                    if self.now - self.last > self.delay:
+                        self.current_frame = (self.current_frame + 1) % len(self.right_ani)
+                        self.image = self.right_ani[self.current_frame]
+                        self.last = self.now
+                    self.x_change = self.velo
+                    self.run = 1
 
-            elif keys[pg.K_UP]:
-                self.now = pg.time.get_ticks()
-                if self.now - self.last > self.delay:
-                    self.current_frame = (self.current_frame + 1) % len(self.up_ani)
-                    self.image = self.up_ani[self.current_frame]
-                    self.last = self.now
-                self.y_change = -1 * self.velo
-                self.run = 2
+                elif keys[pg.K_UP]:
+                    self.now = pg.time.get_ticks()
+                    if self.now - self.last > self.delay:
+                        self.current_frame = (self.current_frame + 1) % len(self.up_ani)
+                        self.image = self.up_ani[self.current_frame]
+                        self.last = self.now
+                    self.y_change = -1 * self.velo
+                    self.run = 2
 
-            elif keys[pg.K_DOWN]:
-                self.now = pg.time.get_ticks()
-                if self.now - self.last > self.delay:
-                    self.current_frame = (self.current_frame + 1) % len(self.right_ani)
-                    self.image = self.right_ani[self.current_frame]
-                    self.last = self.now
-                self.y_change = self.velo
-                self.run = -2
+                elif keys[pg.K_DOWN]:
+                    self.now = pg.time.get_ticks()
+                    if self.now - self.last > self.delay:
+                        self.current_frame = (self.current_frame + 1) % len(self.right_ani)
+                        self.image = self.right_ani[self.current_frame]
+                        self.last = self.now
+                    self.y_change = self.velo
+                    self.run = -2
 
-            else:
-                self.x_change = 0
-                if self.run == -1:
-                    self.image = self.left_ani[0]
-                elif self.run == 1 or self.run == -2:
-                    self.image = self.right_ani[0]
-                elif self.run == 2:
-                    self.image = self.up_ani[0]
+                else:
+                    self.x_change = 0
+                    if self.run == -1:
+                        self.image = self.left_ani[0]
+                    elif self.run == 1 or self.run == -2:
+                        self.image = self.right_ani[0]
+                    elif self.run == 2:
+                        self.image = self.up_ani[0]
             
         else:
             #same process but with the controller
-            if self.game.joy.get_axis(0) < 0 - JOY_MINIMUM:
-                self.now = pg.time.get_ticks()
-                if self.now - self.last > self.delay:
-                    self.current_frame = (self.current_frame + 1) % len(self.left_ani)
-                    self.image = self.left_ani[self.current_frame]
-                    self.last = self.now
-                self.x_change = -1* self.velo
-                self.run = -1
+            if self.velo > 0:
+                if self.game.joy.get_axis(0) < 0 - JOY_MINIMUM:
+                    self.now = pg.time.get_ticks()
+                    if self.now - self.last > self.delay:
+                        self.current_frame = (self.current_frame + 1) % len(self.left_ani)
+                        self.image = self.left_ani[self.current_frame]
+                        self.last = self.now
+                    self.x_change = -1* self.velo
+                    self.run = -1
 
-            elif self.game.joy.get_axis(0) > JOY_MINIMUM:
-                self.now = pg.time.get_ticks()
-                if self.now - self.last > self.delay:
-                    self.current_frame = (self.current_frame + 1) % len(self.right_ani)
-                    self.image = self.right_ani[self.current_frame]
-                    self.last = self.now
-                self.x_change = self.velo
-                self.run = 1
+                elif self.game.joy.get_axis(0) > JOY_MINIMUM:
+                    self.now = pg.time.get_ticks()
+                    if self.now - self.last > self.delay:
+                        self.current_frame = (self.current_frame + 1) % len(self.right_ani)
+                        self.image = self.right_ani[self.current_frame]
+                        self.last = self.now
+                    self.x_change = self.velo
+                    self.run = 1
 
-            elif self.game.joy.get_axis(1) < 0 - JOY_MINIMUM:
-                self.now = pg.time.get_ticks()
-                if self.now - self.last > self.delay:
-                    self.current_frame = (self.current_frame + 1) % len(self.up_ani)
-                    self.image = self.up_ani[self.current_frame]
-                    self.last = self.now
-                self.y_change = -1 * self.velo
-                self.run = 2
+                elif self.game.joy.get_axis(1) < 0 - JOY_MINIMUM:
+                    self.now = pg.time.get_ticks()
+                    if self.now - self.last > self.delay:
+                        self.current_frame = (self.current_frame + 1) % len(self.up_ani)
+                        self.image = self.up_ani[self.current_frame]
+                        self.last = self.now
+                    self.y_change = -1 * self.velo
+                    self.run = 2
 
-            elif self.game.joy.get_axis(1) > JOY_MINIMUM:
-                self.now = pg.time.get_ticks()
-                if self.now - self.last > self.delay:
-                    self.current_frame = (self.current_frame + 1) % len(self.right_ani)
-                    self.image = self.right_ani[self.current_frame]
-                    self.last = self.now
-                self.y_change = self.velo
-                self.run = -2
+                elif self.game.joy.get_axis(1) > JOY_MINIMUM:
+                    self.now = pg.time.get_ticks()
+                    if self.now - self.last > self.delay:
+                        self.current_frame = (self.current_frame + 1) % len(self.right_ani)
+                        self.image = self.right_ani[self.current_frame]
+                        self.last = self.now
+                    self.y_change = self.velo
+                    self.run = -2
 
-            else:
-                #if no longer moving, sets the image to be used for the proper direction
-                self.x_change = 0
-                if self.run == -1:
-                    self.image = self.left_ani[0]
-                elif self.run == 1 or self.run == -2:
-                    self.image = self.right_ani[0]
-                elif self.run == 2:
-                    self.image = self.up_ani[0]
+                else:
+                    #if no longer moving, sets the image to be used for the proper direction
+                    self.x_change = 0
+                    if self.run == -1:
+                        self.image = self.left_ani[0]
+                    elif self.run == 1 or self.run == -2:
+                        self.image = self.right_ani[0]
+                    elif self.run == 2:
+                        self.image = self.up_ani[0]
 
             # self.run = None
 
@@ -263,7 +265,7 @@ class Player(pg.sprite.Sprite):
                     #find the companion and set the map to the new key
                     self.game.game_map = hits[0].companion
                     self.game.change_map = True
-                    self.game.persistant["player"] = {"inv":self.inv, "codes":self.inv_codes, "kills":self.k_count, "life":self.life}
+                    self.game.persistant["player"] = {"inv":self.inv, "codes":self.inv_codes, "kills":self.k_count, "life":self.life, "x":self.rect.x, "y":self.rect.y}
                     self.game.persistant["new_map"] = hits[0].loc
 
     def newmap_spawn(self):
@@ -274,13 +276,13 @@ class Player(pg.sprite.Sprite):
                     t = i
 
                     if t.displace == "down":
-                        self.rect.x, self.rect.y = t.rect.x, t.rect.y + (TILE*.8)
+                        self.rect.x, self.rect.y = self.game.persistant["player"]["x"], t.rect.y + (TILE*.8)
                     elif t.displace == "up":
-                        self.rect.x, self.rect.y = t.rect.x, t.rect.y - (TILE*.8)
+                        self.rect.x, self.rect.y = self.game.persistant["player"]["x"], t.rect.y - (TILE*.8)
                     elif t.displace == "left":
-                        self.rect.x, self.rect.y = t.rect.x - (TILE), t.rect.y
+                        self.rect.x, self.rect.y = t.rect.x - (TILE), self.game.persistant["player"]["y"]
                     elif t.displace == "right":
-                        self.rect.x, self.rect.y = t.rect.x + (TILE), t.rect.y
+                        self.rect.x, self.rect.y = t.rect.x + (TILE), self.game.persistant["player"]["y"]
 
 class Wall(pg.sprite.Sprite):
     def __init__(self, x, y, display, height, width, image = None, bomb = False, mask = False):
