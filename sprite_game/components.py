@@ -58,7 +58,7 @@ class Player(pg.sprite.Sprite):
         keys = pg.key.get_pressed()
 
         if self.game.control == "Keys":
-            if self.velo > 0:
+            if self.velo != 0:
                 #changes the picture based on the direction
                 if keys[pg.K_LEFT]:
                     self.now = pg.time.get_ticks()
@@ -107,7 +107,7 @@ class Player(pg.sprite.Sprite):
             
         else:
             #same process but with the controller
-            if self.velo > 0:
+            if self.velo != 0:
                 if self.game.joy.get_axis(0) < 0 - JOY_MINIMUM:
                     self.now = pg.time.get_ticks()
                     if self.now - self.last > self.delay:

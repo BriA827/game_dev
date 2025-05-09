@@ -32,4 +32,6 @@ PLAYER_VELO = 4
 #controller has slight drift, adjusts for that
 JOY_MINIMUM = 0.004
 
+TICK_OFFSET = 10
+
 TEXTS = {"start": "Press Enter/A to start", "inv_full": "You can't hold any more _!"}

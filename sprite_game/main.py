@@ -256,6 +256,12 @@ class Game:
         if self.player_alive == False:
             self.playing = False
 
+        if self.clear == False:
+            if TEXTS["inv_full"][:-3] in self.text:
+                self.player.velo = .5
+            else:
+                self.player.velo = 0
+
     def draw(self):
         """Fill screen, draw objects, flip."""
      
@@ -264,7 +270,6 @@ class Game:
             self.screen.blit(i.image, (self.game_viewer.get_view(i)))
 
         if self.clear == False:
-            self.player.velo = 0
             #draws the textbox and text, bounces the next button
             pg.draw.rect(self.screen, BLACK, (0,HEIGHT-(2.1*TILE), WIDTH, HEIGHT))
             for i in self.text_sprites:
