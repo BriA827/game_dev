@@ -635,13 +635,14 @@ class Npc(pg.sprite.Sprite):
         self.display = display
 
         self.velo = 2.5
-        self.run = None
+        self.run = 1
 
         self.current_frame = 0
         self.delay = 70
         self.last = pg.time.get_ticks()
     
     def update(self):
+        # if 
         self.rect.x += self.velo
 
         self.now = pg.time.get_ticks()
@@ -660,4 +661,4 @@ class Npc(pg.sprite.Sprite):
         #makes it turn around when hitting a wall
         hits = pg.sprite.spritecollide(self, self.game.block_sprites, False)
         if hits:
-            self.velo = self.velo * -1
+            self.run = rand.choice([-1,1,2,-2])
