@@ -198,6 +198,10 @@ class Game:
                         self.player = Player((obj.x/16)*TILE, (obj.y/16)*TILE,self.screen, self.green_right, self.green_left, self.green_up, self)
                         self.all_sprites.add(self.player)
                         self.player_alive = True
+
+                    elif obj.name == "npc_move":
+                        n = Npc((obj.x/16)*TILE, (obj.y/16)*TILE,self.screen, self.green_right, self.green_left, self.green_up, self)
+                        self.all_sprites.add(n)
         
         #creates a tracker for the player that looks for the closest snake
         self.tracker = Tracker(self.player, self.snake_sprites, self.track_image, self)

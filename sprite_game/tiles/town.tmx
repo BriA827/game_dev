@@ -182,7 +182,7 @@
   <object id="302" name="npc_still" x="82.6667" y="180">
    <point/>
   </object>
-  <object id="303" name="npc_move" x="266" y="148">
+  <object id="303" name="npc_move" x="190.667" y="110">
    <point/>
   </object>
  </objectgroup>

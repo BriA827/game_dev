@@ -1,6 +1,7 @@
 import pygame as pg
 from settings import *
 import math
+import random as rand
 from pygame.math import Vector2 as vec
 
 class SpriteSheet():
@@ -620,25 +621,43 @@ class Next(pg.sprite.Sprite):
         self.rect.y += self.y_change
 
 class Npc(pg.sprite.Sprite):
-    def __init__(self, x, y, display, right, left, game):
+    def __init__(self, x, y, display, right, left, up, game):
         pg.sprite.Sprite.__init__(self)
         self.game = game
         self.self = self
         self.right = right
         self.left = left
+        self.up = up
         self.image = right[0]
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.display = display
-        self.velo = 3.5
+
+        self.velo = 2.5
+        self.run = None
 
         self.current_frame = 0
         self.delay = 70
         self.last = pg.time.get_ticks()
     
     def update(self):
-        
         self.rect.x += self.velo
 
         self.now = pg.time.get_ticks()
+
+        #all images and animation
+        if self.run == 1:
+            self.direct = self.right
+        elif self.run == -1:
+            self.direct = self.left
+
+        if self.now - self.last > self.delay:
+                self.current_frame = (self.current_frame + 1) % len(self.direct)
+                self.image = self.direct[self.current_frame]
+                self.last = self.now
+
+        #makes it turn around when hitting a wall
+        hits = pg.sprite.spritecollide(self, self.game.block_sprites, False)
+        if hits:
+            self.velo = self.velo * -1
