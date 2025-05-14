@@ -640,9 +640,10 @@ class Npc(pg.sprite.Sprite):
         self.rect.y = y
         self.display = display
 
-        #npc generates with a random velocity between 2 and 3
+        #npc generates with a random velocity between 2 and 2.8
         #timer is random int between 100 and 150
-        self.velo = 2 + (rand.randrange(0,11) /10)
+        self.saved_velo = 2 + (rand.randrange(0,9) /10)
+        self.velo = self.saved_velo
         self.timer = 100 + (rand.randrange(0,50))
         self.run = 1
 
@@ -651,6 +652,7 @@ class Npc(pg.sprite.Sprite):
         self.last = pg.time.get_ticks()
 
         self.talk = False
+        self.emotion = None
     
     def update(self):
         self.x_change = 0
@@ -675,13 +677,14 @@ class Npc(pg.sprite.Sprite):
                 self.current_frame = (self.current_frame + 1) % len(self.direct)
                 self.image = self.direct[self.current_frame]
                 self.last = self.now
-
+        
         #if the current time divided by the timer has a remainder of 0
         #then have the npc randomly change direction
         t = pg.time.get_ticks()
-        if t % self.timer == 0:
+        if t % self.timer == 0 and self.talk == False:
             c = [-1,1,2,-2]
-            c.remove(self.run)
+            if self.run in c:
+                c.remove(self.run)
             self.run = rand.choice(c)
 
         if self.run == 1:
@@ -696,6 +699,9 @@ class Npc(pg.sprite.Sprite):
         elif self.run == -2:
             self.rect.y += self.velo
             self.collide_wall('y')
+
+        if self.talk == True:
+            self.talking()
 
     def collide_wall(self, dir):
         #collision rectangle
@@ -721,5 +727,26 @@ class Npc(pg.sprite.Sprite):
             self.run = self.run * -1
 
     def talking(self):
-        if self.talk == True:
-            pass
+        self.image = self.direct[0]
+        self.velo = 0
+        self.run = None
+
+class Speech(pg.sprite.Sprite):
+    def __init__(self, owner, type, image, display, game):
+        pg.sprite.Sprite.__init__(self)
+        """owner is the npc/character, type is thinking/speaking (dict), image is decription (str)"""
+        """ie type = thinking, image = "heart1"""
+        self.self = self
+        self.owner = owner
+        self.game = game
+        self.type = type
+        self.display = display
+        self.image = self.type[image]
+
+        self.rect = self.image.get_rect()
+        if self.owner.run == 2:
+            self.rect.center = self.owner.rect.center[0],  self.owner.rect.center[1] - 20
+        elif self.owner.run == 1 or self.owner.run == -2:
+            self.rect.center = self.owner.rect.center[0] +5,  self.owner.rect.center[1] - 20
+        elif self.owner.run == -1:
+            self.rect.center = self.owner.rect.center[0] -5,  self.owner.rect.center[1] - 20

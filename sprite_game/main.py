@@ -38,7 +38,7 @@ class Game:
         self.floor_images = []
         for i in range(4):
             wood = SpriteSheet(f"sprite_game/sprites/spr_wood_texture_{i}.png")
-            img = wood.get_image(0,0, 16,16, 4,4)
+            img = wood.get_image(0,0,16,16, 4,4)
             img.set_alpha(150)
             self.floor_images.append(img)
 
@@ -111,6 +111,25 @@ class Game:
             heart = pg.image.load(f"platformer/images/hearts/heart_{i}.png")
             heart = pg.transform.scale(heart, (2*TILE/3, 2*TILE/3))
             self.hearts.append(heart)
+
+        self.speaking = {}
+        speaking_sheet = SpriteSheet("sprite_game/sprites/speaking.png")
+        self.thinking = {}
+
+        thinking_sheet = SpriteSheet("sprite_game/sprites/thinking.png")
+
+        count = 0
+        for y in range(0,6):
+            for x in range(0,5):
+                image = speaking_sheet.get_image(x*17,y*17-5,16,16,1.5,1.5)
+                self.speaking[BUBBLES[count]] = image
+                count += 1
+        # count = 0
+        # for y in range(0,7):
+        #     for x in range(0,6):
+        #         image = thinking_sheet.get_image(x,y,16,16)
+        #         self.thinking[BUBBLES[count]] = image
+        #         count += 1
 
     def tile_generation(self, map):
         #this function gets the current map and re-adjusts the tiles to create/display
@@ -237,6 +256,11 @@ class Game:
 
     def update(self):
         """Run all updates."""
+
+        for i in self.npc_sprites:
+            if i.talk == True:
+                b = Speech(i, self.speaking, "question", self.screen, self)
+                self.all_sprites.add(b)
 
         #spawns snake randomly in the confines of the snake_spawn areas
         if len(self.snake_sprites) < ENEMY_NUMBER - self.player.k_count:

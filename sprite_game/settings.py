@@ -29,11 +29,10 @@ PLAYER_INV_MAX = 3
 PLAYER_HEARTS = 5
 PLAYER_VELO = 4
 
-NPC_MOVE_COOLDOWN = 60
-
 #controller has slight drift, adjusts for that
 JOY_MINIMUM = 0.004
 
 TICK_OFFSET = 10
 
 TEXTS = {"start": "Press Enter/A to start", "inv_full": "You can't hold any more _!"}
+BUBBLES = ["swirl", 'music', 'sad', 'sweat1', 'blue', 'sparkle', 'laugh', 'happy', 'dot3', 'money', 'star', 'idea', 'empty', 'dot2', 'lines', 'z2', 'heart2', 'exclaim2', 'dot1', 'angry', 'z1', 'broken', 'exclaim1', 'no', 'shine', 'question', 'heart1', 'sweat2', 'cloud', 'evil']

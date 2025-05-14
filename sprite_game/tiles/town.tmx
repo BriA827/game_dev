@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="311">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="312">
  <tileset firstgid="1" source="town.tsx"/>
  <layer id="2" name="back" width="25" height="25">
   <data encoding="csv">
@@ -177,13 +177,14 @@
   <object id="308" name="npc_wall" x="16.9167" y="319.667" width="143.166" height="5.33333"/>
   <object id="309" name="npc_wall" x="44.8714" y="288.424" width="31.1663" height="5.33333"/>
   <object id="310" name="npc_wall" x="31.5078" y="193.333" width="4.80266" height="31.8788"/>
+  <object id="311" name="npc_wall" x="41.0835" y="151.333" width="31.1663" height="5.33333"/>
  </objectgroup>
  <objectgroup id="11" name="movement">
   <object id="129" name="player" x="52.6214" y="89.671">
    <point/>
   </object>
   <object id="139" name="snake_spawn" x="195.666" y="294.5" width="160.167" height="36.5"/>
-  <object id="142" name="snake_spawn" x="32.3332" y="328.667" width="111.334" height="45.3333"/>
+  <object id="142" name="snake_spawn" x="32.3332" y="328.667" width="111.334" height="43"/>
   <object id="300" name="snake_spawn" x="215.916" y="339.75" width="153.667" height="34"/>
   <object id="302" name="npc_still" x="82.6667" y="180">
    <point/>
