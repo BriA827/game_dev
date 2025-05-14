@@ -117,6 +117,8 @@ class Game:
         #called once upon creation and subsequently when player interacts with a "newmap" sprite
 
         self.block_sprites = pg.sprite.Group()
+        self.npc_sprites = pg.sprite.Group()
+        self.npc_block_sprites = pg.sprite.Group()
         self.mask_sprites = pg.sprite.Group()
         self.snake_sprites = pg.sprite.Group()
         self.all_sprites = pg.sprite.Group()
@@ -160,6 +162,11 @@ class Game:
                         w = Wall((obj.x/16)*TILE, (obj.y/16)*TILE, self.screen, (obj.height/16)*TILE, (obj.width/16)*TILE)
                         self.block_sprites.add(w)
 
+                    #walls for npc to prevent getting stuck -- doesnt affect player
+                    elif layer.name == "npc_collide":
+                        w = Wall((obj.x/16)*TILE, (obj.y/16)*TILE, self.screen, (obj.height/16)*TILE, (obj.width/16)*TILE)
+                        self.npc_block_sprites.add(w)
+
                     #signposts (NOT PROGRAMMED)
                     elif "sign" in obj.name:
                         im = pg.transform.scale(obj.image, (TILE/2,TILE/2))
@@ -202,6 +209,7 @@ class Game:
                     elif obj.name == "npc_move":
                         n = Npc((obj.x/16)*TILE, (obj.y/16)*TILE,self.screen, self.green_right, self.green_left, self.green_up, self)
                         self.all_sprites.add(n)
+                        self.npc_sprites.add(n)
         
         #creates a tracker for the player that looks for the closest snake
         self.tracker = Tracker(self.player, self.snake_sprites, self.track_image, self)
@@ -243,7 +251,7 @@ class Game:
         if "bomb" in self.player.inv:
             self.all_sprites.add(self.tracker)
             self.all_sprites.add(self.tracked)
-            if self.player.use == True:
+            if self.player.use == True and self.player.inv["bomb"] > 0:
                 #if the player uses a bomb, take it from the inventory and start an explosion
                 self.player.inv["bomb"] -= 1
                 e = Explosion(self.screen, self.exp_list, self)
@@ -260,6 +268,7 @@ class Game:
 
         self.all_sprites.update()
         self.block_sprites.update()
+        self.npc_block_sprites.update()
         self.game_viewer.update(self.player)
 
         self.heart_sprites.update(self.player.life)

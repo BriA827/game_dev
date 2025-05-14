@@ -170,6 +170,12 @@ class Player(pg.sprite.Sprite):
         self.collide_item()
         self.collide_tele()
         self.collide_newmap()
+        self.collide_npc()
+
+    def collide_npc(self):
+        if pg.sprite.spritecollide(self, self.game.npc_sprites, False):
+            hits = pg.sprite.spritecollide(self, self.game.npc_sprites, False)
+            hits[0].talk = True
 
     def collide_wall(self, dir):
         #collision rectangle
@@ -634,31 +640,86 @@ class Npc(pg.sprite.Sprite):
         self.rect.y = y
         self.display = display
 
-        self.velo = 2.5
+        #npc generates with a random velocity between 2 and 3
+        #timer is random int between 100 and 150
+        self.velo = 2 + (rand.randrange(0,11) /10)
+        self.timer = 100 + (rand.randrange(0,50))
         self.run = 1
 
         self.current_frame = 0
         self.delay = 70
         self.last = pg.time.get_ticks()
+
+        self.talk = False
     
     def update(self):
-        # if 
-        self.rect.x += self.velo
-
+        self.x_change = 0
+        self.y_change = 0
         self.now = pg.time.get_ticks()
 
         #all images and animation
         if self.run == 1:
             self.direct = self.right
+            self.x_change = self.velo
         elif self.run == -1:
             self.direct = self.left
+            self.x_change = -1 *self.velo
+        elif self.run == -2:
+            self.direct = self.right
+            self.y_change = self.velo
+        elif self.run == 2:
+            self.direct = self.up
+            self.y_change = -1*self.velo
 
         if self.now - self.last > self.delay:
                 self.current_frame = (self.current_frame + 1) % len(self.direct)
                 self.image = self.direct[self.current_frame]
                 self.last = self.now
 
-        #makes it turn around when hitting a wall
-        hits = pg.sprite.spritecollide(self, self.game.block_sprites, False)
-        if hits:
-            self.run = rand.choice([-1,1,2,-2])
+        #if the current time divided by the timer has a remainder of 0
+        #then have the npc randomly change direction
+        t = pg.time.get_ticks()
+        if t % self.timer == 0:
+            c = [-1,1,2,-2]
+            c.remove(self.run)
+            self.run = rand.choice(c)
+
+        if self.run == 1:
+            self.rect.x += self.velo
+            self.collide_wall('x')
+        elif self.run == -1:
+            self.rect.x -= self.velo
+            self.collide_wall('x')
+        elif self.run == 2:
+            self.rect.y -= self.velo
+            self.collide_wall('y')
+        elif self.run == -2:
+            self.rect.y += self.velo
+            self.collide_wall('y')
+
+    def collide_wall(self, dir):
+        #collision rectangle
+        if pg.sprite.spritecollide(self, self.game.block_sprites, False):
+            hits = pg.sprite.spritecollide(self, self.game.block_sprites, False)
+            if dir == 'x':
+                if self.x_change > 0:
+                    self.x = hits[0].rect.left - self.rect.width
+                elif self.self.x_change < 0:
+                    self.x = hits[0].rect.right
+                self.x_change = 0
+                self.rect.x = self.x
+
+            elif dir == 'y':
+                if self.y_change > 0:
+                    self.y = hits[0].rect.top - self.rect.height
+                elif self.self.y_change < 0:
+                    self.y = hits[0].rect.bottom
+                self.y_change=0
+                self.rect.y = self.y
+
+        if pg.sprite.spritecollide(self, self.game.npc_block_sprites, False):
+            self.run = self.run * -1
+
+    def talking(self):
+        if self.talk == True:
+            pass

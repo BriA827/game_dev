@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="304">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="311">
  <tileset firstgid="1" source="town.tsx"/>
  <layer id="2" name="back" width="25" height="25">
   <data encoding="csv">
@@ -157,7 +157,7 @@
   <object id="282" name="tree" x="-0.3182" y="321.152" width="14.6364" height="46.3333"/>
   <object id="283" name="tree" x="6.40909" y="294.561" width="7.54545" height="16.1514"/>
   <object id="284" name="tree" x="2.40909" y="273.561" width="11.1818" height="14.3332"/>
-  <object id="285" name="tree" x="-5.62499" y="223.561" width="20.4886" height="49.0605"/>
+  <object id="285" name="tree" x="-5.62499" y="223.561" width="19.7613" height="49.0605"/>
   <object id="286" name="tree" x="13.6136" y="182.295" width="16.7727" height="16.6818"/>
   <object id="287" name="tree" x="14.1591" y="198.96" width="7.68183" height="8.83522"/>
   <object id="289" name="tree" x="20.1818" y="391.481" width="9.45455" height="8.85685"/>
@@ -172,8 +172,14 @@
   <object id="299" name="tree" x="154.545" y="384.117" width="25.4545" height="6.67504"/>
   <object id="301" name="tree" x="0.5057" y="210.97" width="12.4886" height="12.6855"/>
  </objectgroup>
+ <objectgroup id="17" name="npc_collide">
+  <object id="307" name="npc_wall" x="173.917" y="284.334" width="207.833" height="5.33333"/>
+  <object id="308" name="npc_wall" x="16.9167" y="319.667" width="143.166" height="5.33333"/>
+  <object id="309" name="npc_wall" x="44.8714" y="288.424" width="31.1663" height="5.33333"/>
+  <object id="310" name="npc_wall" x="31.5078" y="193.333" width="4.80266" height="31.8788"/>
+ </objectgroup>
  <objectgroup id="11" name="movement">
-  <object id="129" name="player" x="45.9547" y="84.3377">
+  <object id="129" name="player" x="52.6214" y="89.671">
    <point/>
   </object>
   <object id="139" name="snake_spawn" x="195.666" y="294.5" width="160.167" height="36.5"/>
@@ -183,6 +189,9 @@
    <point/>
   </object>
   <object id="303" name="npc_move" x="190.667" y="110">
+   <point/>
+  </object>
+  <object id="304" name="npc_move" x="108" y="240">
    <point/>
   </object>
  </objectgroup>
