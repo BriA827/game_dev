@@ -170,12 +170,6 @@ class Player(pg.sprite.Sprite):
         self.collide_item()
         self.collide_tele()
         self.collide_newmap()
-        self.collide_npc()
-
-    def collide_npc(self):
-        if pg.sprite.spritecollide(self, self.game.npc_sprites, False):
-            hits = pg.sprite.spritecollide(self, self.game.npc_sprites, False)
-            hits[0].talk = True
 
     def collide_wall(self, dir):
         #collision rectangle
@@ -646,15 +640,25 @@ class Npc(pg.sprite.Sprite):
         self.velo = self.saved_velo
         self.timer = 100 + (rand.randrange(0,50))
         self.run = 1
+        self.facing = "right"
 
         self.current_frame = 0
         self.delay = 70
         self.last = pg.time.get_ticks()
 
         self.talk = False
-        self.emotion = None
+        self.profession = None
     
     def update(self):
+        if self.talk == False:
+            self.movement()
+        self.collide_player()
+
+        if self.talk == True:
+            self.image = self.direct[0]
+            self.run = 0
+
+    def movement(self):
         self.x_change = 0
         self.y_change = 0
         self.now = pg.time.get_ticks()
@@ -663,26 +667,34 @@ class Npc(pg.sprite.Sprite):
         if self.run == 1:
             self.direct = self.right
             self.x_change = self.velo
+            self.facing = "right"
         elif self.run == -1:
             self.direct = self.left
             self.x_change = -1 *self.velo
+            self.facing = "left"
         elif self.run == -2:
             self.direct = self.right
             self.y_change = self.velo
+            self.facing = "right"
         elif self.run == 2:
             self.direct = self.up
             self.y_change = -1*self.velo
+            self.facing = "up"
+        elif self.run == 0:
+            self.x_change = 0
+            self.y_change = 0
+            self.image = self.direct[0]
 
-        if self.now - self.last > self.delay:
+        if self.now - self.last > self.delay and self.run != 0:
                 self.current_frame = (self.current_frame + 1) % len(self.direct)
                 self.image = self.direct[self.current_frame]
                 self.last = self.now
-        
+
         #if the current time divided by the timer has a remainder of 0
         #then have the npc randomly change direction
         t = pg.time.get_ticks()
         if t % self.timer == 0 and self.talk == False:
-            c = [-1,1,2,-2]
+            c = [-1,1,2,-2,0]
             if self.run in c:
                 c.remove(self.run)
             self.run = rand.choice(c)
@@ -699,9 +711,6 @@ class Npc(pg.sprite.Sprite):
         elif self.run == -2:
             self.rect.y += self.velo
             self.collide_wall('y')
-
-        if self.talk == True:
-            self.talking()
 
     def collide_wall(self, dir):
         #collision rectangle
@@ -726,10 +735,13 @@ class Npc(pg.sprite.Sprite):
         if pg.sprite.spritecollide(self, self.game.npc_block_sprites, False):
             self.run = self.run * -1
 
-    def talking(self):
-        self.image = self.direct[0]
-        self.velo = 0
-        self.run = None
+    def collide_player(self):
+        if pg.sprite.collide_rect(self, self.game.player):
+            self.talk = True
+            self.game.player.velo = PLAYER_VELO/PLAYER_VELO
+        else:
+            self.talk = False
+            self.game.player.velo = PLAYER_VELO
 
 class Speech(pg.sprite.Sprite):
     def __init__(self, owner, type, image, display, game):
@@ -744,9 +756,8 @@ class Speech(pg.sprite.Sprite):
         self.image = self.type[image]
 
         self.rect = self.image.get_rect()
-        if self.owner.run == 2:
-            self.rect.center = self.owner.rect.center[0],  self.owner.rect.center[1] - 20
-        elif self.owner.run == 1 or self.owner.run == -2:
-            self.rect.center = self.owner.rect.center[0] +5,  self.owner.rect.center[1] - 20
-        elif self.owner.run == -1:
-            self.rect.center = self.owner.rect.center[0] -5,  self.owner.rect.center[1] - 20
+        self.rect.center = self.owner.rect.center[0], self.owner.rect.center[1] -40
+        if self.owner.facing == "right":
+            self.rect.x +=3
+        elif self.owner.facing == "left":
+            self.rect.x -=3

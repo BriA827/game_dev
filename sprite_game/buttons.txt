@@ -1,0 +1,13 @@
+keyboard:
+    texts - enter
+    pause - p
+    inventory - i
+    explode - e
+    talk - unknown
+
+controller:
+    texts - a
+    pause - minus
+    inventory - plus
+    explode - x
+    talk = unknown

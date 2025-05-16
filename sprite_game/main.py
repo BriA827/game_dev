@@ -122,14 +122,16 @@ class Game:
         for y in range(0,6):
             for x in range(0,5):
                 image = speaking_sheet.get_image(x*17,y*17-5,16,16,1.5,1.5)
+                image.set_colorkey(BLACK)
                 self.speaking[BUBBLES[count]] = image
                 count += 1
-        # count = 0
-        # for y in range(0,7):
-        #     for x in range(0,6):
-        #         image = thinking_sheet.get_image(x,y,16,16)
-        #         self.thinking[BUBBLES[count]] = image
-        #         count += 1
+        count = 0
+        for y in range(0,6):
+            for x in range(0,5):
+                image = thinking_sheet.get_image(x*17-3,y*17-1,16,16,1.5,1.5)
+                image.set_colorkey(BLACK)
+                self.thinking[BUBBLES[count]] = image
+                count += 1
 
     def tile_generation(self, map):
         #this function gets the current map and re-adjusts the tiles to create/display
@@ -145,6 +147,7 @@ class Game:
         self.tele_sprites = pg.sprite.Group()
         self.newmap_sprites = pg.sprite.Group()
         self.text_sprites = pg.sprite.Group()
+        self.bubble_sprites = pg.sprite.Group()
 
         self.map_tiles = pg.sprite.Group()
 
@@ -261,6 +264,17 @@ class Game:
             if i.talk == True:
                 b = Speech(i, self.speaking, "question", self.screen, self)
                 self.all_sprites.add(b)
+                self.bubble_sprites.add(b)
+            elif i.run == 0:
+                b = Speech(i, self.thinking, "dot3", self.screen, self)
+                self.all_sprites.add(b)
+                self.bubble_sprites.add(b)
+
+        for i in self.bubble_sprites:
+            if i.owner.talk ==False and i.type == self.speaking:
+                i.kill()
+            elif i.owner.run != 0 and i.type == self.thinking:
+                i.kill()
 
         #spawns snake randomly in the confines of the snake_spawn areas
         if len(self.snake_sprites) < ENEMY_NUMBER - self.player.k_count:
@@ -311,7 +325,7 @@ class Game:
 
         if self.clear == False:
             if TEXTS["inv_full"][:-3] in self.text:
-                self.player.velo = .5
+                self.player.velo = PLAYER_VELO/PLAYER_VELO
             else:
                 self.player.velo = 0
 
