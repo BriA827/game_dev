@@ -359,9 +359,9 @@ class Game:
         """Game loop events."""
         for event in pg.event.get():
             if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
-                if self.playing:
-                    self.playing = False
                 self.running = False
+                self.playing = False
+                break
 
             elif event.type == pg.KEYDOWN:
                 #e for using a bomb, gets the time it was pressed
@@ -520,7 +520,57 @@ class Game:
 
     def game_over(self):
         """Screen to end game."""
-        pass
+        #displays text
+        end = True
+
+        self.selected = "Restart"
+
+        while end:
+            self.screen.fill(TIES)
+
+            #text section for restarting
+            self.screen.blit(self.font.render("Restart", True, WHITE), (WIDTH//4 + 20, HEIGHT//4))
+            k = Next(WIDTH//3 - 10, HEIGHT//3, self.screen, self.next_image)
+            self.screen.blit(k.image, (k.rect.x, k.rect.y))
+
+            #text section for quitting
+            self.screen.blit(self.font.render("Quit", True, WHITE), (WIDTH//2+ 80, HEIGHT//4))
+            j = Next(2*WIDTH//3 - 60, HEIGHT//3, self.screen, self.next_image)
+            self.screen.blit(j.image, (j.rect.x, j.rect.y))
+
+            #draw a circle around whichever one is currently selected
+            if self.selected == "Restart":
+                pg.draw.ellipse(self.screen, BLACK, (WIDTH//3 - 20, HEIGHT//3-10, 45,45), 5)
+                k.image = self.track_image
+            else:
+                pg.draw.ellipse(self.screen, BLACK, (2*WIDTH//3 - 70, HEIGHT//3-10, 45,45), 5)
+
+            pg.display.flip()
+        
+            for event in pg.event.get():
+                if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
+                    self.running = False
+                    end = False
+
+                elif event.type == pg.KEYDOWN:
+                    #return ends this screen and either begins the game or quits
+                    if event.key == pg.K_RETURN:
+                        if self.selected == "Restart":
+                            end = False
+                        else:
+                            end = False
+                            self.running = False
+                            path = "sprite_game/data.txt"
+                            data = open(path, 'a')
+                            data.write(f"{self.player.k_count}\n")
+                            break
+                    
+                    #changes selected based on player input
+                    if event.key == pg.K_LEFT or event.key == pg.K_RIGHT:
+                        if self.selected == "Restart":
+                            self.selected = "Quit"
+                        else:
+                            self.selected = "Restart"
 
 ############################## PLAY ###################################
 
