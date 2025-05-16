@@ -11,7 +11,7 @@
 2,2,1,2,2,2,3,44,44,44,1,2,1,1,1,1,44,44,1,1,1,1,1,1,1,
 1,1,1,2,1,1,1,1,44,44,44,44,44,44,44,44,44,44,1,1,1,3,1,1,1,
 2,1,1,1,1,1,1,1,1,44,44,44,3,1,1,2,44,44,1,1,1,1,3,1,1,
-2,2,2,1,1,1,1,1,1,1,44,1,1,1,1,1,2,44,1,1,1,1,1,1,1,
+2,2,2,1,1,1,1,1,1,1,44,1,1,1,1,1,44,44,1,1,1,1,1,1,1,
 2,2,2,2,1,1,1,1,1,2,44,1,1,1,1,2,44,44,1,1,1,1,1,2,2,
 2,2,2,2,3,2,44,44,44,44,44,44,44,44,44,44,44,44,1,1,1,1,2,2,2,
 14,14,15,1,1,2,1,1,1,1,1,44,44,44,1,1,44,44,1,3,1,1,1,2,1,
@@ -141,7 +141,7 @@
   <object id="265" name="tree" x="161.5" y="352.75" width="11.5" height="14.5"/>
   <object id="266" name="tree" x="161.75" y="375.75" width="11.5" height="14.5"/>
   <object id="267" name="tree" x="-0.75" y="-0.25" width="21.5" height="94.5"/>
-  <object id="268" name="tree" x="20.75" y="-0.25" width="41" height="30"/>
+  <object id="268" name="tree" x="20.75" y="-0.25" width="41" height="32.3333"/>
   <object id="269" name="tree" x="21" y="28.5" width="8.5" height="9.5"/>
   <object id="270" name="tree" x="48.25" y="30.75" width="14.5" height="15.5"/>
   <object id="271" name="tree" x="2.25" y="87.25" width="12" height="14.5"/>
@@ -173,9 +173,9 @@
   <object id="301" name="tree" x="0.5057" y="210.97" width="12.4886" height="12.6855"/>
  </objectgroup>
  <objectgroup id="17" name="npc_collide">
-  <object id="307" name="npc_wall" x="173.917" y="284.334" width="207.833" height="5.33333"/>
-  <object id="308" name="npc_wall" x="16.9167" y="319.667" width="143.166" height="5.33333"/>
-  <object id="309" name="npc_wall" x="44.8714" y="288.424" width="31.1663" height="5.33333"/>
+  <object id="307" name="npc_wall" x="164.25" y="284.334" width="227.5" height="5.33333"/>
+  <object id="308" name="npc_wall" x="14.9167" y="319.667" width="148.833" height="5.33333"/>
+  <object id="309" name="npc_wall" x="43.2047" y="286.424" width="33.1663" height="5.33333"/>
   <object id="310" name="npc_wall" x="31.5078" y="193.333" width="4.80266" height="31.8788"/>
   <object id="311" name="npc_wall" x="41.0835" y="151.333" width="31.1663" height="5.33333"/>
  </objectgroup>
