@@ -3,7 +3,7 @@ keyboard:
     pause - p
     inventory - i
     explode - e
-    talk - unknown
+    talk - t
 
 controller:
     texts - a

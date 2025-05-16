@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-up" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="87">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-up" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="90">
  <tileset firstgid="1" source="town.tsx"/>
  <layer id="1" name="back" width="25" height="25">
   <data encoding="csv">
@@ -138,23 +138,26 @@
   <object id="74" name="tree" x="394.417" y="145.771" width="5.6667" height="29.9583"/>
   <object id="75" name="tree" x="386.167" y="152.271" width="7.9167" height="14.2083"/>
   <object id="76" name="tree" x="385.417" y="126.771" width="12.9167" height="7.7083"/>
+  <object id="87" name="wall" x="288" y="152.75" width="15.5" height="23"/>
  </objectgroup>
  <objectgroup id="6" name="sprites">
   <object id="9" name="bag" gid="108" x="268.47" y="383.902" width="8.24691" height="9.43969"/>
-  <object id="18" name="bomb" gid="106" x="105.025" y="247.553" width="10" height="9.33333"/>
+  <object id="18" name="bomb" gid="106" x="19.025" y="317.553" width="10" height="9.33333"/>
   <object id="27" name="key" gid="118" x="55.1392" y="128.399" width="9" height="8"/>
   <object id="77" name="mush" gid="30" x="356.167" y="123.5" width="9" height="9"/>
   <object id="78" name="mush" gid="30" x="206.167" y="63.5" width="9" height="9"/>
   <object id="79" name="mush" gid="30" x="370.167" y="250.833" width="9" height="9"/>
   <object id="80" name="log" gid="107" x="292.583" y="108.167" width="9.5" height="9"/>
   <object id="81" name="log" gid="107" x="331.917" y="206.167" width="9.5" height="9"/>
+  <object id="88" name="mush" gid="30" x="100.833" y="220.167" width="9" height="9"/>
+  <object id="89" name="mush" gid="30" x="211.5" y="170.833" width="9" height="9"/>
  </objectgroup>
  <objectgroup id="5" name="newmaps">
   <object id="8" name="forest_town_gate_right" x="0.75464" y="258.286" width="8.38247" height="13"/>
   <object id="19" name="forest_town_castle_right" x="2.31773e-06" y="5.09634" width="2.77113" height="131.113"/>
  </objectgroup>
  <objectgroup id="9" name="interact">
-  <object id="40" name="bucket" gid="131" x="274" y="173" width="11.5" height="11.5"/>
+  <object id="40" name="bucket" gid="131" x="277.333" y="173" width="8.16667" height="8.83333"/>
  </objectgroup>
  <objectgroup id="7" name="movement">
   <object id="16" name="player" x="36.315" y="228.068">

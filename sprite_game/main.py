@@ -121,7 +121,7 @@ class Game:
         count = 0
         for y in range(0,6):
             for x in range(0,5):
-                image = speaking_sheet.get_image(x*17,y*17-5,16,16,1.5,1.5)
+                image = speaking_sheet.get_image(x*16,y*16,16,16,1.5,1.5)
                 image.set_colorkey(BLACK)
                 self.speaking[BUBBLES[count]] = image
                 count += 1
@@ -259,21 +259,23 @@ class Game:
 
     def update(self):
         """Run all updates."""
-
+        
+        #for each npc, sees which are talking and which are thinking
+        #if either are true, creates a speech/thought bubble for them
         for i in self.npc_sprites:
             if i.talk == True:
-                b = Speech(i, self.speaking, "question", self.screen, self)
-                self.all_sprites.add(b)
-                self.bubble_sprites.add(b)
-            elif i.run == 0:
-                b = Speech(i, self.thinking, "dot3", self.screen, self)
+                speech = self.speaking
+            elif i.think == True:
+                speech = self.thinking
+            if i.emotion:
+                b = Speech(i, speech, i.emotion, self.screen, self)
+                i.bubble = b
                 self.all_sprites.add(b)
                 self.bubble_sprites.add(b)
 
+        #if the npc is no longer speaking/thinking or has changed emotions, kills the old 
         for i in self.bubble_sprites:
-            if i.owner.talk ==False and i.type == self.speaking:
-                i.kill()
-            elif i.owner.run != 0 and i.type == self.thinking:
+            if i.owner.bubble != i.self or i.owner.emotion != i.emotion:
                 i.kill()
 
         #spawns snake randomly in the confines of the snake_spawn areas
@@ -380,10 +382,20 @@ class Game:
                     self.text = t
                     self.clear = False
 
-                #return closes the inventory 
+                #when hitting t, checks for which npc to start talking and says player is now talking with npc
+                elif event.key == pg.K_t:
+                    for i in self.npc_sprites:
+                        if i.talk == True:
+                            self.player.talking = True
+                            self.text = TEXTS["npc_talk_default"]
+                            self.clear = False
+
+                #return closes dialgoue box (including inventory) 
                 elif event.key == pg.K_RETURN:
                     self.clear = True
                     self.player.velo = PLAYER_VELO
+                    if self.player.talking == True:
+                        self.player.talking = False
 
             elif event.type == pg.KEYUP:
                 if event.key == pg.K_e:

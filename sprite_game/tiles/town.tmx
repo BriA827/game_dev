@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="312">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="317">
  <tileset firstgid="1" source="town.tsx"/>
  <layer id="2" name="back" width="25" height="25">
   <data encoding="csv">
@@ -90,16 +90,12 @@
  </layer>
  <objectgroup id="5" name="sprites">
   <object id="34" name="pitchfork" gid="117" x="34.5455" y="179.091" width="12.5" height="12"/>
-  <object id="35" name="log" gid="107" x="27.1667" y="108.667" width="10" height="9.5"/>
+  <object id="35" name="log" gid="107" x="18.1667" y="222.667" width="10" height="9.5"/>
   <object id="36" name="log" gid="107" x="188" y="49.5" width="9.5" height="10"/>
   <object id="37" name="log" gid="107" x="34.1667" y="59" width="9.5" height="9"/>
   <object id="38" name="bow" gid="119" x="53.1667" y="319" width="12" height="11.5"/>
   <object id="39" name="arrow" gid="120" x="53.4899" y="264.674" width="10.5" height="10.5" rotation="315.721"/>
-  <object id="133" name="bomb" gid="106" x="228.5" y="206.167" width="10" height="9.33333"/>
-  <object id="152" name="bomb" gid="106" x="246.667" y="236.333" width="10" height="9.33333"/>
-  <object id="153" name="bomb" gid="106" x="251.833" y="210.166" width="10" height="9.33333"/>
-  <object id="154" name="bomb" gid="106" x="228" y="241.833" width="10" height="9.33333"/>
-  <object id="160" name="bomb" gid="106" x="226" y="223.333" width="10" height="9.33333"/>
+  <object id="133" name="bomb" gid="106" x="356.5" y="222.167" width="10" height="9.33333"/>
   <object id="260" name="bucket" gid="132" x="211.75" y="158.667" width="8" height="9.6667"/>
  </objectgroup>
  <objectgroup id="10" name="collide">
@@ -171,6 +167,7 @@
   <object id="298" name="tree" x="146" y="390.662" width="43.6363" height="9.22049"/>
   <object id="299" name="tree" x="154.545" y="384.117" width="25.4545" height="6.67504"/>
   <object id="301" name="tree" x="0.5057" y="210.97" width="12.4886" height="12.6855"/>
+  <object id="316" name="wall" x="191.932" y="137" width="15.5" height="23"/>
  </objectgroup>
  <objectgroup id="17" name="npc_collide">
   <object id="307" name="npc_wall" x="164.25" y="284.334" width="227.5" height="5.33333"/>
@@ -178,6 +175,8 @@
   <object id="309" name="npc_wall" x="43.2047" y="286.424" width="33.1663" height="5.33333"/>
   <object id="310" name="npc_wall" x="31.5078" y="193.333" width="4.80266" height="31.8788"/>
   <object id="311" name="npc_wall" x="41.0835" y="151.333" width="31.1663" height="5.33333"/>
+  <object id="313" name="npc_wall" x="19.7502" y="58.3333" width="45.4996" height="5.33333"/>
+  <object id="314" name="npc_wall" x="158.584" y="54.3333" width="52.4996" height="5.33333"/>
  </objectgroup>
  <objectgroup id="11" name="movement">
   <object id="129" name="player" x="52.6214" y="89.671">

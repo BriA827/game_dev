@@ -45,6 +45,7 @@ class Player(pg.sprite.Sprite):
         self.inv = {}
         self.inv_codes = []
         self.use = False
+        self.talking = False
 
         self.life = 0
         self.k_count  = 0
@@ -170,6 +171,18 @@ class Player(pg.sprite.Sprite):
         self.collide_item()
         self.collide_tele()
         self.collide_newmap()
+        self.collide_npc()
+
+    def collide_npc(self):
+        #checks to see if the player is near the npc and slows the player and stops the npc
+        if pg.sprite.spritecollide(self, self.game.npc_sprites, False):
+            hits = pg.sprite.spritecollide(self, self.game.npc_sprites, False)
+            hits[0].talk = True
+            self.velo = PLAYER_VELO/PLAYER_VELO
+        else:
+            for i in self.game.npc_sprites:
+                i.talk = False
+            self.velo = PLAYER_VELO
 
     def collide_wall(self, dir):
         #collision rectangle
@@ -646,17 +659,25 @@ class Npc(pg.sprite.Sprite):
         self.delay = 70
         self.last = pg.time.get_ticks()
 
+        #these are all for speech bubbles
         self.talk = False
-        self.profession = None
+        self.think = False
+        self.emotion = None
+        self.bubble = None
     
     def update(self):
+        self.emotion = None
+
         if self.talk == False:
             self.movement()
-        self.collide_player()
 
         if self.talk == True:
             self.image = self.direct[0]
             self.run = 0
+            if self.game.player.talking == False:
+                self.emotion = "question"
+            else:
+                self.emotion = "happy"
 
     def movement(self):
         self.x_change = 0
@@ -681,6 +702,8 @@ class Npc(pg.sprite.Sprite):
             self.y_change = -1*self.velo
             self.facing = "up"
         elif self.run == 0:
+            self.emotion = "dot3"
+            self.think = True
             self.x_change = 0
             self.y_change = 0
             self.image = self.direct[0]
@@ -735,14 +758,6 @@ class Npc(pg.sprite.Sprite):
         if pg.sprite.spritecollide(self, self.game.npc_block_sprites, False):
             self.run = self.run * -1
 
-    def collide_player(self):
-        if pg.sprite.collide_rect(self, self.game.player):
-            self.talk = True
-            self.game.player.velo = PLAYER_VELO/PLAYER_VELO
-        else:
-            self.talk = False
-            self.game.player.velo = PLAYER_VELO
-
 class Speech(pg.sprite.Sprite):
     def __init__(self, owner, type, image, display, game):
         pg.sprite.Sprite.__init__(self)
@@ -753,6 +768,7 @@ class Speech(pg.sprite.Sprite):
         self.game = game
         self.type = type
         self.display = display
+        self.emotion = image
         self.image = self.type[image]
 
         self.rect = self.image.get_rect()
