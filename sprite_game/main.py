@@ -246,7 +246,7 @@ class Game:
 
     def new(self):
         """Create all game objects, sprites, and groups. Call run() method"""
-        self.text = False
+        self.text = None
         self.clear = True
 
         self.tile_generation(self.game_map)
@@ -315,21 +315,26 @@ class Game:
         self.heart_sprites.bounce()
 
         #if text is a string, makes an image based on that text
-        if self.text !=False:
+        if self.text:
             self.text_sprite = TextBox(self.text, self.font, WHITE)
             #(NOT PROGRAMMED) working to split the text for additional sections if the text image is too large for the text box
             if (self.text_sprite.image.get_width() + self.text_sprite.x) >= (self.next_text.rect.x - self.next_text.image.get_width()):
-                self.text = self.text.split() #FIX THIS
+                pass
+            #if this happens, put into a list. the lsit shoudl then do "inventory: x, x, x, 1/x" "invenory: x, x, x, 2/x"
+            #enter should push page forward, back should push backward
 
         #player dead, game over
         if self.player_alive == False:
             self.playing = False
 
         if self.clear == False:
-            if TEXTS["inv_full"][:-3] in self.text:
-                self.player.velo = PLAYER_VELO/PLAYER_VELO
-            else:
-                self.player.velo = 0
+            try:
+                if TEXTS["inv_full"][:-3] in self.text:
+                    self.player.velo = PLAYER_VELO/PLAYER_VELO
+                else:
+                    self.player.velo = 0
+            except:
+                pass
 
     def draw(self):
         """Fill screen, draw objects, flip."""
@@ -369,7 +374,7 @@ class Game:
                     self.player.use = True
                     self.bomb_tick = pg.time.get_ticks()
 
-                #i for inventory, assigns the text variable from false to a string with everything in the inventory
+                #i for inventory, turns the text variable from none to a string with everything in the inventory
                 elif event.key == pg.K_i :
                     t = "Inventory: "
                     for i in self.player.inv:
@@ -404,7 +409,7 @@ class Game:
                 elif event.key == pg.K_RETURN:
                     self.text = None
             
-            #all actions are the same as the keyboard, just to different buttons
+            #all actions are the same as the keyboard, just to different buttons ########################################## controller
             elif event.type == pg.JOYBUTTONDOWN:
                 #a button?
                 if event.dict["button"] == 0:
