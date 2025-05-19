@@ -179,6 +179,11 @@ class Player(pg.sprite.Sprite):
             hits = pg.sprite.spritecollide(self, self.game.npc_sprites, False)
             hits[0].talk = True
             self.velo = PLAYER_VELO/PLAYER_VELO
+            try:
+                if self.game.player_response == "Accept":
+                    hits[0].quest = self.game.quest
+            except:
+                pass
         else:
             for i in self.game.npc_sprites:
                 i.talk = False

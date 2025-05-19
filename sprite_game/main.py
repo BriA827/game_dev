@@ -16,9 +16,10 @@ class Game:
         self.load_images()
 
         self.explode_sound = pg.mixer.Sound("sprite_game/sounds/explosion.wav")
+        self.menu_music = pg.mixer.Sound("sprite_game/sounds/menu.wav")
+        self.town_music = pg.mixer.Sound("sprite_game/sounds/TownTheme.mp3")
 
-        # self.path = pg.font.match_font("sprite_game/Perfect DOS VGA 437.ttf", 0, 0)
-        self.font = pg.font.SysFont("Perfect DOS VGA 437 Win", 30)
+        self.font = pg.font.Font("sprite_game/Perfect DOS VGA 437.ttf", 30)
         self.joy = None
 
         #changes in start screen based on user input
@@ -147,6 +148,7 @@ class Game:
         self.tele_sprites = pg.sprite.Group()
         self.newmap_sprites = pg.sprite.Group()
         self.text_sprites = pg.sprite.Group()
+        self.response_sprites = pg.sprite.Group()
         self.bubble_sprites = pg.sprite.Group()
 
         self.map_tiles = pg.sprite.Group()
@@ -221,17 +223,17 @@ class Game:
                     elif layer.name == "newmaps":
                         t = Teleporter((obj.x/16)*TILE, (obj.y/16)*TILE, obj.name.split("_")[0], obj.name.split("_")[1], obj.name.split("_")[-1], loc=obj.name.split("_")[2], width=(obj.width/16)*TILE, height=(obj.height/16)*TILE)
                         self.newmap_sprites.add(t)
-                        
-                    #player
-                    elif obj.name == "player":
-                        self.player = Player((obj.x/16)*TILE, (obj.y/16)*TILE,self.screen, self.green_right, self.green_left, self.green_up, self)
-                        self.all_sprites.add(self.player)
-                        self.player_alive = True
 
                     elif obj.name == "npc_move":
                         n = Npc((obj.x/16)*TILE, (obj.y/16)*TILE,self.screen, self.green_right, self.green_left, self.green_up, self)
                         self.all_sprites.add(n)
                         self.npc_sprites.add(n)
+
+                    #player
+                    elif obj.name == "player":
+                        self.player = Player((obj.x/16)*TILE, (obj.y/16)*TILE,self.screen, self.green_right, self.green_left, self.green_up, self)
+                        self.all_sprites.add(self.player)
+                        self.player_alive = True
         
         #creates a tracker for the player that looks for the closest snake
         self.tracker = Tracker(self.player, self.snake_sprites, self.track_image, self)
@@ -244,16 +246,25 @@ class Game:
                 self.text_sprites.add(im)
         self.next_text = Next(WIDTH-(2*TILE), HEIGHT-TILE, self.screen, self.next_image)
 
+        for y in range(2):
+            for x in range(3):
+                im = Background(WIDTH -(TILE) - (TILE*x), HEIGHT-(3.5*TILE) - (TILE*y), self.floor_images[1])
+                self.response_sprites.add(im)
+
     def new(self):
         """Create all game objects, sprites, and groups. Call run() method"""
         self.text = None
         self.clear = True
+        self.menu_music.stop()
+        self.town_music.play(-1)
 
         self.tile_generation(self.game_map)
 
         self.heart_sprites = Heart(self.hearts, PLAYER_HEARTS)
 
         self.game_viewer = Camera(self.tile_map.width*TILE, self.tile_map.height*TILE)
+
+        self.selected_index = -1
 
         self.run()
 
@@ -295,7 +306,7 @@ class Game:
                 #if the player uses a bomb, take it from the inventory and start an explosion
                 self.player.inv["bomb"] -= 1
                 e = Explosion(self.screen, self.exp_list, self)
-                # self.explode_sound.play(1)
+                self.explode_sound.play()
 
                 #get the amout of time it takes for an explosion versus when the button was pressed. if the explosion is still running, does not start another
                 self.e_tick = pg.time.get_ticks()
@@ -314,9 +325,31 @@ class Game:
         self.heart_sprites.update(self.player.life)
         self.heart_sprites.bounce()
 
+        if self.clear == False:
+            try:
+                if TEXTS["inv_full"][:-3] in self.text:
+                    self.prompt = "inv_full"
+                    self.player.velo = PLAYER_VELO/PLAYER_VELO
+                else:
+                    self.player.velo = 0
+            except:
+                pass
+
         #if text is a string, makes an image based on that text
         if self.text:
             self.text_sprite = TextBox(self.text, self.font, WHITE)
+            if "Inventory:" not in self.text and type(TEXTS[self.prompt]) == dict:
+                self.choices = []
+                for i in TEXTS[self.prompt]["response"]:
+                    self.choices.append(TextBox(i, self.font, WHITE))
+
+                if self.selected_index == -1:
+                    self.selected_index = len(self.choices)-1
+                elif self.selected_index == len(self.choices):
+                    self.selected_index = 0
+
+                self.selected_choice = {"x": WIDTH-(TILE), "y":HEIGHT-(3.23*TILE) - (TILE*self.selected_index), "response": self.choices[self.selected_index]}
+
             #(NOT PROGRAMMED) working to split the text for additional sections if the text image is too large for the text box
             if (self.text_sprite.image.get_width() + self.text_sprite.x) >= (self.next_text.rect.x - self.next_text.image.get_width()):
                 pass
@@ -326,15 +359,6 @@ class Game:
         #player dead, game over
         if self.player_alive == False:
             self.playing = False
-
-        if self.clear == False:
-            try:
-                if TEXTS["inv_full"][:-3] in self.text:
-                    self.player.velo = PLAYER_VELO/PLAYER_VELO
-                else:
-                    self.player.velo = 0
-            except:
-                pass
 
     def draw(self):
         """Fill screen, draw objects, flip."""
@@ -349,8 +373,19 @@ class Game:
             for i in self.text_sprites:
                 self.screen.blit(i.image, (i.rect.x, i.rect.y))
             self.screen.blit(self.text_sprite.image, (self.text_sprite.x,self.text_sprite.y))
-            self.screen.blit(self.next_text.image, (self.next_text.rect.x, self.next_text.rect.y))
-            self.next_text.bounce()
+
+            #if dialogue options are present, it adds the box for those to appear as well
+            if "Inventory:" not in self.text and type(TEXTS[self.prompt]) == dict:
+                pg.draw.rect(self.screen, BLACK, (WIDTH-(TILE*3.1),HEIGHT-(4.6*TILE), 3.3*TILE, 2.2*TILE))
+                for i in self.response_sprites:
+                    self.screen.blit(i.image, (i.rect.x, i.rect.y))
+                for i in range(len(self.choices)):
+                    self.screen.blit(self.choices[i].image, ((WIDTH-(TILE*2.8), HEIGHT-(3.3*TILE) - (TILE*i))))
+                self.screen.blit(self.next_text.image, (self.selected_choice["x"], self.selected_choice["y"]))
+
+            else:
+                self.screen.blit(self.next_text.image, (self.next_text.rect.x, self.next_text.rect.y))
+                self.next_text.bounce()
 
         #displays the hearts (multiple for one sprite) on screen and shifts them from each other
         change = (TILE * self.heart_sprites.heart_num) - (TILE)
@@ -369,8 +404,17 @@ class Game:
                 break
 
             elif event.type == pg.KEYDOWN:
+                #this section helps move the selector icon for dialogue options
+                if event.key == pg.K_DOWN:
+                    if self.clear == False and "Inventory:" not in self.text and type(TEXTS[self.prompt]) == dict:
+                        self.selected_index += 1
+
+                elif event.key == pg.K_UP:
+                    if self.clear == False and "Inventory:" not in self.text and type(TEXTS[self.prompt]) == dict:
+                        self.selected_index -= 1
+
                 #e for using a bomb, gets the time it was pressed
-                if event.key == pg.K_e:
+                elif event.key == pg.K_e:
                     self.player.use = True
                     self.bomb_tick = pg.time.get_ticks()
 
@@ -392,22 +436,61 @@ class Game:
                     for i in self.npc_sprites:
                         if i.talk == True:
                             self.player.talking = True
-                            self.text = TEXTS["npc_talk_default"]
+                            self.prompt = "npc_talk_default"
+                            self.text = TEXTS["npc_talk_default"]["say"]
                             self.clear = False
 
-                #return closes dialgoue box (including inventory) 
+                #checks to see if there's more text, otherwise closes dialgoue box (including inventory)
                 elif event.key == pg.K_RETURN:
-                    self.clear = True
-                    self.player.velo = PLAYER_VELO
-                    if self.player.talking == True:
-                        self.player.talking = False
+                    #this sections checks if the text is more than one line
+                    if self.clear == False and "Inventory:" not in self.text and type(TEXTS[self.prompt]) == dict:
+                        self.player_response = TEXTS[self.prompt]["response"][self.selected_index]
+                        #if it is and the player continues the dialogue, move onto the quest
+                        #the quest is an item and the amount
+                        if self.player_response == "Quest":
+                            self.prompt = "npc_want"
+                            self.quest = rand.choice(QUESTS)
+                            self.text = TEXTS[self.prompt]["say"]
+                            self.text = self.text.replace("-", str(self.quest["n"]))
+                            if self.quest["n"] > 1:
+                                self.text = self.text.replace("_", self.quest["item"]+"s")
+                            else:
+                                self.text = self.text.replace("_", self.quest["item"])
+
+                        elif self.player_response == "Accept":
+                            self.clear = True
+                            self.player.velo = PLAYER_VELO
+                            if self.player.talking == True:
+                                self.player.talking = False
+                            print(self.quest)
+                            for i in self.npc_sprites:
+                                try:
+                                    print(i.quest)
+                                except:
+                                    pass
+                        
+                        #if the player says "bye", ends the dialogue like normal
+                        elif self.player_response == "Bye":
+                            self.clear = True
+                            self.player.velo = PLAYER_VELO
+                            if self.player.talking == True:
+                                self.player.talking = False
+
+                    else: 
+                        self.clear = True
+                        self.player.velo = PLAYER_VELO
+                        if self.player.talking == True:
+                            self.player.talking = False
 
             elif event.type == pg.KEYUP:
                 if event.key == pg.K_e:
                     self.player.use = False
 
                 elif event.key == pg.K_RETURN:
-                    self.text = None
+                    if self.clear == False and "Inventory:" not in self.text and type(TEXTS[self.prompt]) == dict:
+                        pass
+                    else:
+                        self.text = None
             
             #all actions are the same as the keyboard, just to different buttons ########################################## controller
             elif event.type == pg.JOYBUTTONDOWN:
@@ -467,26 +550,27 @@ class Game:
         control_error = False
 
         while start:
+            self.town_music.stop()
+            self.menu_music.play(-1)
             self.screen.fill(TIES)
 
             #text section for keyboard
             self.screen.blit(self.font.render("Keyboard", True, WHITE), (WIDTH//4 + 20, HEIGHT//4))
-            k = Next(WIDTH//3 - 10, HEIGHT//3, self.screen, self.next_image)
-            self.screen.blit(k.image, (k.rect.x, k.rect.y))
+            pg.draw.ellipse(self.screen, WHITE, (WIDTH//3 - 20, HEIGHT//3-10, 45,45), 3)
 
             #text section for controller
             self.screen.blit(self.font.render("Controller", True, WHITE), (WIDTH//2+ 30, HEIGHT//4))
-            j = Next(2*WIDTH//3 - 60, HEIGHT//3, self.screen, self.next_image)
-            self.screen.blit(j.image, (j.rect.x, j.rect.y))
+            pg.draw.ellipse(self.screen, WHITE, (2*WIDTH//3 - 70, HEIGHT//3-10, 45,45), 3)
 
             self.screen.blit(self.font.render(TEXTS["start"], True, WHITE), (WIDTH//4+ 40, HEIGHT//2))
 
             #draw a circle around whichever one is currently selected
             if self.selected == "Keys":
-                pg.draw.ellipse(self.screen, BLACK, (WIDTH//3 - 20, HEIGHT//3-10, 45,45), 5)
-                k.image = self.track_image
+                k = Next(WIDTH//3 - 10, HEIGHT//3, self.screen, self.next_image)
+                self.screen.blit(k.image, (k.rect.x, k.rect.y))
             else:
-                pg.draw.ellipse(self.screen, BLACK, (2*WIDTH//3 - 70, HEIGHT//3-10, 45,45), 5)
+                j = Next(2*WIDTH//3 - 60, HEIGHT//3, self.screen, self.next_image)
+                self.screen.blit(j.image, (j.rect.x, j.rect.y))
 
             #display error text
             if control_error:
@@ -531,24 +615,25 @@ class Game:
         self.selected = "Restart"
 
         while end:
+            self.town_music.stop()
+            self.menu_music.play(-1)
             self.screen.fill(TIES)
 
             #text section for restarting
             self.screen.blit(self.font.render("Restart", True, WHITE), (WIDTH//4 + 20, HEIGHT//4))
-            k = Next(WIDTH//3 - 10, HEIGHT//3, self.screen, self.next_image)
-            self.screen.blit(k.image, (k.rect.x, k.rect.y))
+            pg.draw.ellipse(self.screen, WHITE, (WIDTH//3 - 20, HEIGHT//3-10, 45,45), 3)
 
             #text section for quitting
             self.screen.blit(self.font.render("Quit", True, WHITE), (WIDTH//2+ 80, HEIGHT//4))
-            j = Next(2*WIDTH//3 - 60, HEIGHT//3, self.screen, self.next_image)
-            self.screen.blit(j.image, (j.rect.x, j.rect.y))
+            pg.draw.ellipse(self.screen, WHITE, (2*WIDTH//3 - 70, HEIGHT//3-10, 45,45), 3)
 
             #draw a circle around whichever one is currently selected
             if self.selected == "Restart":
-                pg.draw.ellipse(self.screen, BLACK, (WIDTH//3 - 20, HEIGHT//3-10, 45,45), 5)
-                k.image = self.track_image
+                k = Next(WIDTH//3 - 10, HEIGHT//3, self.screen, self.next_image)
+                self.screen.blit(k.image, (k.rect.x, k.rect.y))
             else:
-                pg.draw.ellipse(self.screen, BLACK, (2*WIDTH//3 - 70, HEIGHT//3-10, 45,45), 5)
+                j = Next(2*WIDTH//3 - 60, HEIGHT//3, self.screen, self.next_image)
+                self.screen.blit(j.image, (j.rect.x, j.rect.y))
 
             pg.display.flip()
         
