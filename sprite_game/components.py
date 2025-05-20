@@ -183,12 +183,6 @@ class Player(pg.sprite.Sprite):
             self.current_npc.talk = True
             self.velo = PLAYER_VELO/PLAYER_VELO
 
-            try:
-                if self.game.player_response == "Accept" and self.current_npc.quest == None:
-                    self.current_npc.quest = self.game.quest
-        
-            except:
-                pass
         else:
             for i in self.game.npc_sprites:
                 i.talk = False
@@ -291,6 +285,9 @@ class Player(pg.sprite.Sprite):
                     self.game.change_map = True
                     self.game.persistant["player"] = {"inv":self.inv, "codes":self.inv_codes, "kills":self.k_count, "life":self.life, "x":self.rect.x, "y":self.rect.y}
                     self.game.persistant["new_map"] = hits[0].loc
+
+                    for i in self.game.npc_sprites:
+                        self.game.persistant["npcs"][i.name] = {"name":i.name, "quest":i.quest, "x":i.rect.x, "y":i.rect.y, "map":i.map}
 
     def newmap_spawn(self):
         #continuation of collide newmap, only triggers when map has fully changed
@@ -656,6 +653,7 @@ class Npc(pg.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.display = display
+        self.map = self.game.game_map
 
         #npc generates with a random velocity between 2 and 2.8
         #timer is random int between 100 and 150
@@ -675,6 +673,7 @@ class Npc(pg.sprite.Sprite):
         self.emotion = None
         self.bubble = None
         self.quest = None
+        self.name = rand.choice(NAMES)
     
     def update(self):
         self.emotion = None
@@ -757,6 +756,7 @@ class Npc(pg.sprite.Sprite):
                     self.x = hits[0].rect.right
                 self.x_change = 0
                 self.rect.x = self.x
+                self.run = self.run * -1
 
             elif dir == 'y':
                 if self.y_change > 0:
@@ -765,6 +765,7 @@ class Npc(pg.sprite.Sprite):
                     self.y = hits[0].rect.bottom
                 self.y_change=0
                 self.rect.y = self.y
+                self.run = self.run * -1
 
         if pg.sprite.spritecollide(self, self.game.npc_block_sprites, False):
             self.run = self.run * -1
