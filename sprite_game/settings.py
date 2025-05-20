@@ -31,9 +31,10 @@ PLAYER_VELO = 4
 
 #controller has slight drift, adjusts for that
 JOY_MINIMUM = 0.004
+JOY_DELAY = 300
 
 TICK_OFFSET = 10
 
-TEXTS = {"start": "Press Enter/A to start", "inv_full": "You can't hold any more _!", "npc_talk_default":{"say":"Hello. Lovely weather we're having.", "response":["Bye", "Quest"]}, "npc_want": {"say": "I want - _, please.", "response":["Bye", "Accept"]}}
+TEXTS = {"start": "Press _ to start", "inv_full": "You can't hold any more _!", "npc_talk_default":{"say":"Hello. Lovely weather we're having.", "response":["Bye", "Quest"]}, "npc_want": {"say": "I want - _, please.", "response":["Bye", "Accept"]}, "have_quest": "I asked for _."}
 QUESTS = [{"item": "mush", "n":3}, {"item": "log", "n":2}, {"item": "log", "n":2}, {"item": "bag", "n":1}]
 BUBBLES = ["swirl", 'music', 'sad', 'sweat1', 'blue', 'sparkle', 'laugh', 'happy', 'dot3', 'money', 'star', 'idea', 'empty', 'dot2', 'lines', 'z2', 'heart2', 'exclaim2', 'dot1', 'angry', 'z1', 'broken', 'exclaim1', 'no', 'shine', 'question', 'heart1', 'sweat2', 'cloud', 'evil']

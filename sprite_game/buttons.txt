@@ -11,3 +11,22 @@ controller:
     inventory - plus
     explode - x
     talk = unknown
+
+    a = 0
+    b = 1
+    x = 2
+    y = 3
+    
+    - = 4
+    + = 6
+
+    push l stick = 7
+    push r stick = 8
+
+    L = 9
+    R = 10
+
+    up = 11
+    down = 12
+    left = 13
+    right = 14

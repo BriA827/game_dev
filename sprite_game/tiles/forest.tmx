@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-up" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="90">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-up" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="92">
  <tileset firstgid="1" source="town.tsx"/>
  <layer id="1" name="back" width="25" height="25">
   <data encoding="csv">
@@ -97,7 +97,7 @@
   <object id="22" name="wall" x="-1.31788" y="138.104" width="80.1667" height="53"/>
   <object id="25" name="wall" x="74.303" y="0.724452" width="4.66667" height="136.914"/>
   <object id="26" name="wall" x="-0.245958" y="0.724516" width="78.0229" height="3.32223"/>
-  <object id="28" name="house" x="224.583" y="65.5" width="63.1667" height="35"/>
+  <object id="28" name="house" x="112.583" y="176.833" width="77.8334" height="35"/>
   <object id="30" name="house" x="303.667" y="47.75" width="64.4167" height="35"/>
   <object id="31" name="fence" x="228.042" y="17.5" width="7.6667" height="46.25"/>
   <object id="32" name="fence" x="275.917" y="18.125" width="7.6667" height="46.25"/>
@@ -139,6 +139,8 @@
   <object id="75" name="tree" x="386.167" y="152.271" width="7.9167" height="14.2083"/>
   <object id="76" name="tree" x="385.417" y="126.771" width="12.9167" height="7.7083"/>
   <object id="87" name="wall" x="288" y="152.75" width="15.5" height="23"/>
+  <object id="90" name="wall" x="80.5833" y="1.5" width="94.1667" height="46.3333"/>
+  <object id="91" name="house" x="239.75" y="64.5" width="63.1667" height="35"/>
  </objectgroup>
  <objectgroup id="6" name="sprites">
   <object id="9" name="bag" gid="108" x="268.47" y="383.902" width="8.24691" height="9.43969"/>
@@ -157,7 +159,7 @@
   <object id="19" name="forest_town_castle_right" x="2.31773e-06" y="5.09634" width="2.77113" height="131.113"/>
  </objectgroup>
  <objectgroup id="9" name="interact">
-  <object id="40" name="bucket" gid="131" x="277.333" y="173" width="8.16667" height="8.83333"/>
+  <object id="40" name="bucket" gid="131" x="274.333" y="170" width="8.16667" height="8.83333"/>
  </objectgroup>
  <objectgroup id="7" name="movement">
   <object id="16" name="player" x="36.315" y="228.068">

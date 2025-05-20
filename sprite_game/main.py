@@ -265,6 +265,8 @@ class Game:
         self.game_viewer = Camera(self.tile_map.width*TILE, self.tile_map.height*TILE)
 
         self.selected_index = -1
+        if self.joy:
+            self.last_joy = pg.time.get_ticks()
 
         self.run()
 
@@ -448,26 +450,26 @@ class Game:
                         #if it is and the player continues the dialogue, move onto the quest
                         #the quest is an item and the amount
                         if self.player_response == "Quest":
-                            self.prompt = "npc_want"
-                            self.quest = rand.choice(QUESTS)
-                            self.text = TEXTS[self.prompt]["say"]
-                            self.text = self.text.replace("-", str(self.quest["n"]))
-                            if self.quest["n"] > 1:
-                                self.text = self.text.replace("_", self.quest["item"]+"s")
+                            if self.player.current_npc.quest == None:
+                                self.prompt = "npc_want"
+                                self.quest = rand.choice(QUESTS)
+                                self.text = TEXTS[self.prompt]["say"]
+                                self.text = self.text.replace("-", str(self.quest["n"]))
+                                if self.quest["n"] > 1:
+                                    self.text = self.text.replace("_", self.quest["item"]+"s")
+                                else:
+                                    self.text = self.text.replace("_", self.quest["item"])
+
                             else:
-                                self.text = self.text.replace("_", self.quest["item"])
+                                self.prompt = "have_quest"
+                                text = TEXTS[self.prompt]
+                                self.text = text.replace("_", str(self.player.current_npc.quest))
 
                         elif self.player_response == "Accept":
                             self.clear = True
                             self.player.velo = PLAYER_VELO
                             if self.player.talking == True:
                                 self.player.talking = False
-                            print(self.quest)
-                            for i in self.npc_sprites:
-                                try:
-                                    print(i.quest)
-                                except:
-                                    pass
                         
                         #if the player says "bye", ends the dialogue like normal
                         elif self.player_response == "Bye":
@@ -494,13 +496,55 @@ class Game:
             
             #all actions are the same as the keyboard, just to different buttons ########################################## controller
             elif event.type == pg.JOYBUTTONDOWN:
-                #a button?
-                if event.dict["button"] == 0:
-                    self.player.use = True
-                    self.bomb_tick = pg.time.get_ticks()
 
-                #+ button? x button?
-                elif event.dict["button"] == 2:
+                #2 button
+                if event.dict["button"] == 2:
+                    actions = []
+                    #checks for talking, if true, a initiates dialogue
+                    for i in self.npc_sprites:
+                        if i.talk == True:
+                            self.player.talking = True
+                            self.prompt = "npc_talk_default"
+                            self.text = TEXTS["npc_talk_default"]["say"]
+                            self.clear = False
+                            actions.append(True)
+
+                    #otherwise, uses bomb
+                    if True not in actions:
+                        self.player.use = True
+                        self.bomb_tick = pg.time.get_ticks()
+                #a
+                elif event.dict["button"] == 0:
+                    #this sections checks if the text is more than one line
+                    if self.clear == False and "Inventory:" not in self.text and type(TEXTS[self.prompt]) == dict:
+                        self.player_response = TEXTS[self.prompt]["response"][self.selected_index]
+                        #if it is and the player continues the dialogue, move onto the quest
+                        #the quest is an item and the amount
+                        if self.player_response == "Quest":
+                            self.prompt = "npc_want"
+                            self.quest = rand.choice(QUESTS)
+                            self.text = TEXTS[self.prompt]["say"]
+                            self.text = self.text.replace("-", str(self.quest["n"]))
+                            if self.quest["n"] > 1:
+                                self.text = self.text.replace("_", self.quest["item"]+"s")
+                            else:
+                                self.text = self.text.replace("_", self.quest["item"])
+
+                        elif self.player_response == "Accept":
+                            self.clear = True
+                            self.player.velo = PLAYER_VELO
+                            if self.player.talking == True:
+                                self.player.talking = False
+                        
+                        #if the player says "bye", ends the dialogue like normal
+                        elif self.player_response == "Bye":
+                            self.clear = True
+                            self.player.velo = PLAYER_VELO
+                            if self.player.talking == True:
+                                self.player.talking = False
+
+                #+ button
+                elif event.dict["button"] == 6:
                     t = "Inventory: "
                     for i in self.player.inv:
                         if self.player.inv[i] == 1:
@@ -512,9 +556,31 @@ class Game:
                     self.text = t
                     self.clear = False
 
-                #b button? 
+                #b button
                 elif event.dict["button"] ==1 :
-                    self.clear = True
+                    self.joy_tick = pg.time.get_ticks()
+                    if self.joy_tick - self.last_joy > JOY_DELAY:
+                        if self.clear == False and "Inventory:" not in self.text and type(TEXTS[self.prompt]) == dict:
+                            pass
+                        else: 
+                            self.clear = True
+                            self.player.velo = PLAYER_VELO
+                            if self.player.talking == True:
+                                self.player.talking = False
+
+            if self.joy.get_axis(1) < 0 - JOY_MINIMUM:
+                self.joy_tick = pg.time.get_ticks()
+                if self.joy_tick - self.last_joy > JOY_DELAY:
+                    if self.clear == False and "Inventory:" not in self.text and type(TEXTS[self.prompt]) == dict:
+                        self.selected_index += 1
+                        self.last_joy = self.joy_tick
+
+            elif self.joy.get_axis(1) > JOY_MINIMUM:
+                self.joy_tick = pg.time.get_ticks()
+                if self.joy_tick - self.last_joy > JOY_DELAY:
+                    if self.clear == False and "Inventory:" not in self.text and type(TEXTS[self.prompt]) == dict:
+                        self.selected_index -= 1
+                        self.last_joy = self.joy_tick
 
     def run(self):
         """Contains main game loop."""
@@ -548,11 +614,21 @@ class Game:
 
         self.selected = "Keys"
         control_error = False
+        self.last_joy = pg.time.get_ticks()
 
         while start:
             self.town_music.stop()
             self.menu_music.play(-1)
             self.screen.fill(TIES)
+
+            if self.selected == "Keys":
+                t = TEXTS["start"]
+                t = t.replace("_", "Enter")
+                shift = 70
+            else:
+                t = TEXTS["start"]
+                t = t.replace("_", "A")
+                shift = 100
 
             #text section for keyboard
             self.screen.blit(self.font.render("Keyboard", True, WHITE), (WIDTH//4 + 20, HEIGHT//4))
@@ -562,7 +638,7 @@ class Game:
             self.screen.blit(self.font.render("Controller", True, WHITE), (WIDTH//2+ 30, HEIGHT//4))
             pg.draw.ellipse(self.screen, WHITE, (2*WIDTH//3 - 70, HEIGHT//3-10, 45,45), 3)
 
-            self.screen.blit(self.font.render(TEXTS["start"], True, WHITE), (WIDTH//4+ 40, HEIGHT//2))
+            self.screen.blit(self.font.render(t, True, WHITE), (WIDTH//4+ shift, HEIGHT//2))
 
             #draw a circle around whichever one is currently selected
             if self.selected == "Keys":
@@ -579,9 +655,16 @@ class Game:
             pg.display.flip()
         
             for event in pg.event.get():
+
                 if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                     self.running = False
                     start = False
+
+                #connects a controller, checks if joy is the selected type
+                elif event.type == pg.JOYDEVICEADDED:
+                    self.joy = pg.joystick.Joystick(event.device_index)
+                    if self.selected == "Joy":
+                        control_error = False
 
                 elif event.type == pg.KEYDOWN:
                     #return ends this screen and begins the game
@@ -601,11 +684,23 @@ class Game:
                         else:
                             self.selected = "Keys"
 
-                #connects a controller, checks if joy is the selected type
-                elif event.type == pg.JOYDEVICEADDED and self.selected == "Joy":
-                    control_error = False
-                    self.joy = pg.joystick.Joystick(event.device_index)
+                elif self.joy.get_axis(0) < 0 - JOY_MINIMUM or self.joy.get_axis(0) > JOY_MINIMUM:
+                    self.joy_tick = pg.time.get_ticks()
+                    if self.joy_tick - self.last_joy > JOY_DELAY:
+                        if self.selected == "Keys":
+                            self.selected = "Joy"
+                        else:
+                            self.selected = "Keys"
+                        self.last_joy = self.joy_tick
 
+                elif event.type == pg.JOYBUTTONDOWN:
+                    #a
+                    if event.dict["button"] == 0:
+                        if self.selected == "Joy" and self.joy == None:
+                            control_error = True
+                        else:
+                            self.control = self.selected
+                            return
 
     def game_over(self):
         """Screen to end game."""
@@ -613,6 +708,7 @@ class Game:
         end = True
 
         self.selected = "Restart"
+        self.last_joy = pg.time.get_ticks()
 
         while end:
             self.town_music.stop()
@@ -650,9 +746,9 @@ class Game:
                         else:
                             end = False
                             self.running = False
-                            path = "sprite_game/data.txt"
-                            data = open(path, 'a')
-                            data.write(f"{self.player.k_count}\n")
+                            # path = "sprite_game/data.txt"
+                            # data = open(path, 'a')
+                            # data.write(f"{self.player.k_count}\n")
                             break
                     
                     #changes selected based on player input
@@ -661,6 +757,28 @@ class Game:
                             self.selected = "Quit"
                         else:
                             self.selected = "Restart"
+
+                elif self.joy.get_axis(0) < 0 - JOY_MINIMUM or self.joy.get_axis(0) > JOY_MINIMUM:
+                    self.joy_tick = pg.time.get_ticks()
+                    if self.joy_tick - self.last_joy > JOY_DELAY:
+                        if self.selected == "Restart":
+                            self.selected = "Quit"
+                        else:
+                            self.selected = "Restart"
+                        self.last_joy = self.joy_tick
+
+                elif event.type == pg.JOYBUTTONDOWN:
+                    #a
+                    if event.dict["button"] == 0:
+                        if self.selected == "Restart":
+                            end = False
+                        else:
+                            end = False
+                            self.running = False
+                            # path = "sprite_game/data.txt"
+                            # data = open(path, 'a')
+                            # data.write(f"{self.player.k_count}\n")
+                            break
 
 ############################## PLAY ###################################
 

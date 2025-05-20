@@ -53,6 +53,8 @@ class Player(pg.sprite.Sprite):
         self.player_mask = pg.mask.from_surface(self.image)
         self.mask_image = self.player_mask.to_surface()
 
+        self.current_npc = None
+
     def update(self):
         self.x_change = 0
         self.y_change = 0
@@ -177,11 +179,14 @@ class Player(pg.sprite.Sprite):
         #checks to see if the player is near the npc and slows the player and stops the npc
         if pg.sprite.spritecollide(self, self.game.npc_sprites, False):
             hits = pg.sprite.spritecollide(self, self.game.npc_sprites, False)
-            hits[0].talk = True
+            self.current_npc = hits[0]
+            self.current_npc.talk = True
             self.velo = PLAYER_VELO/PLAYER_VELO
+
             try:
-                if self.game.player_response == "Accept":
-                    hits[0].quest = self.game.quest
+                if self.game.player_response == "Accept" and self.current_npc.quest == None:
+                    self.current_npc.quest = self.game.quest
+        
             except:
                 pass
         else:
@@ -669,6 +674,7 @@ class Npc(pg.sprite.Sprite):
         self.think = False
         self.emotion = None
         self.bubble = None
+        self.quest = None
     
     def update(self):
         self.emotion = None
