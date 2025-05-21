@@ -10,7 +10,7 @@ controller:
     pause - minus
     inventory - plus
     explode - x
-    talk = unknown
+    talk = x
 
     a = 0
     b = 1

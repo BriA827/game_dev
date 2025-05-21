@@ -673,7 +673,8 @@ class Npc(pg.sprite.Sprite):
         self.emotion = None
         self.bubble = None
         self.quest = None
-        self.name = rand.choice(NAMES)
+        self.name = rand.choice(self.game.names)
+        self.game.names.remove(self.name)
     
     def update(self):
         self.emotion = None

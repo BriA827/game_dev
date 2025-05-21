@@ -31,6 +31,7 @@ class Game:
 
         #saves important data across maps
         self.persistant = {"npcs":{}}
+        self.names = ["Liz", "Lulu", "Irene", "Carol", "Lewis"]
         self.sprite_code = 0
 
     def load_images(self):
@@ -272,7 +273,10 @@ class Game:
 
     def update(self):
         """Run all updates."""
-        
+        try:
+            print(self.prompt, self.player_response, self.player.current_npc.quest)
+        except:
+            pass
         #for each npc, sees which are talking and which are thinking
         #if either are true, creates a speech/thought bubble for them
         for i in self.npc_sprites:
@@ -339,6 +343,8 @@ class Game:
 
         #if text is a string, makes an image based on that text
         if self.text:
+            if "Inventory:" not in self.text and "npc" in self.prompt and self.player.current_npc.name not in self.text:
+                self.text = self.player.current_npc.name+ ": " + self.text
             self.text_sprite = TextBox(self.text, self.font, WHITE)
             if "Inventory:" not in self.text and type(TEXTS[self.prompt]) == dict:
                 self.choices = []
@@ -460,7 +466,7 @@ class Game:
                                 else:
                                     self.text = self.text.replace("_", self.quest["item"])
 
-                            else:
+                            elif self.player.current_npc.quest != None and self.player.current_npc.quest != "Done":
                                 #if the quest can be completed, prompt to complete
                                 if self.player.current_npc.quest["item"] in self.player.inv.keys() and self.player.inv[self.player.current_npc.quest["item"]] == self.player.current_npc.quest["n"]:
                                     self.prompt = "quest_prompt"
@@ -477,17 +483,40 @@ class Game:
                                         self.text = self.text.replace("_", self.player.current_npc.quest["item"])
 
                         elif self.player_response == "Accept":
+                            self.player.current_npc.quest = self.quest
+                            self.quest = None
+                            self.text = None
                             self.clear = True
                             self.player.velo = PLAYER_VELO
                             if self.player.talking == True:
                                 self.player.talking = False
+                            self.selected_index = -1
+                            self.prompt=None
                         
                         #if the player says "bye", ends the dialogue like normal
-                        elif self.player_response == "Bye":
+                        elif self.player_response == "Bye" or self.player_response == "No":
                             self.clear = True
+                            self.text = None
                             self.player.velo = PLAYER_VELO
                             if self.player.talking == True:
                                 self.player.talking = False
+                            self.selected_index = -1
+                            self.prompt=None
+
+                        elif self.player_response == "Yes" and self.prompt != "removed":
+                            self.prompt = "removed"
+                            self.text = TEXTS[self.prompt]
+                            self.text = self.text.replace("-", str(self.player.current_npc.quest["n"]))
+                            if self.player.current_npc.quest["n"] > 1:
+                                self.text = self.text.replace("_", self.player.current_npc.quest["item"]+"s")
+                            else:
+                                self.text = self.text.replace("_", self.player.current_npc.quest["item"])
+                            self.player.inv[self.player.current_npc.quest["item"]] -= self.player.current_npc.quest["n"]
+                            self.player.current_npc.quest = "Done"
+
+                        elif self.player_response == "Yes" and self.player.current_npc.quest == "Done":
+                            self.prompt == "npc_finish_quest"
+                            self.text = TEXTS[self.prompt]
 
                     else: 
                         self.clear = True
@@ -495,6 +524,8 @@ class Game:
                         self.player.velo = PLAYER_VELO
                         if self.player.talking == True:
                             self.player.talking = False
+                        self.selected_index = -1
+                        self.prompt=None
 
             elif event.type == pg.KEYUP:
                 if event.key == pg.K_e:
@@ -608,7 +639,7 @@ class Game:
             self.clock.tick(FPS)
             if self.change_map ==True:
                 for i in self.npc_sprites:
-                    self.persistant["npcs"][i.name] = {"name":i.name, "quest":i.quest, "x":i.rect.x, "y":i.rect.y, "map":i.map}
+                    self.persistant["npcs"][i.name] = {"name":i.name, "quest":i.quest, "map":i.map}
                 self.sprite_code = 0
                 #checks to see if the player is changing the map area. first, changes the map and hten updates the players persistant data
                 self.tile_generation(self.game_map)
@@ -619,12 +650,10 @@ class Game:
                 self.player.k_count = self.persistant["player"]["kills"]
                 self.player.life = self.persistant["player"]["life"]
 
-                for i in range(0, len(list(self.npc_sprites))):
+                for i in range(0, len(list(self.npc_sprites))-1):
                     if self.game_map == list(self.npc_sprites)[i].map:
                         list(self.npc_sprites)[i].name = self.persistant["npcs"][list(self.persistant["npcs"])[i]]["name"]
                         list(self.npc_sprites)[i].quest = self.persistant["npcs"][list(self.persistant["npcs"])[i]]["quest"]
-                        list(self.npc_sprites)[i].rect.x = self.persistant["npcs"][list(self.persistant["npcs"])[i]]["x"]
-                        list(self.npc_sprites)[i].rect.y = self.persistant["npcs"][list(self.persistant["npcs"])[i]]["y"]
                         list(self.npc_sprites)[i].map = self.persistant["npcs"][list(self.persistant["npcs"])[i]]["map"]
 
                 #sprite codes (when paired with sprite ids) identify and remove sprites from the map if they are already in the player's inventory
