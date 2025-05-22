@@ -187,6 +187,7 @@ class Player(pg.sprite.Sprite):
             for i in self.game.npc_sprites:
                 i.talk = False
             self.velo = PLAYER_VELO
+            self.current_npc = None
 
     def collide_wall(self, dir):
         #collision rectangle
@@ -673,8 +674,11 @@ class Npc(pg.sprite.Sprite):
         self.emotion = None
         self.bubble = None
         self.quest = None
-        self.name = rand.choice(self.game.names)
-        self.game.names.remove(self.name)
+        try:
+            self.name = rand.choice(self.game.names)
+            self.game.names.remove(self.name)
+        except:
+            self.name = None
     
     def update(self):
         self.emotion = None

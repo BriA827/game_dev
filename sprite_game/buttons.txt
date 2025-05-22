@@ -1,16 +1,16 @@
-keyboard:
+Keys:
     texts - enter
-    pause - p
     inventory - i
     explode - e
     talk - t
+    move - arrows
 
-controller:
+Joy:
     texts - a
-    pause - minus
     inventory - plus
     explode - x
     talk = x
+    move - left stick
 
     a = 0
     b = 1
