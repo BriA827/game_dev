@@ -287,9 +287,6 @@ class Player(pg.sprite.Sprite):
                     self.game.persistant["player"] = {"inv":self.inv, "codes":self.inv_codes, "kills":self.k_count, "life":self.life, "x":self.rect.x, "y":self.rect.y}
                     self.game.persistant["new_map"] = hits[0].loc
 
-                    for i in self.game.npc_sprites:
-                        self.game.persistant["npcs"][i.name] = {"name":i.name, "quest":i.quest, "x":i.rect.x, "y":i.rect.y, "map":i.map}
-
     def newmap_spawn(self):
         #continuation of collide newmap, only triggers when map has fully changed
             for i in self.game.newmap_sprites:
@@ -678,7 +675,7 @@ class Npc(pg.sprite.Sprite):
             self.name = rand.choice(self.game.names)
             self.game.names.remove(self.name)
         except:
-            self.name = None
+            self.name = "Bri"
     
     def update(self):
         self.emotion = None

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="317">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="321">
  <tileset firstgid="1" source="town.tsx"/>
  <layer id="2" name="back" width="25" height="25">
   <data encoding="csv">
@@ -119,7 +119,7 @@
   <object id="73" name="fence" x="66.6667" y="236.333" width="10" height="49.6667"/>
   <object id="74" name="fence" x="35.4167" y="237.667" width="8.66667" height="80.6667"/>
   <object id="98" name="house" x="65.8333" y="48.1666" width="93.9583" height="5.6667"/>
-  <object id="106" name="wall" x="400" y="137.793" width="1.66667" height="117.208"/>
+  <object id="106" name="wall" x="400" y="-0.207" width="1.66667" height="255.208"/>
   <object id="107" name="wall" x="-2" y="400" width="403.666" height="2.00003"/>
   <object id="134" name="wall" x="-1.99983" y="-2.00002" width="404" height="2.00003"/>
   <object id="136" name="wall" x="-2.16667" y="-2.66667" width="1.66667" height="404.667"/>
@@ -147,8 +147,8 @@
   <object id="276" name="tree" x="182" y="8.5" width="22" height="14"/>
   <object id="277" name="tree" x="202.5" y="12.5" width="22" height="19.5"/>
   <object id="278" name="tree" x="209" y="29.25" width="15" height="49"/>
-  <object id="279" name="tree" x="224.5" y="80" width="30.5" height="16"/>
-  <object id="280" name="tree" x="289.25" y="80" width="30.5" height="16"/>
+  <object id="279" name="tree" x="224.5" y="80" width="31.4091" height="16"/>
+  <object id="280" name="tree" x="287.977" y="80" width="31.7727" height="16"/>
   <object id="281" name="tree" x="-0.409091" y="287.652" width="6.81818" height="32.6969"/>
   <object id="282" name="tree" x="-0.3182" y="321.152" width="14.6364" height="46.3333"/>
   <object id="283" name="tree" x="6.40909" y="294.561" width="7.54545" height="16.1514"/>
@@ -170,16 +170,17 @@
   <object id="316" name="wall" x="191.932" y="137" width="15.5" height="23"/>
  </objectgroup>
  <objectgroup id="17" name="npc_collide">
-  <object id="307" name="npc_wall" x="164.25" y="284.334" width="227.5" height="5.33333"/>
+  <object id="307" name="npc_wall" x="164.25" y="288.667" width="227.5" height="1.99999"/>
   <object id="308" name="npc_wall" x="14.9167" y="319.667" width="148.833" height="5.33333"/>
   <object id="309" name="npc_wall" x="43.2047" y="286.424" width="33.1663" height="5.33333"/>
-  <object id="310" name="npc_wall" x="31.5078" y="193.333" width="4.80266" height="31.8788"/>
+  <object id="310" name="npc_wall" x="31.5078" y="183.333" width="4.80266" height="44.8788"/>
   <object id="311" name="npc_wall" x="41.0835" y="151.333" width="31.1663" height="5.33333"/>
   <object id="313" name="npc_wall" x="19.7502" y="58.3333" width="45.4996" height="5.33333"/>
   <object id="314" name="npc_wall" x="158.584" y="54.3333" width="52.4996" height="5.33333"/>
+  <object id="317" name="npc_wall" x="256.583" y="80.6667" width="32.1667" height="8.66666"/>
  </objectgroup>
  <objectgroup id="11" name="movement">
-  <object id="129" name="player" x="52.6214" y="89.671">
+  <object id="129" name="player" x="101.288" y="78.3377">
    <point/>
   </object>
   <object id="139" name="snake_spawn" x="195.666" y="294.5" width="160.167" height="36.5"/>
@@ -194,6 +195,8 @@
   <object id="304" name="npc_move" x="108" y="240">
    <point/>
   </object>
+  <object id="318" name="snake_spawn" x="30.9165" y="48.4167" width="22.5003" height="20.8333"/>
+  <object id="320" name="snake_spawn" x="170.083" y="38.9167" width="29.5003" height="13.5"/>
  </objectgroup>
  <objectgroup id="12" name="teleports">
   <object id="148" name="gate_lad_down" x="264.212" y="63.2727" width="16.0606" height="6.46681"/>
@@ -206,9 +209,9 @@
  <objectgroup id="9" name="interact">
   <object id="76" name="wheels" gid="58" x="17" y="174.531" width="11.1667" height="11.3333"/>
   <object id="77" name="target" gid="96" x="49" y="249.333" width="15.3333" height="15.6667"/>
-  <object id="85" name="door_3" gid="90" x="128" y="64.1667" width="16" height="15.875"/>
-  <object id="86" name="door_2" gid="90" x="80.2083" y="64" width="15.75" height="15.75"/>
-  <object id="87" name="door_1" gid="86" x="111.917" y="160.042" width="16" height="16"/>
+  <object id="85" name="door" gid="90" x="128" y="64.1667" width="16" height="15.875"/>
+  <object id="86" name="door" gid="90" x="80.2083" y="64" width="15.75" height="15.75"/>
+  <object id="87" name="door" gid="86" x="111.917" y="160.042" width="16" height="16"/>
   <object id="88" name="sign_h" gid="84" x="146.333" y="72.6667" width="11.6667" height="10.6667"/>
   <object id="89" name="sign_h" gid="84" x="66.6667" y="72.6667" width="12" height="10.3333"/>
   <object id="90" name="sign_c" gid="84" x="290.333" y="106.667" width="11" height="10.6667"/>

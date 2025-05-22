@@ -1,4 +1,4 @@
-#!/home/kuni/game_dev/.venv/bin/python
+#!/Users/242413/Desktop/game_dev/.venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
