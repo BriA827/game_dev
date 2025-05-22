@@ -32,7 +32,6 @@ class Game:
 
         #saves important data across maps
         self.persistant = {"npcs":{}}
-        self.names = ["Liz", "Lulu", "Irene", "Carol", "Lewis", "Stella"]
         self.sprite_code = 0
 
         self.won = False
@@ -230,8 +229,8 @@ class Game:
                         t = Teleporter((obj.x/16)*TILE, (obj.y/16)*TILE, obj.name.split("_")[0], obj.name.split("_")[1], obj.name.split("_")[-1], loc=obj.name.split("_")[2], width=(obj.width/16)*TILE, height=(obj.height/16)*TILE)
                         self.newmap_sprites.add(t)
 
-                    elif obj.name == "npc_move":
-                        n = Npc((obj.x/16)*TILE, (obj.y/16)*TILE,self.screen, self.green_right, self.green_left, self.green_up, self)
+                    elif "npc_move" in obj.name:
+                        n = Npc((obj.x/16)*TILE, (obj.y/16)*TILE,self.screen, self.green_right, self.green_left, self.green_up, self, obj.name.split("_")[-1])
                         self.all_sprites.add(n)
                         self.npc_sprites.add(n)
 
@@ -321,7 +320,7 @@ class Game:
             self.victory_sound.play()
 
         #if the player has a bomb, the player's snake tracker is now active and visible. it disapears (but still exists) if the player runs out of bombs
-        if "bomb" in self.player.inv:
+        if "bomb" in self.player.inv and self.player.inv["bomb"]>0:
             self.all_sprites.add(self.tracker)
             self.all_sprites.add(self.tracked)
             if self.player.use == True and self.player.inv["bomb"] > 0:
@@ -359,8 +358,8 @@ class Game:
 
         #if text is a string, makes an image based on that text
         if self.text:
-            # if "Inventory:" not in self.text and "npc" in self.prompt and self.player.current_npc.name not in self.text:
-            #     self.text = self.player.current_npc.name+ ": " + self.text
+            if "Inventory:" not in self.text and "npc" in self.prompt and self.player.current_npc.name not in self.text:
+                self.text = self.player.current_npc.name+ ": " + self.text
             self.text_sprite = TextBox(self.text, self.font, WHITE)
             if "Inventory:" not in self.text and type(TEXTS[self.prompt]) == dict:
                 self.choices = []
@@ -383,12 +382,10 @@ class Game:
         #player dead, game over
         if self.player_alive == False:
             self.playing = False
-        
-        print(self.game_map)
-        print(self.names)
-        print(self.persistant)
+
+        #persistant
         for i in self.npc_sprites:
-            print(i.name)
+            self.persistant["npcs"][i.name] = {"name":i.name, "quest":i.quest, "map":i.map, "velo":i.saved_velo}
 
     def draw(self):
         """Fill screen, draw objects, flip."""
@@ -759,8 +756,6 @@ class Game:
             self.draw()
             self.clock.tick(FPS)
             if self.change_map == True:
-                for i in self.npc_sprites:
-                    self.persistant["npcs"][i.name] = {"name":i.name, "quest":i.quest, "map":i.map, "velo":i.saved_velo}
                 self.sprite_code = 0
             
                 #checks to see if the player is changing the map area. first, changes the map and hten updates the players persistant data
@@ -774,12 +769,12 @@ class Game:
 
                 #reassigns saved npc values to correct npc
                 for i in range(len(list(self.npc_sprites))):
-                    self.names.append(list(self.npc_sprites)[i].name)
                     if self.game_map == list(self.npc_sprites)[i].map:
-                        list(self.npc_sprites)[i].name = self.persistant["npcs"][list(self.persistant["npcs"])[i]]["name"]
-                        list(self.npc_sprites)[i].quest = self.persistant["npcs"][list(self.persistant["npcs"])[i]]["quest"]
-                        list(self.npc_sprites)[i].map = self.persistant["npcs"][list(self.persistant["npcs"])[i]]["map"]
-                        list(self.npc_sprites)[i].saved_velo = self.persistant["npcs"][list(self.persistant["npcs"])[i]]["velo"]
+                        if list(self.npc_sprites)[i].name == self.persistant["npcs"][list(self.persistant["npcs"])[i]]["name"]:
+                            list(self.npc_sprites)[i].name = self.persistant["npcs"][list(self.persistant["npcs"])[i]]["name"]
+                            list(self.npc_sprites)[i].quest = self.persistant["npcs"][list(self.persistant["npcs"])[i]]["quest"]
+                            list(self.npc_sprites)[i].map = self.persistant["npcs"][list(self.persistant["npcs"])[i]]["map"]
+                            list(self.npc_sprites)[i].saved_velo = self.persistant["npcs"][list(self.persistant["npcs"])[i]]["velo"]
 
 
                 self.clear = True
@@ -1014,7 +1009,7 @@ class Game:
                         if self.selected == "Restart":
                             if self.won == True:
                                 self.difficulty += 1
-                                if self.difficulty ==5:
+                                if self.difficulty ==7:
                                     self.multiplier += 1
                                 self.won = False
                             self.game_map = "town"

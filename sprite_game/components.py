@@ -639,7 +639,7 @@ class Next(pg.sprite.Sprite):
         self.rect.y += self.y_change
 
 class Npc(pg.sprite.Sprite):
-    def __init__(self, x, y, display, right, left, up, game):
+    def __init__(self, x, y, display, right, left, up, game, name):
         pg.sprite.Sprite.__init__(self)
         self.game = game
         self.self = self
@@ -671,11 +671,7 @@ class Npc(pg.sprite.Sprite):
         self.emotion = None
         self.bubble = None
         self.quest = None
-        try:
-            self.name = rand.choice(self.game.names)
-            self.game.names.remove(self.name)
-        except:
-            self.name = "Bri"
+        self.name = name
     
     def update(self):
         self.emotion = None

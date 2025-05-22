@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="321">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="25" height="25" tilewidth="16" tileheight="16" infinite="0" nextlayerid="18" nextobjectid="322">
  <tileset firstgid="1" source="town.tsx"/>
  <layer id="2" name="back" width="25" height="25">
   <data encoding="csv">
@@ -180,7 +180,7 @@
   <object id="317" name="npc_wall" x="256.583" y="80.6667" width="32.1667" height="8.66666"/>
  </objectgroup>
  <objectgroup id="11" name="movement">
-  <object id="129" name="player" x="101.288" y="78.3377">
+  <object id="129" name="player" x="104.621" y="86.3373">
    <point/>
   </object>
   <object id="139" name="snake_spawn" x="195.666" y="294.5" width="160.167" height="36.5"/>
@@ -189,14 +189,17 @@
   <object id="302" name="npc_still" x="82.6667" y="180">
    <point/>
   </object>
-  <object id="303" name="npc_move" x="190.667" y="110">
+  <object id="303" name="npc_move_Carol" x="190.667" y="110">
    <point/>
   </object>
-  <object id="304" name="npc_move" x="108" y="240">
+  <object id="304" name="npc_move_Lewis" x="108" y="240">
    <point/>
   </object>
   <object id="318" name="snake_spawn" x="30.9165" y="48.4167" width="22.5003" height="20.8333"/>
   <object id="320" name="snake_spawn" x="170.083" y="38.9167" width="29.5003" height="13.5"/>
+  <object id="321" name="npc_move_Stella" x="350" y="74.6667">
+   <point/>
+  </object>
  </objectgroup>
  <objectgroup id="12" name="teleports">
   <object id="148" name="gate_lad_down" x="264.212" y="63.2727" width="16.0606" height="6.46681"/>
